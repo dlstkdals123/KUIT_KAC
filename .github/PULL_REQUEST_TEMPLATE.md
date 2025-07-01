@@ -1,4 +1,5 @@
 # 📌 Pull Request
+closed #번호
 
 ## 🔍 변경 사항
 - 🛠️ [주요 변경 사항 1]
