@@ -72,6 +72,10 @@ dependencies {
     // 'runtimeOnly'는 애플리케이션 실행 시에만 필요한 의존성임을 의미합니다.
     runtimeOnly("com.mysql:mysql-connector-j")
 
+    // H2 Database: 인메모리 데이터베이스 및 개발/테스트용 JDBC 드라이버입니다.
+    // 'runtimeOnly'는 애플리케이션 실행 시에만 필요한 의존성임을 의미합니다.
+    runtimeOnly("com.h2database:h2")
+
     // Spring Boot Configuration Processor:
     // '@ConfigurationProperties' 어노테이션이 붙은 클래스의 설정 속성들에 대한 메타데이터를 생성합니다.
     // 이를 통해 IDE(IntelliJ 등)에서 'application.properties' 또는 'application.yml' 설정 시

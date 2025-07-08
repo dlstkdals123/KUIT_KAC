@@ -20,7 +20,12 @@ public class UserService {
 
         return new UserResponse(
                 user.getId(),
-                user.getUsername()
+                user.getNickname(),
+                user.getEmail(),
+                user.getGender(),
+                user.getAge(),
+                user.getHeight(),
+                user.getTarget_weight()
         );
     }
 }
