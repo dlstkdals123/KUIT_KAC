@@ -1,6 +1,7 @@
 package org.example.kuit_kac.domain.user.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -12,5 +13,15 @@ public class UserResponse {
     private Long id;
 
     @Schema(description = "사용자의 이름", example = "인상민")
-    private String username;
+    private String nickname;
+
+    private String email;
+
+    private String gender;
+
+    private int age;
+
+    private int height;
+
+    private double target_weight;
 }
