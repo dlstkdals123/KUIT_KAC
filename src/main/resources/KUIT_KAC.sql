@@ -1,10 +1,10 @@
-DROP TABLE IF EXISTS `user`;
+﻿DROP TABLE IF EXISTS `user`;
 
 CREATE TABLE `user` (
     `id`           bigint AUTO_INCREMENT NOT NULL PRIMARY KEY,
-    `nickname`     varchar(20)           NOT NULL UNIQUE,
+    `nickname`     varchar(20)           NOT NULL,
     `password`     varchar(100)          NOT NULL,
-    `email`        varchar(50)           NOT NULL UNIQUE,
+    `email`        varchar(50)           NOT NULL,
     `gender`       ENUM('male', 'female') NOT NULL,
     `age`          int                   NOT NULL,
     `height`       int                   NOT NULL,
