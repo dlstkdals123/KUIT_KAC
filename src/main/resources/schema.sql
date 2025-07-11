@@ -1,11 +1,11 @@
-DROP TABLE IF EXISTS `user`;
+DROP TABLE IF EXISTS `users`;
 
-CREATE TABLE `user` (
+CREATE TABLE `users` (
                         `id`           bigint AUTO_INCREMENT NOT NULL PRIMARY KEY,
                         `nickname`     varchar(20)           NOT NULL,
                         `password`     varchar(100)          NOT NULL,
                         `email`        varchar(50)           NOT NULL,
-                        `gender`       ENUM('male', 'female') NOT NULL,
+                        `gender`       ENUM('MALE', 'FEMALE') NOT NULL,
                         `age`          int                   NOT NULL,
                         `height`       int                   NOT NULL,
                         `target_weight` double                NOT NULL,
@@ -65,7 +65,7 @@ CREATE TABLE `diet_template` (
                                  `date`         date                  NULL,
                                  `created_at`   datetime              NOT NULL DEFAULT CURRENT_TIMESTAMP,
                                  `updated_at`   datetime              NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-                                 FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON DELETE CASCADE
+                                 FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
 );
 
 DROP TABLE IF EXISTS `exercise_record`;
@@ -76,7 +76,7 @@ CREATE TABLE `exercise_record` (
                                    `exercise_date` date                  NOT NULL,
                                    `created_at`    datetime              NOT NULL DEFAULT CURRENT_TIMESTAMP,
                                    `updated_at`    datetime              NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-                                   FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON DELETE CASCADE
+                                   FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
 );
 
 DROP TABLE IF EXISTS `social_dining`;
@@ -84,11 +84,11 @@ DROP TABLE IF EXISTS `social_dining`;
 CREATE TABLE `social_dining` (
                                  `id`                 bigint AUTO_INCREMENT NOT NULL PRIMARY KEY,
                                  `user_id`            bigint                NOT NULL,
-                                 `type`               ENUM('dining_out', 'drinking') NOT NULL,
+                                 `type`               ENUM('DINING_OUT', 'DRINKING') NOT NULL,
                                  `social_dining_date` date                  NULL,
                                  `created_at`         datetime              NOT NULL DEFAULT CURRENT_TIMESTAMP,
                                  `updated_at`         datetime              NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-                                 FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON DELETE CASCADE
+                                 FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
 );
 
 DROP TABLE IF EXISTS `weight`;
@@ -99,7 +99,7 @@ CREATE TABLE `weight` (
                           `weight`       double                NOT NULL,
                           `created_at`   datetime              NOT NULL DEFAULT CURRENT_TIMESTAMP,
                           `updated_at`   datetime              NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-                          FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON DELETE CASCADE
+                          FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
 );
 
 DROP TABLE IF EXISTS `exercise_routine`;
@@ -110,7 +110,7 @@ CREATE TABLE `exercise_routine` (
                                     `name`         varchar(50)           NULL,
                                     `created_at`   datetime              NOT NULL DEFAULT CURRENT_TIMESTAMP,
                                     `updated_at`   datetime              NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-                                    FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON DELETE CASCADE
+                                    FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
 );
 
 DROP TABLE IF EXISTS `diet`;
@@ -119,12 +119,12 @@ CREATE TABLE `diet` (
                         `id`               bigint AUTO_INCREMENT NOT NULL PRIMARY KEY,
                         `user_id`          bigint                NOT NULL,
                         `diet_template_id` bigint                NULL,
-                        `diet_type`        ENUM('record', 'plan', 'AI_plan') NULL,
+                        `diet_type`        ENUM('RECORD', 'PLAN', 'AI_PLAN') NULL,
                         `name`             varchar(30)           NULL,
                         `diet_date`        date                  NULL,
                         `created_at`       datetime              NOT NULL DEFAULT CURRENT_TIMESTAMP,
                         `updated_at`       datetime              NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-                        FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON DELETE CASCADE,
+                        FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE,
                         FOREIGN KEY (`diet_template_id`) REFERENCES `diet_template`(`id`) ON DELETE SET NULL
 );
 
@@ -133,7 +133,7 @@ DROP TABLE IF EXISTS `meal`;
 CREATE TABLE `meal` (
                         `id`           bigint AUTO_INCREMENT NOT NULL PRIMARY KEY,
                         `diet_id`      bigint                NOT NULL,
-                        `meal_type`    ENUM('breakfast', 'lunch', 'dinner', 'snack') NOT NULL,
+                        `meal_type`    ENUM('BREAKFAST', 'LUNCH', 'DINNER', 'SNACK') NOT NULL,
                         `meal_time`    datetime              NOT NULL,
                         `created_at`   datetime              NOT NULL DEFAULT CURRENT_TIMESTAMP,
                         `updated_at`   datetime              NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
@@ -162,13 +162,13 @@ CREATE TABLE `exercise_detail` (
                                    `set_detail_id`      bigint                NOT NULL,
                                    `user_id`            bigint                NOT NULL,
                                    `time`               int                   NULL,
-                                   `intensity`          ENUM('loose', 'normal', 'tight') NULL,
+                                   `intensity`          ENUM('LOOSE', 'NORMAL', 'TIGHT') NULL,
                                    `created_at`         datetime              NOT NULL DEFAULT CURRENT_TIMESTAMP,
                                    `updated_at`         datetime              NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
                                    FOREIGN KEY (`exercise_record_id`) REFERENCES `exercise_record`(`id`) ON DELETE CASCADE,
                                    FOREIGN KEY (`exercise_id`) REFERENCES `exercise`(`id`) ON DELETE CASCADE,
                                    FOREIGN KEY (`set_detail_id`) REFERENCES `set_detail`(`id`) ON DELETE CASCADE,
-                                   FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON DELETE CASCADE
+                                   FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
 );
 
 DROP TABLE IF EXISTS `exercise_routine_information`;
@@ -189,9 +189,9 @@ CREATE TABLE `user_information` (
                                     `user_id`                 bigint NOT NULL PRIMARY KEY,
                                     `has_diet_experience`     boolean NOT NULL DEFAULT FALSE,
                                     `diet_fail_reason`        varchar(50) NOT NULL,
-                                    `appetite_type`           ENUM('small', 'big') NOT NULL,
+                                    `appetite_type`           ENUM('SMALL', 'BIG') NOT NULL,
                                     `weekly_eating_out_count` varchar(10) NOT NULL,
-                                    `eating_out_type`         ENUM('fastfood', 'korean', 'chinese', 'western', 'fried') NOT NULL,
-                                    `diet_velocity`           ENUM('yumyum', 'coach', 'all_in') NOT NULL,
-                                    FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON DELETE CASCADE
+                                    `eating_out_type`         ENUM('FASTFOOD', 'KOREAN', 'CHINESE', 'WESTERN', 'FRIED') NOT NULL,
+                                    `diet_velocity`           ENUM('YUMYUM', 'COACH', 'ALL_IN') NOT NULL,
+                                    FOREIGN KEY (`user_id`) REFERENCES `users`(`id`) ON DELETE CASCADE
 );

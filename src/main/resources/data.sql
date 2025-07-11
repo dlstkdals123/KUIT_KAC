@@ -1,6 +1,6 @@
-INSERT INTO `user` (`nickname`, `password`, `email`, `gender`, `age`, `height`, `target_weight`) VALUES
-('user1', 'hashed_password_1', 'user1@example.com', 'male', 30, 175, 70.5),
-('user2', 'hashed_password_2', 'user2@example.com', 'female', 25, 163, 55.0);
+INSERT INTO `users` (`nickname`, `password`, `email`, `gender`, `age`, `height`, `target_weight`) VALUES
+('user1', 'hashed_password_1', 'user1@example.com', 'MALE', 30, 175, 70.5),
+('user2', 'hashed_password_2', 'user2@example.com', 'FEMALE', 25, 163, 55.0);
 
 INSERT INTO `exercise` (`name`, `target_muscle_group`, `met_value`) VALUES
 ('벤치프레스', '가슴', 5.0),
@@ -16,13 +16,13 @@ INSERT INTO `diet_template` (`user_id`, `name`, `date`) VALUES
 (1, '아침식단1', CURDATE());
 
 INSERT INTO `diet` (`user_id`, `diet_template_id`, `diet_type`, `name`, `diet_date`) VALUES
-(1, NULL, 'record', '오늘의 아침', CURDATE()),
-(1, 1, 'plan', NULL, CURDATE());
+(1, NULL, 'RECORD', '오늘의 아침', CURDATE()),
+(1, 1, 'PLAN', NULL, CURDATE());
 
 INSERT INTO `meal` (`diet_id`, `meal_type`, `meal_time`) VALUES
-(1, 'breakfast', NOW()),
-(1, 'lunch', NOW()),
-(1, 'snack', NOW());
+(1, 'BREAKFAST', NOW()),
+(1, 'LUNCH', NOW()),
+(1, 'SNACK', NOW());
 
 INSERT INTO `meal_food` (`meal_id`, `food_id`, `quantity`) VALUES
 (1, 1, 0.1),
@@ -38,15 +38,15 @@ INSERT INTO `exercise_record` (`user_id`, `exercise_date`) VALUES
 (1, CURDATE());
 
 INSERT INTO `exercise_detail` (`exercise_record_id`, `exercise_id`, `set_detail_id`, `user_id`, `time`, `intensity`) VALUES
-(1, 1, 1, 1, 60, 'normal'),
-(1, 2, 2, 1, 90, 'tight');
+(1, 1, 1, 1, 60, 'NORMAL'),
+(1, 2, 2, 1, 90, 'TIGHT');
 
 INSERT INTO `user_information` (`user_id`, `has_diet_experience`, `diet_fail_reason`, `appetite_type`, `weekly_eating_out_count`, `eating_out_type`, `diet_velocity`) VALUES
-(1, TRUE, '야식', 'big', '2-3', 'korean', 'coach');
+(1, TRUE, '야식', 'BIG', '2-3', 'korean', 'coach');
 
 INSERT INTO `social_dining` (`user_id`, `type`, `social_dining_date`) VALUES
-(1, 'dining_out', CURDATE()),
-(1, 'drinking', CURDATE());
+(1, 'DINING_OUT', CURDATE()),
+(1, 'DRINKING', CURDATE());
 
 INSERT INTO `weight` (`user_id`, `weight`) VALUES
 (1, 85.0),

@@ -58,11 +58,6 @@ dependencies {
     // 'compileOnly'는 컴파일 시에만 필요하고 런타임에는 포함되지 않음을 의미합니다.
     compileOnly("org.projectlombok:lombok")
 
-    // Spring Boot DevTools: 개발 단계에서 편리한 기능을 제공합니다.
-    // 코드 변경 시 애플리케이션 자동 재시작, 라이브 리로드(LiveReload) 등을 지원하여 개발 효율을 높여줍니다.
-    // 'developmentOnly'는 개발 환경에서만 적용되는 의존성임을 나타냅니다.
-    developmentOnly("org.springframework.boot:spring-boot-devtools")
-
     // Spring Boot Docker Compose: 개발 환경에서 Docker Compose를 사용하여
     // 애플리케이션과 연관된 서비스(DB, Redis 등)를 쉽게 실행하고 관리할 수 있도록 돕습니다.
     // 'developmentOnly'는 개발 환경에서만 적용되는 의존성임을 나타냅니다.
