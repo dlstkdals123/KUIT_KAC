@@ -1,9 +1,12 @@
 spring:
   profiles:
-    active: local
+    active: dev
 
   application:
     name: KUIT_KAC
+
+springdoc:
+  packages-to-scan: org.example.kuit_kac
 
 server:
   port: 8080
