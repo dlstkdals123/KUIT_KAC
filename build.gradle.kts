@@ -1,6 +1,6 @@
 plugins {
     java
-    id("org.springframework.boot") version "3.5.3"
+    id("org.springframework.boot") version "3.3.1"
     id("io.spring.dependency-management") version "1.1.7"
 }
 
@@ -51,7 +51,7 @@ dependencies {
     // SpringDoc OpenAPI UI: OpenAPI 3(Swagger) 기반의 API 문서를 자동으로 생성하고 UI를 제공합니다.
     // REST API의 명세를 자동으로 만들고 웹 브라우저에서 테스트할 수 있는 페이지를 제공하여 API 개발 및 공유를 돕습니다.
     // (Spring Boot 3.x 이상에서 권장되는 Swagger 구현체)
-    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.5.0") // 최신 버전을 확인하세요!
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.2") // 최신 버전을 확인하세요!
 
     // Lombok: 자바 개발 시 반복되는 코드(getter, setter, 생성자 등) 작성을 줄여주는 유틸리티 라이브러리입니다.
     // 컴파일 시점에 자동으로 코드를 생성하여 생산성을 높여줍니다.
