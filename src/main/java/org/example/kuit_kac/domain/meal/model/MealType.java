@@ -6,10 +6,10 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum MealType {
-    BREAKFAST("BREAKFAST"),
-    LUNCH("LUNCH"),
-    DINNER("DINNER"),
-    SNACK("SNACK");
+    BREAKFAST("breakfast"),
+    LUNCH("lunch"),
+    DINNER("lunch"),
+    SNACK("snack");
 
     private final String value;
 }
