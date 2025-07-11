@@ -21,7 +21,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: create-drop # 운영 배포 시 none + Flyway 권장
+      ddl-auto: update # 운영 배포 시 none + Flyway 권장
     show-sql: true # 운영 배포 시 false
     properties:
       hibernate:
