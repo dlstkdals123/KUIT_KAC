@@ -119,7 +119,7 @@ CREATE TABLE `diet` (
                         `id`               bigint AUTO_INCREMENT NOT NULL PRIMARY KEY,
                         `user_id`          bigint                NOT NULL,
                         `diet_template_id` bigint                NULL,
-                        `diet_type`        ENUM('RECORD', 'PLAN', 'AI_PLAN') NULL,
+                        `diet_type`        ENUM('RECORD', 'PLAN', 'AI_PLAN', 'FASTING') NULL,
                         `name`             varchar(30)           NULL,
                         `diet_date`        date                  NULL,
                         `created_at`       datetime              NOT NULL DEFAULT CURRENT_TIMESTAMP,
