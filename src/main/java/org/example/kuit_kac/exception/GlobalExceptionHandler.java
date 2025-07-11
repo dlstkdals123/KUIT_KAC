@@ -21,7 +21,7 @@ public class GlobalExceptionHandler {
         errorDetails.put("timestamp", LocalDateTime.now());
         errorDetails.put("status", httpStatus.value());
         errorDetails.put("error", httpStatus.getReasonPhrase());
-        errorDetails.put("code", errorCode.name());
+        errorDetails.put("code", errorCode.getCode());
         errorDetails.put("message", errorCode.getMessage());
 
         return new ResponseEntity<>(errorDetails, httpStatus);
