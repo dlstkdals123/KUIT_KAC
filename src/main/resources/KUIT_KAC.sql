@@ -133,13 +133,23 @@ DROP TABLE IF EXISTS `meal`;
 CREATE TABLE `meal` (
     `id`           bigint AUTO_INCREMENT NOT NULL PRIMARY KEY,
     `diet_id`      bigint                NOT NULL,
-    `food_id`      bigint                NOT NULL,
     `meal_type`    ENUM('breakfast', 'lunch', 'dinner', 'snack') NOT NULL,
-    `quantity`     double                NOT NULL,
     `meal_time`    datetime              NOT NULL,
     `created_at`   datetime              NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `updated_at`   datetime              NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (`diet_id`) REFERENCES `diet`(`id`) ON DELETE CASCADE,
+    FOREIGN KEY (`diet_id`) REFERENCES `diet`(`id`) ON DELETE CASCADE
+);
+
+DROP TABLE IF EXISTS `meal_food`;
+
+CREATE TABLE `meal_food` (
+    `id`           bigint AUTO_INCREMENT NOT NULL PRIMARY KEY,
+    `meal_id`      bigint                NOT NULL,
+    `food_id`      bigint                NOT NULL,
+    `quantity`     double                NOT NULL,
+    `created_at`   datetime              NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_at`   datetime              NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (`meal_id`) REFERENCES `meal`(`id`) ON DELETE CASCADE,
     FOREIGN KEY (`food_id`) REFERENCES `food`(`id`) ON DELETE CASCADE
 );
 

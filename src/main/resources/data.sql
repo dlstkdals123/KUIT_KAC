@@ -17,12 +17,17 @@ INSERT INTO `diet_template` (`user_id`, `name`, `date`) VALUES
 
 INSERT INTO `diet` (`user_id`, `diet_template_id`, `diet_type`, `name`, `diet_date`) VALUES
 (1, NULL, 'record', '오늘의 아침', CURDATE()),
-(1, 1, NULL, NULL, CURDATE());
+(1, 1, 'plan', NULL, CURDATE());
 
-INSERT INTO `meal` (`diet_id`, `food_id`, `meal_type`, `quantity`, `meal_time`) VALUES
-(1, 1, 'breakfast', 0.1, NOW()),
-(1, 2, 'lunch', 1.6, NOW()),
-(1, 3, 'snack', 1.0, NOW());
+INSERT INTO `meal` (`diet_id`, `meal_type`, `meal_time`) VALUES
+(1, 'breakfast', NOW()),
+(1, 'lunch', NOW()),
+(1, 'snack', NOW());
+
+INSERT INTO `meal_food` (`meal_id`, `food_id`, `quantity`) VALUES
+(1, 1, 0.1),
+(2, 2, 1.6),
+(3, 3, 1.0);
 
 INSERT INTO `set_detail` (`count`, `weight_kg`, `weight_num`, `distance`, `time`, `order`) VALUES
 (10, 60, 0, 0, 0.0, 1),
