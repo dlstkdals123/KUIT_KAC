@@ -32,7 +32,7 @@ public class DietController {
 
     @PostMapping()
     @Operation(summary = "새로운 식단 기록 생성", description = "사용자의 새로운 식단 기록을 생성합니다. 식단 유형(일반 식사 또는 단식)과 포함된 끼니 및 음식 정보에 따라 다르게 처리됩니다.")
-    public ResponseEntity<DietWithMealsAndFoodsResponse> createDiet(@ModelAttribute DietCreateRequest dietCreateRequest) {
+    public ResponseEntity<DietWithMealsAndFoodsResponse> createDiet(@RequestBody DietCreateRequest dietCreateRequest) {
         DietWithMealsAndFoodsResponse dietWithMealsAndFoodsResponse = dietService.createDiet(dietCreateRequest);
 
         return ResponseEntity.ok(dietWithMealsAndFoodsResponse);

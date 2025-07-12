@@ -1,4 +1,4 @@
-INSERT INTO `users` (`nickname`, `password`, `email`, `gender`, `age`, `height`, `target_weight`) VALUES
+INSERT INTO `user` (`nickname`, `password`, `email`, `gender`, `age`, `height`, `target_weight`) VALUES
 ('user1', 'hashed_password_1', 'user1@example.com', 'MALE', 30, 175, 70.5),
 ('user2', 'hashed_password_2', 'user2@example.com', 'FEMALE', 25, 163, 55.0);
 
@@ -16,8 +16,7 @@ INSERT INTO `diet_template` (`user_id`, `name`, `date`) VALUES
 (1, '아침식단1', CURDATE());
 
 INSERT INTO `diet` (`user_id`, `diet_template_id`, `diet_type`, `name`, `diet_date`) VALUES
-(1, NULL, 'RECORD', '오늘의 아침', CURDATE()),
-(1, 1, 'PLAN', NULL, CURDATE());
+(1, NULL, 'RECORD', '오늘의 아침', CURDATE());
 
 INSERT INTO `meal` (`diet_id`, `meal_type`, `meal_time`) VALUES
 (1, 'BREAKFAST', NOW()),
