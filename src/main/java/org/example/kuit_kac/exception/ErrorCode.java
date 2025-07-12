@@ -14,6 +14,7 @@ public enum ErrorCode {
     DIET_USER_ID_AND_DIET_TYPE_AND_DATE_NOT_FOUND("DIET_004", "사용자, 식단 유형, 날짜가 모두 일치하는 식단을 찾을 수 없습니다."),
     FASTING_DIET_CANNOT_CONTAIN_MEALS("DIET_005", "단식 식단에는 끼니 정보가 포함될 수 없습니다."),
     MEAL_EMPTY("DIET_006", "일반 식단에는 최소 하나 이상의 끼니가 포함되어야 합니다."),
+    DIET_NOT_FOUND("DIET_007", "해당 식단을 찾을 수 없습니다."),
 
     // 식단 템플릿(DietTemplate) 관련 에러 코드
     DIET_TEMPLATE_NOT_FOUND("DIET_TEMPLATE_001", "나만의 식단 템플릿을 찾을 수 없습니다."),
