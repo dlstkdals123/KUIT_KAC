@@ -12,8 +12,11 @@ public enum ErrorCode {
     DIET_USER_ID_AND_DIET_TYPE_AND_DATE_NOT_FOUND("DIET_004", "사용자, 식단 유형, 날짜가 모두 일치하는 식단을 찾을 수 없습니다."),
 
     MEAL_DIET_NOT_FOUND("MEAL_001", "해당 식단에 해당하는 끼니를 찾을 수 없습니다."),
+    MEAL_NOT_FOUND("MEAL_002", "끼니를 찾을 수 없습니다."),
 
-    FOOD_MEAL_ID_NOT_FOUND("FOOD_001", "해당 끼니에 해당하는 음식을 찾을 수 없습니다.");
+    MEAL_FOOD_EMPTY("MEAL_FOOD_001", "끼니에는 최소 하나 이상의 음식이 포함되어야 합니다."),
+
+    FOOD_NOT_FOUND("FOOD_001", "해당 음식을 찾을 수 없습니다.");
 
     private final String code;
     private final String message;
