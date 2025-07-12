@@ -2,10 +2,14 @@ package org.example.kuit_kac.domain.food.model;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
 @Getter
+@Setter
+@NoArgsConstructor
 @Entity
 public class Food {
 
