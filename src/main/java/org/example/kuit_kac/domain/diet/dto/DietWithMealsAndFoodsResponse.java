@@ -25,7 +25,7 @@ public class DietWithMealsAndFoodsResponse {
     @Schema(description = "연결된 식단 템플릿의 고유 식별자 (DietTemplate ID). 없을 수 있습니다.", example = "201", nullable = true)
     private Long dietTemplateId;
 
-    @Schema(description = "식단 유형", example = "RECORD", allowableValues = {"RECORD", "PLAN"})
+    @Schema(description = "식단 유형", example = "RECORD", allowableValues = {"RECORD", "PLAN", "AI_PLAN", "FASTING"})
     private DietType dietType;
 
     @Schema(description = "식단 이름", example = "오늘의 아침")

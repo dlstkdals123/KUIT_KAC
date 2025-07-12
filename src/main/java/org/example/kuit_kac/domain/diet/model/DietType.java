@@ -6,9 +6,10 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum DietType {
-    RECORD("record"),
-    PLAN("plan"),
-    AI_PLAN("ai_plan");
+    RECORD("RECORD"),
+    PLAN("PLAN"),
+    AI_PLAN("AI_PLAN"),
+    FASTING("FASTING");
 
     private final String value;
 }
