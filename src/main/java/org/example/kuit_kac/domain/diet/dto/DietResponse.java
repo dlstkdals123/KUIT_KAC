@@ -3,7 +3,10 @@ package org.example.kuit_kac.domain.diet.dto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.example.kuit_kac.domain.diet.model.Diet;
 import org.example.kuit_kac.domain.diet.model.DietType;
+import org.example.kuit_kac.domain.user.dto.UserResponse;
+import org.example.kuit_kac.domain.user.model.User;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -24,15 +27,28 @@ public class DietResponse {
     @Schema(description = "식단 유형", example = "RECORD", allowableValues = {"RECORD", "PLAN", "AI_PLAN", "FASTING"})
     private DietType dietType;
 
-    @Schema(description = "식단 이름", example = "점심 식단")
+    @Schema(description = "식단 이름", example = "오늘의 아침")
     private String name;
 
-    @Schema(description = "식단 날짜", example = "2023-07-10")
+    @Schema(description = "식단 날짜", example = "2025-07-12")
     private LocalDate dietDate;
 
-    @Schema(description = "식단 정보 생성일시", example = "2023-07-10T09:00:00")
+    @Schema(description = "식단 정보 생성일시", example = "2025-07-12T09:00:00")
     private LocalDateTime createdAt;
 
-    @Schema(description = "식단 정보 최종 수정일시", example = "2023-07-10T09:00:00")
+    @Schema(description = "식단 정보 최종 수정일시", example = "2025-07-12T09:00:00")
     private LocalDateTime updatedAt;
+
+    public static DietResponse from(Diet diet) {
+        return new DietResponse(
+                diet.getId(),
+                diet.getUser().getId(),
+                diet.getDietTemplate().getId(),
+                diet.getDietType(),
+                diet.getName(),
+                diet.getDietDate(),
+                diet.getCreatedAt(),
+                diet.getUpdatedAt()
+        );
+    }
 }
