@@ -1,10 +1,12 @@
 package org.example.kuit_kac.domain.food.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.example.kuit_kac.domain.food.dto.FoodResponse;
 import org.example.kuit_kac.domain.food.service.FoodService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,5 +21,11 @@ public class FoodController {
 
     @GetMapping("/{id}")
     @Operation(summary = "음식 ID로 단일 음식 정보 조회", description = "제공된 음식 ID를 사용하여 특정 음식의 상세 정보를 조회합니다.")
-    public FoodResponse getFood(@PathVariable Long id) { return foodService.getFoodById(id); }
+    public ResponseEntity<FoodResponse> getFood(
+            @Parameter(description = "조회할 음식의 고유 ID", example = "1")
+            @PathVariable Long id
+    ) {
+        FoodResponse foodResponse = foodService.getFoodById(id);
+        return ResponseEntity.ok(foodResponse);
+    }
 }
