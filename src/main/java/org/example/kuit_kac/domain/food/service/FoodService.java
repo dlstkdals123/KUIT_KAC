@@ -7,6 +7,7 @@ import org.example.kuit_kac.domain.food.repository.FoodRepository;
 import org.example.kuit_kac.exception.CustomException;
 import org.example.kuit_kac.exception.ErrorCode;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.PathVariable;
 
 @Service
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 public class FoodService {
     private final FoodRepository foodRepository;
 
+    @Transactional(readOnly = true)
     public FoodResponse getFoodById(@PathVariable Long id) {
         Food food = foodRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ErrorCode.FOOD_NOT_FOUND));
