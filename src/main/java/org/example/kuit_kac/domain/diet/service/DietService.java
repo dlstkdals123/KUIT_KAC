@@ -30,7 +30,6 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 public class DietService {
 
     private final UserRepository userRepository;
@@ -38,9 +37,17 @@ public class DietService {
     private final DietTemplateRepository dietTemplateRepository;
     private final FoodRepository foodRepository;
 
+    @Transactional(readOnly = true)
     public DietWithMealsAndFoodsResponse getDietByUserIdAndDietTypeAndDietDate(Long userId, DietType dietType, LocalDate dietDate) {
         Diet diet = dietRepository.findByUserIdAndDietTypeAndDietDate(userId, dietType, dietDate)
                 .orElseThrow(() -> new CustomException(ErrorCode.DIET_USER_ID_AND_DIET_TYPE_AND_DATE_NOT_FOUND));
+        return DietWithMealsAndFoodsResponse.from(diet);
+    }
+
+    @Transactional(readOnly = true)
+    public DietWithMealsAndFoodsResponse getDietById(Long id) {
+        Diet diet = dietRepository.findById(id)
+                .orElseThrow(() -> new CustomException(ErrorCode.DIET_NOT_FOUND));
         return DietWithMealsAndFoodsResponse.from(diet);
     }
 

@@ -1,13 +1,12 @@
 package org.example.kuit_kac.domain.diet.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.example.kuit_kac.domain.diet.dto.DietCreateRequest;
-import org.example.kuit_kac.domain.diet.dto.DietResponse;
 import org.example.kuit_kac.domain.diet.dto.DietSearchRequest;
 import org.example.kuit_kac.domain.diet.dto.DietWithMealsAndFoodsResponse;
-import org.example.kuit_kac.domain.diet.model.Diet;
 import org.example.kuit_kac.domain.diet.service.DietService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -32,9 +31,21 @@ public class DietController {
     }
 
     @PostMapping()
+    @Operation(summary = "새로운 식단 기록 생성", description = "사용자의 새로운 식단 기록을 생성합니다. 식단 유형(일반 식사 또는 단식)과 포함된 끼니 및 음식 정보에 따라 다르게 처리됩니다.")
     public ResponseEntity<DietWithMealsAndFoodsResponse> createDiet(@ModelAttribute DietCreateRequest dietCreateRequest) {
         DietWithMealsAndFoodsResponse dietWithMealsAndFoodsResponse = dietService.createDiet(dietCreateRequest);
 
         return ResponseEntity.ok(dietWithMealsAndFoodsResponse);
     }
+
+    @GetMapping("/{id}")
+    @Operation(summary = "식단 ID로 단일 식단 상세 정보 조회", description = "제공된 식단 ID를 사용하여 특정 식단의 모든 끼니 및 음식 상세 정보를 조회합니다.")
+    public ResponseEntity<DietWithMealsAndFoodsResponse> getDietById(
+            @Parameter(description = "조회할 식단의 고유 ID", example = "1")
+            @PathVariable Long id
+    ) {
+        DietWithMealsAndFoodsResponse dietWithMealsAndFoodsResponse = dietService.getDietById(id);
+        return ResponseEntity.ok(dietWithMealsAndFoodsResponse);
+    }
+
 }
