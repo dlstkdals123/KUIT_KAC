@@ -22,7 +22,7 @@ public class MealUpdateRequest {
     @Schema(description = "끼니 유형", example = "LUNCH", allowableValues = {"BREAKFAST", "LUNCH", "DINNER", "SNACK"})
     private MealType mealType;
 
-    @Schema(description = "끼니를 섭취한 시간", example = "2023-07-10T12:30:00")
+    @Schema(description = "끼니를 섭취한 시간", example = "2025-07-10T12:30:00")
     private LocalDateTime mealTime;
 
     @Schema(description = "끼니에 포함될 음식 목록입니다. 기존 음식 정보는 모두 이 목록으로 대체됩니다.", requiredMode = Schema.RequiredMode.REQUIRED)

@@ -3,8 +3,11 @@ package org.example.kuit_kac.domain.diet.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.example.kuit_kac.domain.diet.dto.DietCreateRequest;
+import org.example.kuit_kac.domain.diet.dto.DietResponse;
 import org.example.kuit_kac.domain.diet.dto.DietSearchRequest;
 import org.example.kuit_kac.domain.diet.dto.DietWithMealsAndFoodsResponse;
+import org.example.kuit_kac.domain.diet.model.Diet;
 import org.example.kuit_kac.domain.diet.service.DietService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,12 +20,20 @@ public class DietController {
     private final DietService dietService;
 
     @GetMapping()
-    @Operation(summary = "사용자 식단 기록 조회", description = "특정 사용자의 날짜별 식단 기록을 조회합니다. 식단 유형으로 필터링할 수 있습니다.")
+    @Operation(summary = "사용자 식단 기록 조회",
+            description = "특정 사용자의 날짜별 식단 기록을 조회합니다. 식단 유형으로 필터링할 수 있습니다.")
     public ResponseEntity<DietWithMealsAndFoodsResponse> getUserDiet(@ModelAttribute DietSearchRequest dietSearchCondition) {
         DietWithMealsAndFoodsResponse dietWithMealsAndFoodsResponse = dietService.getDietByUserIdAndDietTypeAndDietDate(
                 dietSearchCondition.getUserId(),
                 dietSearchCondition.getDietType(),
                 dietSearchCondition.getDietDate());
+
+        return ResponseEntity.ok(dietWithMealsAndFoodsResponse);
+    }
+
+    @PostMapping()
+    public ResponseEntity<DietWithMealsAndFoodsResponse> createDiet(@ModelAttribute DietCreateRequest dietCreateRequest) {
+        DietWithMealsAndFoodsResponse dietWithMealsAndFoodsResponse = dietService.createDiet(dietCreateRequest);
 
         return ResponseEntity.ok(dietWithMealsAndFoodsResponse);
     }

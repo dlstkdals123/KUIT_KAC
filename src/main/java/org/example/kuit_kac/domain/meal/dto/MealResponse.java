@@ -22,13 +22,13 @@ public class MealResponse {
     @Schema(description = "끼니 유형", example = "LUNCH", allowableValues = {"BREAKFAST", "LUNCH", "DINNER", "SNACK"})
     private MealType mealType;
 
-    @Schema(description = "끼니를 섭취한 시간", example = "2023-07-10T12:30:00")
+    @Schema(description = "끼니를 섭취한 시간", example = "2025-07-10T12:30:00")
     private LocalDateTime mealTime;
 
-    @Schema(description = "끼니 정보 생성일시", example = "2023-07-10T12:00:00")
+    @Schema(description = "끼니 정보 생성일시", example = "2025-07-10T12:00:00")
     private LocalDateTime createdAt;
 
-    @Schema(description = "끼니 정보 최종 수정일시", example = "2023-07-10T12:00:00")
+    @Schema(description = "끼니 정보 최종 수정일시", example = "2025-07-10T12:00:00")
     private LocalDateTime updatedAt;
 
     @PrePersist
