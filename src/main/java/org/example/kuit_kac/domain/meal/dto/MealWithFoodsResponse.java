@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.example.kuit_kac.domain.meal.model.Meal;
 import org.example.kuit_kac.domain.meal.model.MealType;
-import org.example.kuit_kac.domain.meal_food.dto.MealFoodItemResponse; // 새로 생성할 DTO 임포트
+import org.example.kuit_kac.domain.meal_food.dto.MealFoodItemResponse;
 
 import java.time.LocalDateTime;
 import java.util.List;

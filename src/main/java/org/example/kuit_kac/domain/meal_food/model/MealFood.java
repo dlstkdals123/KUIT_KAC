@@ -2,8 +2,8 @@ package org.example.kuit_kac.domain.meal_food.model;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.example.kuit_kac.domain.meal.model.Meal;
 import org.example.kuit_kac.domain.food.model.Food;
+import org.example.kuit_kac.domain.meal.model.Meal;
 
 import java.time.LocalDateTime;
 

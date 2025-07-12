@@ -1,11 +1,10 @@
 package org.example.kuit_kac.domain.meal.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
 import lombok.Setter;
-
 import org.example.kuit_kac.domain.meal.model.MealType;
 import org.example.kuit_kac.domain.meal_food.dto.MealFoodUpdateRequest;
 

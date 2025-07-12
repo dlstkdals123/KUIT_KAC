@@ -5,8 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.example.kuit_kac.domain.diet.model.Diet;
 import org.example.kuit_kac.domain.diet.model.DietType;
-import org.example.kuit_kac.domain.user.dto.UserResponse;
-import org.example.kuit_kac.domain.user.model.User;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
