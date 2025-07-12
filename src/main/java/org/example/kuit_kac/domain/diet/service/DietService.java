@@ -2,7 +2,6 @@ package org.example.kuit_kac.domain.diet.service;
 
 import lombok.RequiredArgsConstructor;
 import org.example.kuit_kac.domain.diet.dto.DietCreateRequest;
-import org.example.kuit_kac.domain.diet.dto.DietResponse;
 import org.example.kuit_kac.domain.diet.dto.DietWithMealsAndFoodsResponse;
 import org.example.kuit_kac.domain.diet.model.Diet;
 import org.example.kuit_kac.domain.diet.model.DietType;
@@ -20,13 +19,10 @@ import org.example.kuit_kac.exception.CustomException;
 import org.example.kuit_kac.exception.ErrorCode;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.ModelAttribute;
 
-import javax.swing.text.html.Option;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor

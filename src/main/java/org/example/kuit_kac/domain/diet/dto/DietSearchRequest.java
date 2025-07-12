@@ -2,10 +2,10 @@ package org.example.kuit_kac.domain.diet.dto;
 
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Schema;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.example.kuit_kac.domain.diet.model.DietType;
 import org.springframework.format.annotation.DateTimeFormat;
 
