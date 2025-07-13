@@ -19,22 +19,16 @@ public class MealResponse {
     @Schema(description = "연결된 식단의 고유 식별자 (Diet ID)", example = "101")
     private Long dietId;
 
-    @Schema(description = "연결된 음식의 고유 식별자 (Food ID)", example = "201")
-    private Long foodId;
-
     @Schema(description = "끼니 유형", example = "LUNCH", allowableValues = {"BREAKFAST", "LUNCH", "DINNER", "SNACK"})
     private MealType mealType;
 
-    @Schema(description = "음식의 양", example = "1.5")
-    private double quantity;
-
-    @Schema(description = "끼니를 섭취한 시간", example = "2023-07-10T12:30:00")
+    @Schema(description = "끼니를 섭취한 시간", example = "2025-07-10T12:30:00")
     private LocalDateTime mealTime;
 
-    @Schema(description = "끼니 정보 생성일시", example = "2023-07-10T12:00:00")
+    @Schema(description = "끼니 정보 생성일시", example = "2025-07-10T12:00:00")
     private LocalDateTime createdAt;
 
-    @Schema(description = "끼니 정보 최종 수정일시", example = "2023-07-10T12:00:00")
+    @Schema(description = "끼니 정보 최종 수정일시", example = "2025-07-10T12:00:00")
     private LocalDateTime updatedAt;
 
     @PrePersist

@@ -2,12 +2,16 @@ package org.example.kuit_kac.domain.dietTemplate.model;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.example.kuit_kac.domain.user.model.User;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Getter
+@Setter
+@NoArgsConstructor
 @Entity
 public class DietTemplate {
 

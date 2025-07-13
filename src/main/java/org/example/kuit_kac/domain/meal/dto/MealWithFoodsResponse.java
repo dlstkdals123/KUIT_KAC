@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.example.kuit_kac.domain.meal.model.Meal;
 import org.example.kuit_kac.domain.meal.model.MealType;
-import org.example.kuit_kac.domain.meal_food.dto.MealFoodItemResponse; // 새로 생성할 DTO 임포트
+import org.example.kuit_kac.domain.meal_food.dto.MealFoodItemResponse;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -24,13 +24,13 @@ public class MealWithFoodsResponse {
     @Schema(description = "끼니 유형", example = "LUNCH", allowableValues = {"BREAKFAST", "LUNCH", "DINNER", "SNACK"})
     private MealType mealType;
 
-    @Schema(description = "끼니를 섭취한 시간", example = "2023-07-10T12:30:00")
+    @Schema(description = "끼니를 섭취한 시간", example = "2025-07-10T12:30:00")
     private LocalDateTime mealTime;
 
-    @Schema(description = "끼니 정보 생성일시", example = "2023-07-10T12:00:00")
+    @Schema(description = "끼니 정보 생성일시", example = "2025-07-10T12:00:00")
     private LocalDateTime createdAt;
 
-    @Schema(description = "끼니 정보 최종 수정일시", example = "2023-07-10T12:00:00")
+    @Schema(description = "끼니 정보 최종 수정일시", example = "2025-07-10T12:00:00")
     private LocalDateTime updatedAt;
 
     @Schema(description = "해당 끼니에 포함되는 음식 목록 (MealFood 정보 포함)")

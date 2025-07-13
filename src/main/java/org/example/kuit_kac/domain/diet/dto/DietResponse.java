@@ -3,6 +3,7 @@ package org.example.kuit_kac.domain.diet.dto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.example.kuit_kac.domain.diet.model.Diet;
 import org.example.kuit_kac.domain.diet.model.DietType;
 
 import java.time.LocalDate;
@@ -21,18 +22,31 @@ public class DietResponse {
     @Schema(description = "연결된 식단 템플릿의 고유 식별자 (DietTemplate ID). 없을 수 있습니다.", example = "201", nullable = true)
     private Long dietTemplateId;
 
-    @Schema(description = "식단 유형", example = "NORMAL", allowableValues = {"NORMAL", "BULK_UP", "CUTTING"}) // DietType Enum에 따라 예시 변경
+    @Schema(description = "식단 유형", example = "RECORD", allowableValues = {"RECORD", "PLAN", "AI_PLAN", "FASTING"})
     private DietType dietType;
 
-    @Schema(description = "식단 이름", example = "점심 식단")
+    @Schema(description = "식단 이름", example = "오늘의 아침")
     private String name;
 
-    @Schema(description = "식단 날짜", example = "2023-07-10")
+    @Schema(description = "식단 날짜", example = "2025-07-12")
     private LocalDate dietDate;
 
-    @Schema(description = "식단 정보 생성일시", example = "2023-07-10T09:00:00")
+    @Schema(description = "식단 정보 생성일시", example = "2025-07-12T09:00:00")
     private LocalDateTime createdAt;
 
-    @Schema(description = "식단 정보 최종 수정일시", example = "2023-07-10T09:00:00")
+    @Schema(description = "식단 정보 최종 수정일시", example = "2025-07-12T09:00:00")
     private LocalDateTime updatedAt;
+
+    public static DietResponse from(Diet diet) {
+        return new DietResponse(
+                diet.getId(),
+                diet.getUser().getId(),
+                diet.getDietTemplate().getId(),
+                diet.getDietType(),
+                diet.getName(),
+                diet.getDietDate(),
+                diet.getCreatedAt(),
+                diet.getUpdatedAt()
+        );
+    }
 }
