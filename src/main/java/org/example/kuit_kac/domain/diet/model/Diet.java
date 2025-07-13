@@ -6,8 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.example.kuit_kac.domain.dietTemplate.model.DietTemplate;
-import org.example.kuit_kac.domain.user.model.User;
 import org.example.kuit_kac.domain.meal.model.Meal;
+import org.example.kuit_kac.domain.user.model.User;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

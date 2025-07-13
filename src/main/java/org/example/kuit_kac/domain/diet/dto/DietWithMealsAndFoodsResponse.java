@@ -25,19 +25,19 @@ public class DietWithMealsAndFoodsResponse {
     @Schema(description = "연결된 식단 템플릿의 고유 식별자 (DietTemplate ID). 없을 수 있습니다.", example = "201", nullable = true)
     private Long dietTemplateId;
 
-    @Schema(description = "식단 유형", example = "RECORD", allowableValues = {"RECORD", "PLAN"})
+    @Schema(description = "식단 유형", example = "RECORD", allowableValues = {"RECORD", "PLAN", "AI_PLAN", "FASTING"})
     private DietType dietType;
 
     @Schema(description = "식단 이름", example = "오늘의 아침")
     private String name;
 
-    @Schema(description = "식단 날짜", example = "2023-07-10")
+    @Schema(description = "식단 날짜", example = "2025-07-12")
     private LocalDate dietDate;
 
-    @Schema(description = "식단 정보 생성일시", example = "2023-07-10T09:00:00")
+    @Schema(description = "식단 정보 생성일시", example = "2025-07-12T09:00:00")
     private LocalDateTime createdAt;
 
-    @Schema(description = "식단 정보 최종 수정일시", example = "2023-07-10T09:00:00")
+    @Schema(description = "식단 정보 최종 수정일시", example = "2025-07-12T09:00:00")
     private LocalDateTime updatedAt;
 
     @Schema(description = "해당 식단에 포함된 끼니 목록 (각 끼니에 음식 상세 포함)")

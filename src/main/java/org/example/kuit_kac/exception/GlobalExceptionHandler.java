@@ -27,17 +27,25 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorDetails, httpStatus);
     }
 
-    private HttpStatus convertErrorCodeToHttpStatus(ErrorCode errorCode) {
+    public HttpStatus convertErrorCodeToHttpStatus(ErrorCode errorCode) {
         switch (errorCode) {
             case USER_NOT_FOUND:
             case DIET_USER_ID_NOT_FOUND:
             case DIET_USER_ID_AND_DIET_TYPE_NOT_FOUND:
             case DIET_USER_ID_AND_DIET_TYPE_AND_DATE_NOT_FOUND:
+            case DIET_NOT_FOUND:
+            case DIET_TEMPLATE_NOT_FOUND:
             case MEAL_DIET_NOT_FOUND:
-            case FOOD_MEAL_ID_NOT_FOUND:
+            case MEAL_NOT_FOUND:
+            case FOOD_NOT_FOUND:
                 return HttpStatus.NOT_FOUND;
+
             case DIET_TYPE_INVALID:
+            case FASTING_DIET_CANNOT_CONTAIN_MEALS:
+            case MEAL_EMPTY:
+            case MEAL_FOOD_EMPTY:
                 return HttpStatus.BAD_REQUEST;
+
             default:
                 return HttpStatus.INTERNAL_SERVER_ERROR;
         }

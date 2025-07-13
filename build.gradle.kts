@@ -23,6 +23,10 @@ repositories {
     mavenCentral()
 }
 
+tasks.withType<JavaCompile> {
+    options.compilerArgs.add("-parameters")
+}
+
 dependencies {
     // Spring Data JPA: 관계형 데이터베이스와 객체를 매핑하여 데이터를 쉽게 관리할 수 있도록 돕는 라이브러리
     // 데이터베이스 CRUD(생성, 읽기, 업데이트, 삭제) 작업을 편리하게 수행할 수 있습니다.
