@@ -5,7 +5,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.example.kuit_kac.domain.dietTemplate.model.DietTemplate;
 import org.example.kuit_kac.domain.meal.model.Meal;
 import org.example.kuit_kac.domain.user.model.User;
 
@@ -15,7 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Getter
-@Setter
 @NoArgsConstructor()
 @Entity
 @NamedEntityGraphs({
@@ -56,16 +54,9 @@ public class Diet {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "diet_template_id", nullable = true)
-    private DietTemplate dietTemplate;
-
     @Enumerated(EnumType.STRING)
     @Column(name = "diet_type", length = 20)
     private DietType dietType;
-
-    @Column(length = 30)
-    private String name;
 
     @Column(name = "diet_date")
     private LocalDate dietDate;
@@ -91,11 +82,9 @@ public class Diet {
     }
 
     @Builder
-    public Diet(User user, DietTemplate dietTemplate, DietType dietType, String name, LocalDate dietDate) {
+    public Diet(User user, DietType dietType, LocalDate dietDate) {
         this.user = user;
-        this.dietTemplate = dietTemplate;
         this.dietType = dietType;
-        this.name = name;
         this.dietDate = dietDate;
     }
 

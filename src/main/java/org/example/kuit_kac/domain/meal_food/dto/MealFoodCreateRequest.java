@@ -13,7 +13,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Schema(description = "끼니에 포함될 단일 음식 및 섭취량 정보 요청 DTO입니다.")
-public class MealFoodRequest {
+public class MealFoodCreateRequest {
 
     @NotNull(message = "끼니 ID는 필수입니다.")
     @Schema(description = "끼니의 고유 식별자 (Meal ID)", example = "101", requiredMode = Schema.RequiredMode.REQUIRED)

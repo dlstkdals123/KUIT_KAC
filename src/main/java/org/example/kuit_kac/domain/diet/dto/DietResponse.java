@@ -19,14 +19,8 @@ public class DietResponse {
     @Schema(description = "연결된 사용자의 고유 식별자 (User ID)", example = "101")
     private Long userId;
 
-    @Schema(description = "연결된 식단 템플릿의 고유 식별자 (DietTemplate ID). 없을 수 있습니다.", example = "201", nullable = true)
-    private Long dietTemplateId;
-
-    @Schema(description = "식단 유형", example = "RECORD", allowableValues = {"RECORD", "PLAN", "AI_PLAN", "FASTING"})
+    @Schema(description = "식단 유형", example = "RECORD", allowableValues = {"RECORD", "PLAN", "AI_PLAN", "FASTING", "DINING_OUT", "DRINKING"})
     private DietType dietType;
-
-    @Schema(description = "식단 이름", example = "오늘의 아침")
-    private String name;
 
     @Schema(description = "식단 날짜", example = "2025-07-12")
     private LocalDate dietDate;
@@ -41,9 +35,7 @@ public class DietResponse {
         return new DietResponse(
                 diet.getId(),
                 diet.getUser().getId(),
-                diet.getDietTemplate().getId(),
                 diet.getDietType(),
-                diet.getName(),
                 diet.getDietDate(),
                 diet.getCreatedAt(),
                 diet.getUpdatedAt()

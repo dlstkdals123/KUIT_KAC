@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.example.kuit_kac.domain.food.dto.FoodResponse;
+import org.example.kuit_kac.domain.food.model.Food;
 import org.example.kuit_kac.domain.food.service.FoodService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,7 +26,7 @@ public class FoodController {
             @Parameter(description = "조회할 음식의 고유 ID", example = "1")
             @PathVariable Long id
     ) {
-        FoodResponse foodResponse = foodService.getFoodById(id);
-        return ResponseEntity.ok(foodResponse);
+        Food food = foodService.getFoodById(id);
+        return ResponseEntity.ok(FoodResponse.from(food));
     }
 }

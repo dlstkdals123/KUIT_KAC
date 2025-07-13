@@ -2,10 +2,8 @@
 DROP TABLE IF EXISTS `meal_food`;
 DROP TABLE IF EXISTS `meal`;
 DROP TABLE IF EXISTS `diet`;
-DROP TABLE IF EXISTS `diet_template`;
 DROP TABLE IF EXISTS `exercise_detail`;
 DROP TABLE IF EXISTS `exercise_record`;
-DROP TABLE IF EXISTS `social_dining`;
 DROP TABLE IF EXISTS `weight`;
 DROP TABLE IF EXISTS `exercise_routine_information`;
 DROP TABLE IF EXISTS `exercise_routine`;
@@ -52,63 +50,44 @@ CREATE TABLE `weight` (
 
 
 -- 음식 관련 테이블
-CREATE TABLE `diet_template` (
-    `id`           bigint AUTO_INCREMENT NOT NULL PRIMARY KEY,
-    `user_id`      bigint                NOT NULL,
-    `name`         varchar(30)           NOT NULL,
-    `date`         date                  NULL,
-    `created_at`   datetime              NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    `updated_at`   datetime              NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON DELETE CASCADE
-);
-
 CREATE TABLE `diet` (
     `id`               bigint AUTO_INCREMENT NOT NULL PRIMARY KEY,
     `user_id`          bigint                NOT NULL,
-    `diet_template_id` bigint                NULL,
-    `diet_type`        ENUM('RECORD', 'PLAN', 'AI_PLAN', 'PASTING') NULL,
-    `name`             varchar(30)           NULL,
-    `diet_date`        date                  NULL,
+    `diet_type`        ENUM('RECORD', 'PLAN', 'AI_PLAN', 'FASTING', 'DINING_OUT', 'DRINKING') NOT NULL,
+    `diet_date`        date                  NOT NULL,
     `created_at`       datetime              NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `updated_at`       datetime              NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON DELETE CASCADE,
-    FOREIGN KEY (`diet_template_id`) REFERENCES `diet_template`(`id`) ON DELETE SET NULL
-);
-
-CREATE TABLE `social_dining` (
-    `id`                 bigint AUTO_INCREMENT NOT NULL PRIMARY KEY,
-    `user_id`            bigint                NOT NULL,
-    `type`               ENUM('DINING_OUT', 'DRINKING') NOT NULL,
-    `social_dining_date` date                  NULL,
-    `created_at`         datetime              NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    `updated_at`         datetime              NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON DELETE CASCADE
+    UNIQUE (`user_id`, `diet_type`, `diet_date`)
 );
 
 CREATE TABLE `meal` (
     `id`           bigint AUTO_INCREMENT NOT NULL PRIMARY KEY,
-    `diet_id`      bigint                NOT NULL,
-    `meal_type`    ENUM('BREAKFAST', 'LUNCH', 'DINNER', 'SNACK') NOT NULL,
-    `meal_time`    datetime              NOT NULL,
+    `user_id`      bigint                NOT NULL,
+    `diet_id`      bigint                NULL,
+    `name`         varchar(30)           NOT NULL,
+    `meal_type`    ENUM('BREAKFAST', 'LUNCH', 'DINNER', 'SNACK', 'TEMPLATE') NOT NULL,
+    `meal_time`    datetime              NULL,
     `created_at`   datetime              NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `updated_at`   datetime              NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON DELETE CASCADE,
     FOREIGN KEY (`diet_id`) REFERENCES `diet`(`id`) ON DELETE CASCADE
 );
 
 CREATE TABLE `food` (
-                        `id`             bigint AUTO_INCREMENT NOT NULL PRIMARY KEY,
-                        `name`           varchar(50)           NOT NULL,
-                        `unit_type`      varchar(20)           NOT NULL,
-                        `unit_num`       bigint                NOT NULL,
-                        `food_type`      varchar(20)           NOT NULL,
-                        `is_processed_food` boolean              NOT NULL DEFAULT FALSE,
-                        `calorie`        double                NULL,
-                        `carbohydrate_g` double                NULL,
-                        `protein_g`      double                NULL,
-                        `fat_g`          double                NULL,
-                        `sugar_g`        double                NULL,
-                        `created_at`     datetime              NOT NULL DEFAULT CURRENT_TIMESTAMP,
-                        `updated_at`     datetime              NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    `id`             bigint AUTO_INCREMENT NOT NULL PRIMARY KEY,
+    `name`           varchar(50)           NOT NULL,
+    `unit_type`      varchar(20)           NOT NULL,
+    `unit_num`       bigint                NOT NULL,
+    `food_type`      varchar(20)           NOT NULL,
+    `is_processed_food` boolean              NOT NULL DEFAULT FALSE,
+    `calorie`        double                NULL,
+    `carbohydrate_g` double                NULL,
+    `protein_g`      double                NULL,
+    `fat_g`          double                NULL,
+    `sugar_g`        double                NULL,
+    `created_at`     datetime              NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_at`     datetime              NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
 CREATE TABLE `meal_food` (
@@ -123,7 +102,7 @@ CREATE TABLE `meal_food` (
 );
 
 
--- 운동 관련 테이블
+-- 운동 관련 테이블 (수정 필요)
 CREATE TABLE `exercise` (
     `id`                  bigint AUTO_INCREMENT NOT NULL PRIMARY KEY,
     `name`                varchar(40)           NULL,
