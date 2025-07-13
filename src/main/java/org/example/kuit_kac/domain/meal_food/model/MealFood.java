@@ -57,4 +57,7 @@ public class MealFood {
         this.quantity = quantity;
     }
 
+    public void addFood(Food food) {
+        this.food = food;
+    }
 }

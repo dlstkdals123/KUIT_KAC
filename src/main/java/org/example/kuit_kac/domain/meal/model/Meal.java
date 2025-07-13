@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.example.kuit_kac.domain.diet.model.Diet;
 import org.example.kuit_kac.domain.meal_food.model.MealFood;
+import org.example.kuit_kac.domain.user.model.User;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -40,14 +41,21 @@ public class Meal {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "diet_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "diet_id")
     private Diet diet;
+
+    @Column(nullable = false, length = 50)
+    private String name;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private MealType mealType;
 
-    @Column(nullable = false)
+    @Column()
     private LocalDateTime mealTime;
 
     @OneToMany(mappedBy = "meal", cascade = CascadeType.ALL, orphanRemoval = true)
