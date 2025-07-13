@@ -24,16 +24,10 @@ public class DietCreateRequest {
     @Schema(description = "식단 기록을 생성할 사용자의 고유 ID", example = "101", requiredMode = Schema.RequiredMode.REQUIRED)
     private Long userId;
 
-    @Schema(description = "연결할 식단 템플릿의 고유 ID (선택 사항)", example = "201", nullable = true)
-    private Long dietTemplateId;
-
     @NotNull(message = "식단 유형은 필수입니다.")
-    @Schema(description = "식단 유형", example = "RECORD", allowableValues = {"RECORD", "PLAN", "AI_PLAN", "FASTING"},
+    @Schema(description = "식단 유형", example = "RECORD", allowableValues = {"RECORD", "PLAN", "AI_PLAN", "FASTING", "DINING_OUT", "DRINKING"},
             requiredMode = Schema.RequiredMode.REQUIRED)
     private DietType dietType;
-
-    @Schema(description = "식단 이름", example = "오늘의 아침")
-    private String name;
 
     @NotNull(message = "식단 날짜는 필수입니다.")
     @Schema(description = "식단 날짜 (YYYY-MM-DD 형식)", example = "2025-07-12", requiredMode = Schema.RequiredMode.REQUIRED)

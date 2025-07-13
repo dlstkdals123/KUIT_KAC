@@ -9,7 +9,9 @@ public enum DietType {
     RECORD("RECORD"),
     PLAN("PLAN"),
     AI_PLAN("AI_PLAN"),
-    FASTING("FASTING");
+    FASTING("FASTING"),
+    DINING_OUT("DINING_OUT"),
+    DRINKING("DRINKING");
 
     private final String value;
 }

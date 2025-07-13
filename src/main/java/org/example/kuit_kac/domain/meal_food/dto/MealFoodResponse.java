@@ -9,7 +9,7 @@ import org.example.kuit_kac.domain.meal_food.model.MealFood;
 @Getter
 @AllArgsConstructor
 @Schema(description = "끼니에 포함된 개별 음식의 상세 정보 및 섭취량을 담는 응답 DTO입니다.")
-public class MealFoodItemResponse {
+public class MealFoodResponse {
     @Schema(description = "끼니_음식의 고유 식별자 (ID)", example = "1", requiredMode = Schema.RequiredMode.REQUIRED)
     private Long mealFoodId;
 
@@ -19,9 +19,9 @@ public class MealFoodItemResponse {
     @Schema(description = "음식 상세 정보")
     private FoodResponse food;
 
-    public static MealFoodItemResponse from(MealFood mealFood) {
+    public static MealFoodResponse from(MealFood mealFood) {
         FoodResponse foodResponse = FoodResponse.from(mealFood.getFood());
-        return new MealFoodItemResponse(
+        return new MealFoodResponse(
                 mealFood.getId(),
                 mealFood.getQuantity(),
                 foodResponse

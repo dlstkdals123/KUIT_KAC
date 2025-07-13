@@ -53,7 +53,7 @@ CREATE TABLE `weight` (
 CREATE TABLE `diet` (
     `id`               bigint AUTO_INCREMENT NOT NULL PRIMARY KEY,
     `user_id`          bigint                NOT NULL,
-    `diet_type`        ENUM('RECORD', 'PLAN', 'AI_PLAN', 'PASTING', 'DINING_OUT', 'DRINKING') NOT NULL,
+    `diet_type`        ENUM('RECORD', 'PLAN', 'AI_PLAN', 'FASTING', 'DINING_OUT', 'DRINKING') NOT NULL,
     `diet_date`        date                  NOT NULL,
     `created_at`       datetime              NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `updated_at`       datetime              NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
