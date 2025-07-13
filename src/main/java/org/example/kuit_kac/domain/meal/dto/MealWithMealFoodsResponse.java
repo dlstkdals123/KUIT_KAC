@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.example.kuit_kac.domain.meal.model.Meal;
 import org.example.kuit_kac.domain.meal.model.MealType;
-import org.example.kuit_kac.domain.meal_food.dto.MealFoodItemResponse;
+import org.example.kuit_kac.domain.meal_food.dto.MealFoodResponse;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 @Getter
 @AllArgsConstructor
 @Schema(description = "끼니와 해당 끼니에 포함된 음식 목록 정보를 담는 응답 DTO입니다.")
-public class MealWithFoodsResponse {
+public class MealWithMealFoodsResponse {
     @Schema(description = "끼니의 고유 식별자 (ID)", example = "1", requiredMode = Schema.RequiredMode.REQUIRED)
     private Long id;
 
@@ -34,14 +34,14 @@ public class MealWithFoodsResponse {
     private LocalDateTime updatedAt;
 
     @Schema(description = "해당 끼니에 포함되는 음식 목록 (MealFood 정보 포함)")
-    private List<MealFoodItemResponse> foodItems;
+    private List<MealFoodResponse> foodItems;
 
-    public static MealWithFoodsResponse from(Meal meal) {
-        List<MealFoodItemResponse> foodItems = meal.getMealFoods().stream()
-                .map(MealFoodItemResponse::from)
+    public static MealWithMealFoodsResponse from(Meal meal) {
+        List<MealFoodResponse> foodItems = meal.getMealFoods().stream()
+                .map(MealFoodResponse::from)
                 .collect(Collectors.toList());
 
-        return new MealWithFoodsResponse(
+        return new MealWithMealFoodsResponse(
                 meal.getId(),
                 meal.getDiet().getId(),
                 meal.getMealType(),

@@ -4,7 +4,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.example.kuit_kac.domain.user.dto.UserDietResponse;
 import org.example.kuit_kac.domain.user.dto.UserResponse;
 import org.example.kuit_kac.domain.user.service.UserService;
 import org.springframework.http.ResponseEntity;
@@ -12,8 +11,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/users")
@@ -31,15 +28,5 @@ public class UserController {
     ) {
         UserResponse userResponse = userService.getUserById(id);
         return ResponseEntity.ok(userResponse);
-    }
-
-    @GetMapping("/{id}/diets") // 경로를 명확하게 지정
-    @Operation(summary = "사용자 ID로 식단 이름 목록 조회", description = "제공된 사용자 ID를 사용하여 해당 사용자의 모든 식단 이름과 ID를 조회합니다.")
-    public ResponseEntity<List<UserDietResponse>> getUserDiets(
-            @Parameter(description = "조회할 사용자의 고유 ID", example = "1")
-            @PathVariable Long id
-    ) {
-        List<UserDietResponse> userDiets = userService.getUserDietsById(id);
-        return ResponseEntity.ok(userDiets);
     }
 }

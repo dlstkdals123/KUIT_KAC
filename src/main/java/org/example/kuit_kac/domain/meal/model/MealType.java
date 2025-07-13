@@ -9,7 +9,8 @@ public enum MealType {
     BREAKFAST("BREAKFAST"),
     LUNCH("LUNCH"),
     DINNER("DINNER"),
-    SNACK("SNACK");
+    SNACK("SNACK"),
+    TEMPLATE("TEMPLATE");
 
     private final String value;
 }

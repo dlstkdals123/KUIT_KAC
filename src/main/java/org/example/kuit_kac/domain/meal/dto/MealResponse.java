@@ -5,6 +5,7 @@ import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.example.kuit_kac.domain.meal.model.Meal;
 import org.example.kuit_kac.domain.meal.model.MealType;
 
 import java.time.LocalDateTime;
@@ -16,10 +17,16 @@ public class MealResponse {
     @Schema(description = "끼니의 고유 식별자 (ID)", example = "1", requiredMode = Schema.RequiredMode.REQUIRED)
     private Long id;
 
+    @Schema(description = "연결된 사용자의 고유 식별자 (User ID)", example = "101")
+    private Long userId;
+
     @Schema(description = "연결된 식단의 고유 식별자 (Diet ID)", example = "101")
     private Long dietId;
 
-    @Schema(description = "끼니 유형", example = "LUNCH", allowableValues = {"BREAKFAST", "LUNCH", "DINNER", "SNACK"})
+    @Schema(description = "끼니 이름", example = "아침 식단")
+    private String name;
+
+    @Schema(description = "끼니 유형", example = "LUNCH", allowableValues = {"BREAKFAST", "LUNCH", "DINNER", "SNACK", "TEMPLATE"})
     private MealType mealType;
 
     @Schema(description = "끼니를 섭취한 시간", example = "2025-07-10T12:30:00")
@@ -40,5 +47,18 @@ public class MealResponse {
     @PreUpdate
     protected void onUpdate() {
         this.updatedAt = LocalDateTime.now();
+    }
+
+    public static MealResponse from(Meal meal) {
+        return new MealResponse(
+                meal.getId(),
+                meal.getUser().getId(),
+                (meal.getDiet() != null) ? meal.getDiet().getId() : null,
+                meal.getName(),
+                meal.getMealType(),
+                meal.getMealTime(),
+                meal.getCreatedAt(),
+                meal.getUpdatedAt()
+        );
     }
 }
