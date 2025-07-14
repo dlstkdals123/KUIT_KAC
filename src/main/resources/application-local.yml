@@ -23,12 +23,6 @@ spring:
       hibernate:
         format_sql: true
 
-  sql:
-    init:
-      mode: always # 애플리케이션 시작 시 항상 schema.sql과 data.sql 실행
-      continue-on-error: true # 스크립트 실행 중 오류 발생 시에도 계속 진행할지 여부 (개발 시 유용)
-      platform: mysql # 사용하는 DB 플랫폼 명시 (선택 사항이지만 명확하게 해줌)
-
   docker:
     compose:
       enabled: false
