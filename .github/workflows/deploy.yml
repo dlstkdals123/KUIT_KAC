@@ -31,7 +31,8 @@ jobs:
             else
               echo "Merge successful, no conflicts detected."
             fi
-
+            
+            chmod +x gradlew
             ./gradlew clean build
             docker rm -f server-dev --force
             docker rmi server-dev
