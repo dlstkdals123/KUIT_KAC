@@ -25,7 +25,7 @@ public class MealController {
     @Operation(summary = "특정 끼니 전체 업데이트", description = "지정된 끼니(Meal)의 모든 정보를 새로운 내용으로 교체하고, 포함된 모든 음식(MealFood) 정보도 새로운 내용으로 덮어씁니다.")
     public ResponseEntity<MealWithMealFoodsResponse> updateMealWithFoods(
             @Parameter(description = "수정할 끼니의 고유 ID", example = "10")
-            @PathVariable Long id,
+            @PathVariable("id") Long id,
             @RequestBody MealUpdateRequest request
     ) {
         Meal meal = mealService.updateMealAndFoods(id, request);

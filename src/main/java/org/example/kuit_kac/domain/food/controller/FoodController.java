@@ -24,7 +24,7 @@ public class FoodController {
     @Operation(summary = "음식 ID로 단일 음식 정보 조회", description = "제공된 음식 ID를 사용하여 특정 음식의 상세 정보를 조회합니다.")
     public ResponseEntity<FoodResponse> getFood(
             @Parameter(description = "조회할 음식의 고유 ID", example = "1")
-            @PathVariable Long id
+            @PathVariable("id") Long id
     ) {
         Food food = foodService.getFoodById(id);
         return ResponseEntity.ok(FoodResponse.from(food));
