@@ -35,7 +35,7 @@ public class DietController {
     @Operation(summary = "식단 ID로 단일 식단 상세 정보 조회", description = "제공된 식단 ID를 사용하여 특정 식단의 모든 끼니 및 음식 상세 정보를 조회합니다.")
     public ResponseEntity<DietWithMealsAndFoodsResponse> getDietById(
             @Parameter(description = "조회할 식단의 고유 ID", example = "1")
-            @PathVariable Long id
+            @PathVariable("id") Long id
     ) {
         Diet diet = dietService.getDietById(id);
         return ResponseEntity.ok(DietWithMealsAndFoodsResponse.from(diet));

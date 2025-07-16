@@ -24,7 +24,7 @@ public class UserController {
     @Operation(summary = "사용자 ID로 단일 사용자 정보 조회", description = "제공된 사용자 ID를 사용하여 특정 사용자의 상세 프로필 정보를 조회합니다.")
     public ResponseEntity<UserResponse> getUser(
             @Parameter(description = "조회할 사용자의 고유 ID", example = "1")
-            @PathVariable Long id
+            @PathVariable("id") Long id
     ) {
         UserResponse userResponse = userService.getUserById(id);
         return ResponseEntity.ok(userResponse);
