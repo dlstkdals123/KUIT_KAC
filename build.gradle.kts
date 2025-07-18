@@ -60,7 +60,7 @@ dependencies {
     // Lombok: 자바 개발 시 반복되는 코드(getter, setter, 생성자 등) 작성을 줄여주는 유틸리티 라이브러리입니다.
     // 컴파일 시점에 자동으로 코드를 생성하여 생산성을 높여줍니다.
     // 'compileOnly'는 컴파일 시에만 필요하고 런타임에는 포함되지 않음을 의미합니다.
-    compileOnly("org.projectlombok:lombok")
+    compileOnly("org.projectlombok:lombok:1.18.38")
 
     // Spring Boot Docker Compose: 개발 환경에서 Docker Compose를 사용하여
     // 애플리케이션과 연관된 서비스(DB, Redis 등)를 쉽게 실행하고 관리할 수 있도록 돕습니다.
@@ -84,7 +84,7 @@ dependencies {
 
     // Lombok: 앞서 'compileOnly'로 추가된 Lombok이 실제로 코드를 생성하도록 하는 어노테이션 프로세서입니다.
     // 이 선언이 있어야 Lombok 어노테이션이 제대로 동작합니다.
-    annotationProcessor("org.projectlombok:lombok")
+    annotationProcessor("org.projectlombok:lombok:1.18.38")
 
     // Spring Boot Starter Test: 테스트를 위한 핵심 의존성(JUnit, Mockito, Spring Test 등)을 제공합니다.
     // 단위 테스트, 통합 테스트 등을 작성할 때 사용합니다.
