@@ -4,6 +4,10 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+
+import java.util.List;
+
+import org.example.kuit_kac.domain.food.dto.FoodNameResponse;
 import org.example.kuit_kac.domain.food.dto.FoodResponse;
 import org.example.kuit_kac.domain.food.model.Food;
 import org.example.kuit_kac.domain.food.service.FoodService;
@@ -28,5 +32,15 @@ public class FoodController {
     ) {
         Food food = foodService.getFoodById(id);
         return ResponseEntity.ok(FoodResponse.from(food));
+    }
+
+    @GetMapping("/names")
+    @Operation(summary = "모든 음식의 이름을 조회", description = "모든 음식의 ID와 이름을 조회합니다.")
+    public ResponseEntity<List<FoodNameResponse>> getFoodNames() {
+        List<Food> foods = foodService.findAll();
+        List<FoodNameResponse> foodNameResponses = foods.stream()
+                .map(FoodNameResponse::from)
+                .toList();
+        return ResponseEntity.ok(foodNameResponses);
     }
 }
