@@ -3,6 +3,7 @@ package org.example.kuit_kac.domain.meal.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.kuit_kac.domain.meal.dto.*;
 import org.example.kuit_kac.domain.meal.model.Meal;
@@ -26,51 +27,25 @@ public class MealController {
     public ResponseEntity<MealWithMealFoodsResponse> updateMealWithFoods(
             @Parameter(description = "수정할 끼니의 고유 ID", example = "10")
             @PathVariable("id") Long id,
-            @RequestBody MealUpdateRequest request
+            @Valid @RequestBody MealUpdateRequest request
     ) {
         Meal meal = mealService.updateMealAndFoods(id, request);
         return ResponseEntity.ok(MealWithMealFoodsResponse.from(meal));
     }
 
-    @GetMapping()
-    @Operation(summary = "사용자 ID로 끼니 이름 목록 조회", description = "제공된 사용자 ID를 사용하여 해당 사용자의 모든 끼니를 조회합니다.")
-    public ResponseEntity<List<MealResponse>> getMeals(@ModelAttribute MealSearchRequest mealSearchRequest) {
-        List<Meal> meals = getMealsByMealSearchRequest(mealSearchRequest);
-
-        List<MealResponse> mealResponses = meals.stream()
-                .map(MealResponse::from)
-                .toList();
-
-        return ResponseEntity.ok(mealResponses);
-    }
-
     @GetMapping("/names")
-    @Operation(summary = "사용자 ID로 끼니 이름 목록 조회", description = "제공된 사용자 ID를 사용하여 해당 사용자의 모든 끼니를 조회합니다.")
-    public ResponseEntity<List<MealNameResponse>> getMealNames(@ModelAttribute MealSearchRequest mealSearchRequest) {
-        List<Meal> meals = getMealsByMealSearchRequest(mealSearchRequest);
+    @Operation(summary = "사용자 ID와 끼니 유형으로 끼니 목록 이름 조회", description = "제공된 사용자 ID와 끼니 유형을 사용하여 해당 사용자의 모든 끼니 이름을 조회합니다.")
+    public ResponseEntity<List<MealNameResponse>> getMealNames(
+        @Valid @ModelAttribute MealSearchRequest mealSearchRequest) {
+        Long userId = mealSearchRequest.getUserId();
+        MealType mealType = mealSearchRequest.getMealType();
+
+        List<Meal> meals = mealService.getMealsByUserIdAndMealType(userId, mealType);
 
         List<MealNameResponse> mealNameResponses = meals.stream()
                 .map(MealNameResponse::from)
                 .toList();
 
         return ResponseEntity.ok(mealNameResponses);
-    }
-
-    private List<Meal> getMealsByMealSearchRequest(MealSearchRequest mealSearchRequest) {
-        Long userId = mealSearchRequest.getUserId();
-        MealType mealType = mealSearchRequest.getMealType();
-        List<Meal> meals;
-
-        if (userId == null && mealType == null) {
-            meals = mealService.getMeals();
-        } else if (userId == null) {
-            meals = mealService.getMealsByMealType(mealType);
-        } else if (mealType == null) {
-            meals = mealService.getMealsByUserId(userId);
-        } else {
-            meals = mealService.getMealsByUserIdAndMealType(userId, mealType);
-        }
-
-        return meals;
     }
 }
