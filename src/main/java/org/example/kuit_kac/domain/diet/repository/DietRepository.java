@@ -7,17 +7,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
-import java.util.List;
 import java.util.Optional;
 
 @Repository
 public interface DietRepository extends JpaRepository<Diet, Long> {
-
-    @EntityGraph(value = "Diet.withMeals")
-    List<Diet> findByUserId(Long userId);
-
-    @EntityGraph(value = "Diet.withMeals")
-    List<Diet> findByUserIdAndDietType(Long userId, DietType dietType);
 
     @EntityGraph(value = "Diet.withMeals")
     Optional<Diet> findByUserIdAndDietTypeAndDietDate(Long userId, DietType dietType, LocalDate dietDate);
