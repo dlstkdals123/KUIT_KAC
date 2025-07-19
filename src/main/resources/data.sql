@@ -36,7 +36,7 @@ INSERT INTO `meal` (`user_id`, `diet_id`, `name`, `meal_type`, `meal_time`) VALU
 (1, 1, '오늘의 점심', 'LUNCH', CONCAT(CURDATE(), ' 13:00:00')),
 (1, NULL, '나만의 간식', 'TEMPLATE', NULL);
 
-INSERT INTO `food` (`name`, `unit_type`, `unit_num`, `food_type`, `is_processed_food`, `calorie`, `carbohydrate_g`, `protein_g`, `fat_g`, `sugar_g`) VALUES
+INSERT INTO `food` (`name`, `unit_type`, `unit_num`, `food_type`, `is_processed_food`, `calorie`, `carbohydrate`, `protein`, `fat`, `sugar`) VALUES
 ('샌드위치_닭가슴살', '개', 100, '빵 및 과자류', FALSE, 165.0, 0.0, 31.0, 3.6, 0.0),
 ('현미밥', '공기', 200, '밥류', FALSE, 280.0, 60.0, 6.0, 2.0, 0.0),
 ('코카콜라', '캔', 250, '음료류', TRUE, 100.0, 27.0, 0.0, 0.0, 27.0);

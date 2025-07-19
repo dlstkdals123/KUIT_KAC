@@ -17,7 +17,7 @@ public class Food {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, length = 50)
+    @Column(nullable = false, unique = true, length = 50)
     private String name;
 
     @Column(name = "unit_type", nullable = false, length = 20)
@@ -30,26 +30,37 @@ public class Food {
     private String foodType;
 
     @Column(name = "is_processed_food", nullable = false)
-    private Boolean isProcessedFood;
+    private Boolean isProcessedFood = false;
 
-    @Column(nullable = true)
-    private Double calorie;
+    @Column(name = "calorie", nullable = false)
+    private Double calorie = 0.0;
 
-    @Column(name = "carbohydrate_g", nullable = true)
-    private Double carbohydrateG;
+    @Column(name = "carbohydrate", nullable = false)
+    private Double carbohydrate = 0.0;
 
-    @Column(name = "protein_g", nullable = true)
-    private Double proteinG;
+    @Column(name = "protein", nullable = false)
+    private Double protein = 0.0;
 
-    @Column(name = "fat_g", nullable = true)
-    private Double fatG;
+    @Column(name = "fat", nullable = false)
+    private Double fat = 0.0;
 
-    @Column(name = "sugar_g", nullable = true)
-    private Double sugarG;
+    @Column(name = "sugar", nullable = false)
+    private Double sugar = 0.0;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
+
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        this.updatedAt = LocalDateTime.now();
+    }
 }

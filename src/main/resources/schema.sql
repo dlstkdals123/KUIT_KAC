@@ -17,23 +17,23 @@ DROP TABLE IF EXISTS `user`;
 -- 사용자 관련 테이블
 CREATE TABLE `user` (
     `id`           bigint AUTO_INCREMENT NOT NULL PRIMARY KEY,
-    `nickname`     varchar(20)           NOT NULL,
+    `nickname`     varchar(20)           NOT NULL UNIQUE,
     `password`     varchar(100)          NOT NULL,
-    `email`        varchar(50)           NOT NULL,
+    `email`        varchar(50)           NOT NULL UNIQUE,
     `gender`       ENUM('MALE', 'FEMALE') NOT NULL,
     `age`          int                   NOT NULL,
     `height`       int                   NOT NULL,
-    `target_weight` double                NOT NULL,
+    `target_weight` double               NOT NULL,
     `created_at`   datetime              NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `updated_at`   datetime              NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
 CREATE TABLE `user_information` (
-    `user_id`                 bigint NOT NULL PRIMARY KEY,
-    `has_diet_experience`     boolean NOT NULL DEFAULT FALSE,
-    `diet_fail_reason`        varchar(50) NOT NULL,
-    `appetite_type`           ENUM('SMALL', 'BIG') NOT NULL,
-    `weekly_eating_out_count` varchar(10) NOT NULL,
+    `user_id`                 bigint          NOT NULL PRIMARY KEY,
+    `has_diet_experience`     boolean         NOT NULL DEFAULT FALSE,
+    `diet_fail_reason`        varchar(50)     NULL,
+    `appetite_type`           ENUM('SMALL', 'BIG') NULL,
+    `weekly_eating_out_count` varchar(10)     NULL,
     `eating_out_type`         ENUM('FASTFOOD', 'KOREAN', 'CHINESE', 'WESTERN', 'FRIED') NOT NULL,
     `diet_velocity`           ENUM('YUMYUM', 'COACH', 'ALL_IN') NOT NULL,
     FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON DELETE CASCADE
@@ -76,16 +76,16 @@ CREATE TABLE `meal` (
 
 CREATE TABLE `food` (
     `id`             bigint AUTO_INCREMENT NOT NULL PRIMARY KEY,
-    `name`           varchar(50)           NOT NULL,
+    `name`           varchar(50)           NOT NULL UNIQUE,
     `unit_type`      varchar(20)           NOT NULL,
     `unit_num`       bigint                NOT NULL,
     `food_type`      varchar(20)           NOT NULL,
-    `is_processed_food` boolean              NOT NULL DEFAULT FALSE,
-    `calorie`        double                NULL,
-    `carbohydrate_g` double                NULL,
-    `protein_g`      double                NULL,
-    `fat_g`          double                NULL,
-    `sugar_g`        double                NULL,
+    `is_processed_food` boolean            NOT NULL DEFAULT FALSE,
+    `calorie`        double                NOT NULL DEFAULT 0.0,
+    `carbohydrate`   double                NOT NULL DEFAULT 0.0,
+    `protein`        double                NOT NULL DEFAULT 0.0,
+    `fat`            double                NOT NULL DEFAULT 0.0,
+    `sugar`          double                NOT NULL DEFAULT 0.0,
     `created_at`     datetime              NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `updated_at`     datetime              NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
