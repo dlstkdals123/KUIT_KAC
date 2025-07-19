@@ -35,12 +35,12 @@ public class FoodController {
     }
 
     @GetMapping("/names")
-    @Operation(summary = "모든 음식의 이름을 조회", description = "모든 음식의 ID와 이름을 조회합니다.")
+    @Operation(summary = "모든 음식의 이름을 조회", description = "모든 음식의 ID와 이름을 조회합니다. 현재는 사용하지 않습니다. (삭제 예정)")
     public ResponseEntity<List<FoodNameResponse>> getFoodNames() {
         List<Food> foods = foodService.findAll();
         List<FoodNameResponse> foodNameResponses = foods.stream()
                 .map(FoodNameResponse::from)
                 .toList();
-        return ResponseEntity.ok(foodNameResponses);
+        return ResponseEntity.ok(foodNameResponses); 
     }
 }
