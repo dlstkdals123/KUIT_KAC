@@ -17,10 +17,10 @@ public class FoodResponse {
     @Schema(description = "음식 이름", example = "닭가슴살")
     private String name;
 
-    @Schema(description = "단위 유형 (예: 개, 공기, 캔, ml)", example = "ml")
+    @Schema(description = "단위 유형 (예: 개, 공기, 캔)", example = "캔")
     private String unitType;
 
-    @Schema(description = "단위당 개수 또는 중량 (예: 1개, 1공기, 1캔, 100ml)", example = "1")
+    @Schema(description = "단위당 개수 또는 중량 (예: 1공기 = 250g, 1캔 = 330ml, 1개 = 100g)", example = "250")
     private Long unitNum;
 
     @Schema(description = "음식대분류명 (예: 밥류, 과자류·빵류 또는 떡류)", example = "밥류")
@@ -29,20 +29,20 @@ public class FoodResponse {
     @Schema(description = "가공식품 여부", example = "true")
     private Boolean isProcessedFood;
 
-    @Schema(description = "칼로리 (kcal)", example = "165.0", nullable = true)
+    @Schema(description = "칼로리 (kcal)", example = "165.0")
     private Double calorie;
 
-    @Schema(description = "탄수화물 (g)", example = "0.0", nullable = true)
-    private Double carbohydrateG;
+    @Schema(description = "탄수화물 (g)", example = "0.0")
+    private Double carbohydrate;
 
-    @Schema(description = "단백질 (g)", example = "31.0", nullable = true)
-    private Double proteinG;
+    @Schema(description = "단백질 (g)", example = "31.0")
+    private Double protein;
 
-    @Schema(description = "지방 (g)", example = "3.6", nullable = true)
-    private Double fatG;
+    @Schema(description = "지방 (g)", example = "3.6")
+    private Double fat;
 
-    @Schema(description = "당류 (g)", example = "0.0", nullable = true)
-    private Double sugarG;
+    @Schema(description = "당류 (g)", example = "0.0")
+    private Double sugar;
 
     @Schema(description = "음식 정보 생성일시", example = "2023-01-01T00:00:00")
     private LocalDateTime createdAt;
@@ -59,10 +59,10 @@ public class FoodResponse {
                 food.getFoodType(),
                 food.getIsProcessedFood(),
                 food.getCalorie(),
-                food.getCarbohydrateG(),
-                food.getProteinG(),
-                food.getFatG(),
-                food.getSugarG(),
+                food.getCarbohydrate(),
+                food.getProtein(),
+                food.getFat(),
+                food.getSugar(),
                 food.getCreatedAt(),
                 food.getUpdatedAt()
         );
