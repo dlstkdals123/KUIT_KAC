@@ -19,7 +19,7 @@ public class MealSearchRequest {
     @Parameter(description = "끼니 기록을 조회할 사용자의 고유 ID.", example = "101")
     private Long userId;
 
-    @NotNull(message = "식단 유형은 필수입니다.")
-    @Parameter(description = "조회할 식단 유형 (예: BREAKFAST, LUNCH, DINNER, SNACK, TEMPLATE).", example = "RECORD")
+    @NotNull(message = "끼니 유형은 필수입니다.")
+    @Parameter(description = "조회할 끼니 유형 (예: BREAKFAST, LUNCH, DINNER, SNACK, TEMPLATE).", example = "TEMPLATE")
     private MealType mealType;
 }

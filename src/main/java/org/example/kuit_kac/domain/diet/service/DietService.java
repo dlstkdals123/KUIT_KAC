@@ -40,12 +40,6 @@ public class DietService {
                 .orElseThrow(() -> new CustomException(ErrorCode.DIET_BY_USER_ID_AND_DIET_TYPE_AND_DATE_NOT_FOUND));
     }
 
-    @Transactional(readOnly = true)
-    public Diet getDietById(Long id) {
-        return dietRepository.findById(id)
-                .orElseThrow(() -> new CustomException(ErrorCode.DIET_NOT_FOUND));
-    }
-
     @Transactional
     public Diet createDiet(DietCreateRequest dietCreateRequest) {
         // 사용자 존재 여부 확인
