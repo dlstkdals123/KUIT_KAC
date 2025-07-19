@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.example.kuit_kac.domain.food.dto.FoodResponse;
+import org.example.kuit_kac.domain.meal_food.model.MealAifood;
 import org.example.kuit_kac.domain.meal_food.model.MealFood;
 
 @Getter
@@ -25,6 +26,15 @@ public class MealFoodResponse {
                 mealFood.getId(),
                 mealFood.getQuantity(),
                 foodResponse
+        );
+    }
+
+    public static MealFoodResponse from(MealAifood mealAifood) {
+        FoodResponse aifoodResponse = FoodResponse.from(mealAifood.getAifood());
+        return new MealFoodResponse(
+                mealAifood.getId(),
+                mealAifood.getQuantity(),
+                aifoodResponse
         );
     }
 }
