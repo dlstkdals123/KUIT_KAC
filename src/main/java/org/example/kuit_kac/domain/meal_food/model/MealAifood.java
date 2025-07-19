@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.Builder;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
-import org.example.kuit_kac.domain.food.model.Food;
+import org.example.kuit_kac.domain.food.model.Aifood;
 import org.example.kuit_kac.domain.meal.model.Meal;
 
 import java.time.LocalDateTime;
@@ -14,11 +14,11 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-@Table(name = "meal_food")
+@Table(name = "meal_aifood")
 @NamedEntityGraphs({
-    @NamedEntityGraph(name = "MealFood.withFood", attributeNodes = @NamedAttributeNode("food"))
+    @NamedEntityGraph(name = "MealAifood.withAifood", attributeNodes = @NamedAttributeNode("aifood"))
 })
-public class MealFood {
+public class MealAifood {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,10 +29,9 @@ public class MealFood {
     @JoinColumn(name = "meal_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private Meal meal;
 
-    @Setter
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "food_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
-    private Food food;
+    @JoinColumn(name = "aifood_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+    private Aifood aifood;
 
     @Column(nullable = false)
     private double quantity;
@@ -55,9 +54,13 @@ public class MealFood {
     }
 
     @Builder
-    public MealFood(Meal meal, Food food, double quantity) {
+    public MealAifood(Meal meal, Aifood aifood, double quantity) {
         this.meal = meal;
-        this.food = food;
+        this.aifood = aifood;
         this.quantity = quantity;
     }
-}
+
+    public void addAifood(Aifood aifood) {
+        this.aifood = aifood;
+    }
+} 

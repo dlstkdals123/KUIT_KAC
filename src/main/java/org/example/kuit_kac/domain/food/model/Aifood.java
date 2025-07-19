@@ -3,20 +3,25 @@ package org.example.kuit_kac.domain.food.model;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.example.kuit_kac.domain.user.model.User;
 
 import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor
 @Entity
-@Table(name = "food")
-public class Food {
+@Table(name = "aifood")
+public class Aifood {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true, length = 50)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
+    @Column(nullable = false, length = 50)
     private String name;
 
     @Column(name = "unit_type", nullable = false, length = 20)
@@ -62,4 +67,4 @@ public class Food {
     protected void onUpdate() {
         this.updatedAt = LocalDateTime.now();
     }
-}
+} 

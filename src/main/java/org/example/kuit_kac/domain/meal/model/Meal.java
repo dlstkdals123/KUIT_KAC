@@ -1,9 +1,13 @@
 package org.example.kuit_kac.domain.meal.model;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.AccessLevel;
+import lombok.Builder;
 import org.example.kuit_kac.domain.diet.model.Diet;
 import org.example.kuit_kac.domain.meal_food.model.MealFood;
+import org.example.kuit_kac.domain.meal_food.model.MealAifood;
 import org.example.kuit_kac.domain.user.model.User;
 
 import java.time.LocalDateTime;
@@ -11,7 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Getter
-@Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "meal")
@@ -31,6 +34,23 @@ import java.util.List;
         subgraphs = @NamedSubgraph(
             name = "mealFoodsSubgraph",
             attributeNodes = @NamedAttributeNode("food")
+        )
+    ),
+    // Meal.withMealAifoods: mealAifoods 필드를 페치
+    @NamedEntityGraph(
+        name = "Meal.withMealAifoods",
+        attributeNodes = @NamedAttributeNode("mealAifoods")
+    ),
+    // Meal.withMealAifoodsAndAifood: mealAifoods -> aifood 를 페치
+    @NamedEntityGraph(
+        name = "Meal.withMealAifoodsAndAifood",
+        attributeNodes = @NamedAttributeNode(
+            value = "mealAifoods",
+            subgraph = "mealAifoodsSubgraph"
+        ),
+        subgraphs = @NamedSubgraph(
+            name = "mealAifoodsSubgraph",
+            attributeNodes = @NamedAttributeNode("aifood")
         )
     )
 })
@@ -61,6 +81,9 @@ public class Meal {
     @OneToMany(mappedBy = "meal", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MealFood> mealFoods = new ArrayList<>();
 
+    @OneToMany(mappedBy = "meal", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<MealAifood> mealAifoods = new ArrayList<>();
+
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
@@ -88,5 +111,10 @@ public class Meal {
     public void addMealFood(MealFood mealFood) {
         this.mealFoods.add(mealFood);
         mealFood.setMeal(this);
+    }
+
+    public void addMealAifood(MealAifood mealAifood) {
+        this.mealAifoods.add(mealAifood);
+        mealAifood.setMeal(this);
     }
 }

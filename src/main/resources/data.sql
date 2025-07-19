@@ -1,4 +1,5 @@
 -- 외래 키 제약 조건에 따라 데이터 삭제 (역순)
+DELETE FROM `meal_aifood`;
 DELETE FROM `meal_food`;
 DELETE FROM `meal`;
 DELETE FROM `diet`;
@@ -10,6 +11,7 @@ DELETE FROM `exercise_routine`;
 DELETE FROM `user_information`;
 DELETE FROM `set_detail`;
 DELETE FROM `exercise`;
+DELETE FROM `aifood`;
 DELETE FROM `food`;
 DELETE FROM `user`;
 
@@ -41,9 +43,19 @@ INSERT INTO `food` (`name`, `unit_type`, `unit_num`, `food_type`, `is_processed_
 ('현미밥', '공기', 200, '밥류', FALSE, 280.0, 60.0, 6.0, 2.0, 0.0),
 ('코카콜라', '캔', 250, '음료류', TRUE, 100.0, 27.0, 0.0, 0.0, 27.0);
 
+INSERT INTO `aifood` (`user_id`, `name`, `unit_type`, `unit_num`, `food_type`, `is_processed_food`, `calorie`, `carbohydrate`, `protein`, `fat`, `sugar`) VALUES
+(1, '닭가슴살_볶음', '공기', 150, '밥류', FALSE, 180.0, 5.0, 25.0, 8.0, 2.0),
+(1, '단백질_샤케', '개', 200, '밥류', TRUE, 120.0, 15.0, 20.0, 2.0, 10.0),
+(2, '저칼로리_샐러드', '그릇', 100, '밥류', FALSE, 80.0, 10.0, 5.0, 3.0, 5.0);
+
 INSERT INTO `meal_food` (`meal_id`, `food_id`, `quantity`) VALUES
 (1, 1, 0.1),
 (2, 2, 1.6),
+(3, 3, 1.0);
+
+INSERT INTO `meal_aifood` (`meal_id`, `aifood_id`, `quantity`) VALUES
+(1, 1, 1.0),
+(2, 2, 0.5),
 (3, 3, 1.0);
 
 
