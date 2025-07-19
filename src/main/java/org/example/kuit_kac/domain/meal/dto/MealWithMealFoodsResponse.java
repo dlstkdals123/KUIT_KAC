@@ -36,8 +36,15 @@ public class MealWithMealFoodsResponse {
     @Schema(description = "해당 끼니에 포함되는 음식 목록 (MealFood 정보 포함)")
     private List<MealFoodResponse> foodItems;
 
+    @Schema(description = "해당 끼니에 포함되는 AI 음식 목록 (MealAifood 정보 포함)")
+    private List<MealFoodResponse> aifoodItems;
+
     public static MealWithMealFoodsResponse from(Meal meal) {
         List<MealFoodResponse> foodItems = meal.getMealFoods().stream()
+                .map(MealFoodResponse::from)
+                .collect(Collectors.toList());
+
+        List<MealFoodResponse> aifoodItems = meal.getMealAifoods().stream()
                 .map(MealFoodResponse::from)
                 .collect(Collectors.toList());
 
@@ -48,7 +55,8 @@ public class MealWithMealFoodsResponse {
                 meal.getMealTime(),
                 meal.getCreatedAt(),
                 meal.getUpdatedAt(),
-                foodItems
+                foodItems,
+                aifoodItems
         );
     }
 }

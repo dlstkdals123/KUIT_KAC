@@ -23,7 +23,8 @@ public class MealFoodService {
         Food food = foodService.getFoodById(mealFoodCreateRequest.getFoodId());
 
         MealFood mealFood = new MealFood(meal, food, mealFoodCreateRequest.getQuantity());
-        mealFood.addFood(food);
+
+        mealFood.setFood(food);
 
         return mealFoodRepository.save(mealFood);
     }

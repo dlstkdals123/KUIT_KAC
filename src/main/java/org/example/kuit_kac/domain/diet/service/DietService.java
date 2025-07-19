@@ -40,12 +40,6 @@ public class DietService {
                 .orElseThrow(() -> new CustomException(ErrorCode.DIET_BY_USER_ID_AND_DIET_TYPE_AND_DATE_NOT_FOUND));
     }
 
-    @Transactional(readOnly = true)
-    public Diet getDietById(Long id) {
-        return dietRepository.findById(id)
-                .orElseThrow(() -> new CustomException(ErrorCode.DIET_NOT_FOUND));
-    }
-
     @Transactional
     public Diet createDiet(DietCreateRequest dietCreateRequest) {
         // 사용자 존재 여부 확인
@@ -72,7 +66,7 @@ public class DietService {
             return createOnlyDiet(diet, dietCreateRequest);
         }
         // meal을 포함하는 유형인 경우 Diet와 Meal을 생성 ex) 식단, 계획, AI 계획
-        return createDietWithMeals(diet, dietCreateRequest);
+        return createDietWithMeals(user, diet, dietCreateRequest);
     }
 
     // meal을 포함하지 않는 유형인 경우 Diet만 생성 ex) 단식, 외식, 술자리
@@ -84,13 +78,13 @@ public class DietService {
     }
 
     // meal을 포함하는 유형인 경우 Diet와 Meal을 생성 ex) 식단, 계획, AI 계획
-    private Diet createDietWithMeals(Diet diet, DietCreateRequest dietCreateRequest) {
+    private Diet createDietWithMeals(User user, Diet diet, DietCreateRequest dietCreateRequest) {
         if (dietCreateRequest.getMeals() == null || dietCreateRequest.getMeals().isEmpty()) {
             throw new CustomException(ErrorCode.DIET_MEAL_EMPTY);
         }
 
         dietCreateRequest.getMeals().forEach(mealCreateRequest -> {
-            Meal meal = mealService.createMealWithMealFoods(mealCreateRequest, diet);
+            Meal meal = mealService.createMealWithMealFoods(mealCreateRequest, diet, user);
             diet.addMeal(meal);
         });
 

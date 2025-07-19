@@ -34,7 +34,7 @@ public class MealController {
     }
 
     @GetMapping("/names")
-    @Operation(summary = "사용자 ID와 끼니 유형으로 끼니 목록 이름 조회", description = "제공된 사용자 ID와 끼니 유형을 사용하여 해당 사용자의 모든 끼니 이름을 조회합니다.")
+    @Operation(summary = "사용자 ID와 끼니 유형으로 끼니 목록 이름 조회", description = "제공된 사용자 ID와 끼니 유형을 사용하여 해당 사용자의 모든 끼니 이름을 조회합니다. 현재는 나만의 식단 불러오기에서만 사용됩니다.")
     public ResponseEntity<List<MealNameResponse>> getMealNames(
         @Valid @ModelAttribute MealSearchRequest mealSearchRequest) {
         Long userId = mealSearchRequest.getUserId();
