@@ -16,6 +16,7 @@ public enum ErrorCode {
     DIET_MEAL_EMPTY("DIET_006", "일반 식단에는 최소 하나 이상의 끼니가 포함되어야 합니다."),
     DIET_NOT_FOUND("DIET_007", "해당 식단을 찾을 수 없습니다."),
     DIET_EXIST("DIET_008", "사용자, 식단 유형, 날짜가 모두 동일한 식단이 존재하여 추가할 수 없습니다."),
+    DIET_DATE_IS_NOT_TODAY("DIET_009", "오늘 날짜의 식단만 추가할 수 있습니다."),
 
     // 끼니(Meal) 관련 에러 코드
     MEAL_DIET_NOT_FOUND("MEAL_001", "해당 식단에 해당하는 끼니를 찾을 수 없습니다."),

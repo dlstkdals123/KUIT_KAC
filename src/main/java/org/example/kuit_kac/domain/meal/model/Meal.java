@@ -48,7 +48,7 @@ public class Meal {
     @JoinColumn(name = "diet_id")
     private Diet diet;
 
-    @Column(nullable = false, length = 50)
+    @Column(nullable = false, length = 30)
     private String name;
 
     @Enumerated(EnumType.STRING)
