@@ -11,6 +11,7 @@ import org.example.kuit_kac.domain.meal.model.MealType;
 import org.example.kuit_kac.domain.meal.repository.MealRepository;
 import org.example.kuit_kac.domain.meal_food.model.MealFood;
 import org.example.kuit_kac.domain.meal_food.service.MealFoodService;
+import org.example.kuit_kac.domain.user.model.User;
 import org.example.kuit_kac.exception.CustomException;
 import org.example.kuit_kac.exception.ErrorCode;
 import org.springframework.stereotype.Service;
@@ -89,17 +90,19 @@ public class MealService {
     }
 
     @Transactional
-    public Meal createMealWithMealFoods(MealCreateRequest mealCreateRequest, Diet diet) {
+    public Meal createMealWithMealFoods(MealCreateRequest mealCreateRequest, Diet diet, User user) {
         if (mealCreateRequest.getMealFoods() == null || mealCreateRequest.getMealFoods().isEmpty()) {
             throw new CustomException(ErrorCode.MEAL_FOOD_EMPTY);
         }
 
-        Meal meal = new Meal(diet, mealCreateRequest.getMealType(), mealCreateRequest.getMealTime());
+        Meal meal = new Meal(user, diet, mealCreateRequest.getName(), mealCreateRequest.getMealType(), mealCreateRequest.getMealTime());
+
+        mealRepository.save(meal);
 
         mealCreateRequest.getMealFoods().forEach(mealFoodCreateRequest -> {
             MealFood mealFood = mealFoodService.createMealFoodWithFoods(mealFoodCreateRequest, meal);
             meal.addMealFood(mealFood);
         });
-        return mealRepository.save(meal);
+        return meal;
     }
 }

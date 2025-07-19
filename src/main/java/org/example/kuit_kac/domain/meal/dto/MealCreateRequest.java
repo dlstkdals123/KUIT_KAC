@@ -20,6 +20,10 @@ import java.util.List;
 @Schema(description = "새로운 끼니 생성 요청 DTO입니다. 해당 끼니에 포함될 음식 정보를 포함합니다.")
 public class MealCreateRequest {
 
+    @NotNull(message = "끼니 이름은 필수입니다.")
+    @Schema(description = "끼니 이름", example = "오늘 점심", requiredMode = Schema.RequiredMode.REQUIRED)
+    private String name;
+
     @NotNull(message = "끼니 유형은 필수입니다.")
     @Schema(description = "끼니 유형", example = "LUNCH", allowableValues = {"BREAKFAST", "LUNCH", "DINNER", "SNACK", "TEMPLATE"},
             requiredMode = Schema.RequiredMode.REQUIRED)

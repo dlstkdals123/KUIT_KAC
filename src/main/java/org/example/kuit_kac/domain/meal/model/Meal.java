@@ -106,8 +106,10 @@ public class Meal {
     }
 
     @Builder
-    public Meal(Diet diet, MealType mealType, LocalDateTime mealTime) {
+    public Meal(User user, Diet diet, String name, MealType mealType, LocalDateTime mealTime) {
+        this.user = user;
         this.diet = diet;
+        this.name = name;
         this.mealType = mealType;
         this.mealTime = mealTime;
     }
