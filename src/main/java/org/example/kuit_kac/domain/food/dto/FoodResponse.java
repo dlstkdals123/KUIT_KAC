@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.example.kuit_kac.domain.food.model.Food;
+import org.example.kuit_kac.domain.food.model.Aifood;
 
 import java.time.LocalDateTime;
 
@@ -65,6 +66,24 @@ public class FoodResponse {
                 food.getSugar(),
                 food.getCreatedAt(),
                 food.getUpdatedAt()
+        );
+    }
+
+    public static FoodResponse from(Aifood aifood) {
+        return new FoodResponse(
+                aifood.getId(),
+                aifood.getName(),
+                aifood.getUnitType(),
+                aifood.getUnitNum(),
+                aifood.getFoodType(),
+                aifood.getIsProcessedFood(),
+                aifood.getCalorie(),
+                aifood.getCarbohydrate(),
+                aifood.getProtein(),
+                aifood.getFat(),
+                aifood.getSugar(),
+                aifood.getCreatedAt(),
+                aifood.getUpdatedAt()
         );
     }
 }

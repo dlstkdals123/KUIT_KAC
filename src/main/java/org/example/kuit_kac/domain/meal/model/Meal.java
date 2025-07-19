@@ -3,6 +3,7 @@ package org.example.kuit_kac.domain.meal.model;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.AccessLevel;
 import lombok.Builder;
 import org.example.kuit_kac.domain.diet.model.Diet;
@@ -64,6 +65,7 @@ public class Meal {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    @Setter
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "diet_id")
     private Diet diet;
@@ -71,10 +73,12 @@ public class Meal {
     @Column(nullable = false, length = 30)
     private String name;
 
+    @Setter
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private MealType mealType;
 
+    @Setter
     @Column()
     private LocalDateTime mealTime;
 
