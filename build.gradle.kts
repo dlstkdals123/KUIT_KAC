@@ -98,6 +98,10 @@ dependencies {
     // JUnit Platform Launcher: JUnit 5 테스트를 실행하기 위한 런타임 의존성입니다.
     // 'testRuntimeOnly'는 테스트 실행 시에만 필요한 의존성임을 의미합니다.
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+
+    // Spring Boot Starter Validation: Bean Validation 기능을 제공하는 의존성입니다.
+    // 'validation' 패키지에 있는 모든 검증 어노테이션(예: @Valid, @NotNull, @NotBlank 등)을 사용할 수 있습니다.
+    implementation("org.springframework.boot:spring-boot-starter-validation")
 }
 
 tasks.withType<Test> {

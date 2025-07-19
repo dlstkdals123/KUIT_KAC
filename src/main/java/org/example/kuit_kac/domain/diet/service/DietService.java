@@ -48,23 +48,34 @@ public class DietService {
 
     @Transactional
     public Diet createDiet(DietCreateRequest dietCreateRequest) {
+        // 사용자 존재 여부 확인
         User user = userRepository.findById(dietCreateRequest.getUserId())
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
 
+        // 사용자, 식단 유형, 날짜가 모두 동일한 식단이 존재하는지 확인
         dietRepository.findByUserIdAndDietTypeAndDietDate(
                 dietCreateRequest.getUserId(),
                 dietCreateRequest.getDietType(),
                 dietCreateRequest.getDietDate())
                 .ifPresent(diet -> { throw new CustomException(ErrorCode.DIET_EXIST); });
 
+        // RECORD인 경우 오늘 날짜의 식단만 추가할 수 있습니다.
+        if (dietCreateRequest.getDietType() == DietType.RECORD && !dietCreateRequest.getDietDate().isEqual(LocalDate.now())) {
+            throw new CustomException(ErrorCode.DIET_DATE_IS_NOT_TODAY);
+        }
+
+        // 식단 생성
         Diet diet = new Diet(user, dietCreateRequest.getDietType(), dietCreateRequest.getDietDate());
 
+        // meal을 포함하지 않는 유형인 경우 Diet만 생성 ex) 단식, 외식, 술자리
         if (ONLY_DIET_TYPES.contains(dietCreateRequest.getDietType())) {
             return createOnlyDiet(diet, dietCreateRequest);
         }
+        // meal을 포함하는 유형인 경우 Diet와 Meal을 생성 ex) 식단, 계획, AI 계획
         return createDietWithMeals(diet, dietCreateRequest);
     }
 
+    // meal을 포함하지 않는 유형인 경우 Diet만 생성 ex) 단식, 외식, 술자리
     private Diet createOnlyDiet(Diet diet, DietCreateRequest dietCreateRequest) {
         if (dietCreateRequest.getMeals() != null && !dietCreateRequest.getMeals().isEmpty()) {
             throw new CustomException(ErrorCode.ONLY_DIET_CANNOT_CONTAIN_MEALS);
@@ -72,6 +83,7 @@ public class DietService {
         return dietRepository.save(diet);
     }
 
+    // meal을 포함하는 유형인 경우 Diet와 Meal을 생성 ex) 식단, 계획, AI 계획
     private Diet createDietWithMeals(Diet diet, DietCreateRequest dietCreateRequest) {
         if (dietCreateRequest.getMeals() == null || dietCreateRequest.getMeals().isEmpty()) {
             throw new CustomException(ErrorCode.DIET_MEAL_EMPTY);
