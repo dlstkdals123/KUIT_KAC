@@ -3,12 +3,10 @@ package org.example.kuit_kac.domain.user.model;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.time.LocalDateTime;
 
 @Getter
-@Setter
 @NoArgsConstructor
 @Entity
 @Table(name = "user")
@@ -24,7 +22,7 @@ public class User {
     @Column(nullable = false, length = 100)
     private String password;
 
-    @Column(nullable = false, length = 50)
+    @Column(nullable = false, unique = true, length = 50)
     private String email;
 
     @Enumerated(EnumType.STRING)
@@ -38,7 +36,7 @@ public class User {
     private int height;
 
     @Column(nullable = false)
-    private double target_weight;
+    private double targetWeight;
 
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;

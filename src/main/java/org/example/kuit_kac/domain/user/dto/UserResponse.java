@@ -31,7 +31,7 @@ public class UserResponse {
     private int height;
 
     @Schema(description = "사용자의 목표 체중 (kg)", example = "60.5")
-    private double target_weight;
+    private double targetWeight;
 
     @Schema(description = "사용자 정보 생성일시", example = "2023-01-01T10:00:00")
     private LocalDateTime createdAt;
@@ -47,7 +47,7 @@ public class UserResponse {
                 user.getGender(),
                 user.getAge(),
                 user.getHeight(),
-                user.getTarget_weight(),
+                user.getTargetWeight(),
                 user.getCreatedAt(),
                 user.getUpdatedAt()
         );
