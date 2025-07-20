@@ -50,8 +50,8 @@ CREATE TABLE `diet` (
     `user_id`      bigint                NOT NULL,
     `name`         varchar(30)           NOT NULL,
     `diet_type`    ENUM('BREAKFAST', 'LUNCH', 'DINNER', 'SNACK', 'FASTING', 'TEMPLATE') NOT NULL,
-    `diet_entry_type` ENUM('RECORD', 'PLAN', 'AI_PLAN', 'DINING_OUT', 'DRINKING') NOT NULL,
-    `diet_time`    datetime              NOT NULL,
+    `diet_entry_type` ENUM('RECORD', 'PLAN', 'AI_PLAN', 'DINING_OUT', 'DRINKING') NULL,
+    `diet_time`    datetime              NULL,
     `created_at`   datetime              NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `updated_at`   datetime              NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON DELETE CASCADE

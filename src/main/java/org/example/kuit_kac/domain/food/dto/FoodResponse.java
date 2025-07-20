@@ -25,7 +25,7 @@ public class FoodResponse {
     @Schema(description = "단위당 개수 또는 중량 (예: 1공기 = 250g, 1캔 = 330ml, 1개 = 100g)", example = "250")
     private Long unitNum;
 
-    @Schema(description = "음식대분류명", example = "RICE")
+    @Schema(description = "음식대분류명", example = "NORMAL_RICE")
     private FoodType foodType;
 
     @Schema(description = "음식대분류명 (한국어)", example = "밥류")
@@ -40,14 +40,26 @@ public class FoodResponse {
     @Schema(description = "탄수화물 (g)", example = "0.0")
     private Double carbohydrate;
 
+    @Schema(description = "고탄수화물 여부", example = "false")
+    private Boolean isHighCarbohydrate;
+
     @Schema(description = "단백질 (g)", example = "31.0")
     private Double protein;
+
+    @Schema(description = "고단백질 여부", example = "true")
+    private Boolean isHighProtein;
 
     @Schema(description = "지방 (g)", example = "3.6")
     private Double fat;
 
+    @Schema(description = "고지방 여부", example = "false")
+    private Boolean isHighFat;
+
     @Schema(description = "당류 (g)", example = "0.0")
     private Double sugar;
+
+    @Schema(description = "식품 점수", example = "2")
+    private Integer score;
 
     @Schema(description = "음식 정보 생성일시", example = "2023-01-01T00:00:00")
     private LocalDateTime createdAt;
@@ -66,9 +78,13 @@ public class FoodResponse {
                 food.getIsProcessedFood(),
                 food.getCalorie(),
                 food.getCarbohydrate(),
+                food.getIsHighCarbohydrate(),
                 food.getProtein(),
+                food.getIsHighProtein(),
                 food.getFat(),
+                food.getIsHighFat(),
                 food.getSugar(),
+                food.getScore(),
                 food.getCreatedAt(),
                 food.getUpdatedAt()
         );
@@ -85,9 +101,13 @@ public class FoodResponse {
                 aifood.getIsProcessedFood(),
                 aifood.getCalorie(),
                 aifood.getCarbohydrate(),
+                aifood.getIsHighCarbohydrate(),
                 aifood.getProtein(),
+                aifood.getIsHighProtein(),
                 aifood.getFat(),
+                aifood.getIsHighFat(),
                 aifood.getSugar(),
+                aifood.getScore(),
                 aifood.getCreatedAt(),
                 aifood.getUpdatedAt()
         );
