@@ -1,4 +1,4 @@
-package org.example.kuit_kac.domain.meal_food.model;
+package org.example.kuit_kac.domain.diet_food.model;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -6,19 +6,20 @@ import lombok.Getter;
 import lombok.Builder;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
+
+import org.example.kuit_kac.domain.diet.model.Diet;
 import org.example.kuit_kac.domain.food.model.Food;
-import org.example.kuit_kac.domain.meal.model.Meal;
 
 import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-@Table(name = "meal_food")
+@Table(name = "diet_food")
 @NamedEntityGraphs({
-    @NamedEntityGraph(name = "MealFood.withFood", attributeNodes = @NamedAttributeNode("food"))
+    @NamedEntityGraph(name = "DietFood.withFood", attributeNodes = @NamedAttributeNode("food"))
 })
-public class MealFood {
+public class DietFood {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,8 +27,8 @@ public class MealFood {
 
     @Setter
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "meal_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
-    private Meal meal;
+    @JoinColumn(name = "diet_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+    private Diet diet;
 
     @Setter
     @ManyToOne(fetch = FetchType.LAZY)
@@ -55,8 +56,8 @@ public class MealFood {
     }
 
     @Builder
-    public MealFood(Meal meal, Food food, double quantity) {
-        this.meal = meal;
+    public DietFood(Diet diet, Food food, double quantity) {
+        this.diet = diet;
         this.food = food;
         this.quantity = quantity;
     }

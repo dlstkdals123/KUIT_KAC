@@ -1,4 +1,4 @@
-package org.example.kuit_kac.domain.meal_food.model;
+package org.example.kuit_kac.domain.diet_food.model;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -6,19 +6,20 @@ import lombok.Getter;
 import lombok.Builder;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
+
+import org.example.kuit_kac.domain.diet.model.Diet;
 import org.example.kuit_kac.domain.food.model.Aifood;
-import org.example.kuit_kac.domain.meal.model.Meal;
 
 import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-@Table(name = "meal_aifood")
+@Table(name = "diet_aifood")
 @NamedEntityGraphs({
-    @NamedEntityGraph(name = "MealAifood.withAifood", attributeNodes = @NamedAttributeNode("aifood"))
+    @NamedEntityGraph(name = "DietAifood.withAifood", attributeNodes = @NamedAttributeNode("aifood"))
 })
-public class MealAifood {
+public class DietAifood {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,8 +27,8 @@ public class MealAifood {
 
     @Setter
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "meal_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
-    private Meal meal;
+    @JoinColumn(name = "diet_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+    private Diet diet;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "aifood_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
@@ -54,13 +55,13 @@ public class MealAifood {
     }
 
     @Builder
-    public MealAifood(Meal meal, Aifood aifood, double quantity) {
-        this.meal = meal;
+    public DietAifood(Diet diet, Aifood aifood, double quantity) {
+        this.diet = diet;
         this.aifood = aifood;
         this.quantity = quantity;
     }
 
-    public void addAifood(Aifood aifood) {
+    public void setAifood(Aifood aifood) {
         this.aifood = aifood;
     }
-} 
+}

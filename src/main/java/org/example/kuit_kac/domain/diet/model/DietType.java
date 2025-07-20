@@ -6,12 +6,13 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum DietType {
-    RECORD("RECORD"),
-    PLAN("PLAN"),
-    AI_PLAN("AI_PLAN"),
-    FASTING("FASTING"),
-    DINING_OUT("DINING_OUT"),
-    DRINKING("DRINKING");
+    BREAKFAST("BREAKFAST", "아침"),
+    LUNCH("LUNCH", "점심"),
+    DINNER("DINNER", "저녁"),
+    SNACK("SNACK", "간식"),
+    FASTING("FASTING", "단식"),
+    TEMPLATE("TEMPLATE", "나만의 식단");
 
     private final String value;
+    private final String koreanName;
 }

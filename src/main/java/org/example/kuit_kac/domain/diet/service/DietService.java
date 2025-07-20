@@ -1,93 +1,106 @@
 package org.example.kuit_kac.domain.diet.service;
 
 import lombok.RequiredArgsConstructor;
+
 import org.example.kuit_kac.domain.diet.dto.DietCreateRequest;
+import org.example.kuit_kac.domain.diet.dto.DietUpdateRequest;
 import org.example.kuit_kac.domain.diet.model.Diet;
+import org.example.kuit_kac.domain.diet.model.DietEntryType;
 import org.example.kuit_kac.domain.diet.model.DietType;
 import org.example.kuit_kac.domain.diet.repository.DietRepository;
-import org.example.kuit_kac.domain.meal.model.Meal;
-import org.example.kuit_kac.domain.meal.service.MealService;
+import org.example.kuit_kac.domain.diet_food.dto.DietFoodUpdateRequest;
+import org.example.kuit_kac.domain.diet_food.model.DietFood;
+import org.example.kuit_kac.domain.diet_food.service.DietFoodService;
+import org.example.kuit_kac.domain.food.model.Food;
+import org.example.kuit_kac.domain.food.repository.FoodRepository;
 import org.example.kuit_kac.domain.user.model.User;
-import org.example.kuit_kac.domain.user.repository.UserRepository;
 import org.example.kuit_kac.exception.CustomException;
 import org.example.kuit_kac.exception.ErrorCode;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.Optional;
 import java.time.LocalDate;
-import java.util.Set;
-import java.util.EnumSet;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.ArrayList;
 
 @Service
 @RequiredArgsConstructor
 public class DietService {
 
-    private static final Set<DietType> ONLY_DIET_TYPES = EnumSet.of(
-            DietType.FASTING,
-            DietType.DINING_OUT,
-            DietType.DRINKING
-    );
-
-    private final UserRepository userRepository;
     private final DietRepository dietRepository;
+    private final FoodRepository foodRepository;
 
-    private final MealService mealService;
-
+    private final DietFoodService dietFoodService;
 
     @Transactional(readOnly = true)
-    public Diet getDietByUserIdAndDietTypeAndDietDate(Long userId, DietType dietType, LocalDate dietDate) {
-        return dietRepository.findByUserIdAndDietTypeAndDietDate(userId, dietType, dietDate)
-                .orElseThrow(() -> new CustomException(ErrorCode.DIET_BY_USER_ID_AND_DIET_TYPE_AND_DATE_NOT_FOUND));
+    public List<Diet> getDietsByUserId(Long userId, DietEntryType dietEntryType, LocalDate date) {
+        LocalDateTime startOfDay = date.atStartOfDay(); // 00:00:00
+        LocalDateTime endOfDay = date.atTime(LocalTime.MAX); // 23:59:59
+        List<Diet> diets = dietRepository.findByUserIdAndDietEntryTypeAndDietTimeBetween(userId, dietEntryType, startOfDay, endOfDay);
+        return diets;
+    }
+
+    @Transactional(readOnly = true)
+    public List<Diet> getDietsByUserIdAndDietType(Long userId, DietType dietType) {
+        List<Diet> diets = dietRepository.findByUserIdAndDietType(userId, dietType);
+        if (diets.isEmpty()) {
+            throw new CustomException(ErrorCode.DIET_NOT_FOUND);
+        }
+        return diets;
     }
 
     @Transactional
-    public Diet createDiet(DietCreateRequest dietCreateRequest) {
-        // 사용자 존재 여부 확인
-        User user = userRepository.findById(dietCreateRequest.getUserId())
-                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
+    public Diet updateDietAndFoods(Long dietId, DietUpdateRequest request) {
+        if (request.getFoods() == null || request.getFoods().isEmpty()) {
+            throw new CustomException(ErrorCode.MEAL_FOOD_EMPTY);
+        }
+        
+        Diet diet = dietRepository.findById(dietId)
+                .orElseThrow(() -> new CustomException(ErrorCode.MEAL_NOT_FOUND));
 
-        // 사용자, 식단 유형, 날짜가 모두 동일한 식단이 존재하는지 확인
-        dietRepository.findByUserIdAndDietTypeAndDietDate(
-                dietCreateRequest.getUserId(),
-                dietCreateRequest.getDietType(),
-                dietCreateRequest.getDietDate())
-                .ifPresent(diet -> { throw new CustomException(ErrorCode.DIET_EXIST); });
-
-        // RECORD인 경우 오늘 날짜의 식단만 추가할 수 있습니다.
-        if (dietCreateRequest.getDietType() == DietType.RECORD && !dietCreateRequest.getDietDate().isEqual(LocalDate.now())) {
-            throw new CustomException(ErrorCode.DIET_DATE_IS_NOT_TODAY);
+        // 1. 먼저 모든 Food가 존재하는지 검증
+        List<Food> foods = new ArrayList<>();
+        for (DietFoodUpdateRequest foodRequest : request.getFoods()) {
+            Food food = foodRepository.findById(foodRequest.getFoodId())
+                    .orElseThrow(() -> new CustomException(ErrorCode.FOOD_NOT_FOUND));
+            foods.add(food);
         }
 
-        // 식단 생성
-        Diet diet = new Diet(user, dietCreateRequest.getDietType(), dietCreateRequest.getDietDate());
+        // 2. 검증 완료 후 기존 데이터 삭제
+        diet.getDietFoods().clear();
 
-        // meal을 포함하지 않는 유형인 경우 Diet만 생성 ex) 단식, 외식, 술자리
-        if (ONLY_DIET_TYPES.contains(dietCreateRequest.getDietType())) {
-            return createOnlyDiet(diet, dietCreateRequest);
+        // 3. 새로운 데이터 추가
+        for (int i = 0; i < request.getFoods().size(); i++) {
+            DietFoodUpdateRequest foodRequest = request.getFoods().get(i);
+            Food food = foods.get(i);
+            
+            DietFood newDietFood = new DietFood(diet, food, foodRequest.getQuantity());
+            diet.addDietFood(newDietFood);
         }
-        // meal을 포함하는 유형인 경우 Diet와 Meal을 생성 ex) 식단, 계획, AI 계획
-        return createDietWithMeals(user, diet, dietCreateRequest);
+
+        Optional.ofNullable(request.getDietType()).ifPresent(diet::setDietType);
+        Optional.ofNullable(request.getDietTime()).ifPresent(diet::setDietTime);
+
+        return diet;
     }
 
-    // meal을 포함하지 않는 유형인 경우 Diet만 생성 ex) 단식, 외식, 술자리
-    private Diet createOnlyDiet(Diet diet, DietCreateRequest dietCreateRequest) {
-        if (dietCreateRequest.getMeals() != null && !dietCreateRequest.getMeals().isEmpty()) {
-            throw new CustomException(ErrorCode.ONLY_DIET_CANNOT_CONTAIN_MEALS);
-        }
-        return dietRepository.save(diet);
-    }
-
-    // meal을 포함하는 유형인 경우 Diet와 Meal을 생성 ex) 식단, 계획, AI 계획
-    private Diet createDietWithMeals(User user, Diet diet, DietCreateRequest dietCreateRequest) {
-        if (dietCreateRequest.getMeals() == null || dietCreateRequest.getMeals().isEmpty()) {
-            throw new CustomException(ErrorCode.DIET_MEAL_EMPTY);
+    @Transactional
+    public Diet createDietWithDietFoods(DietCreateRequest dietCreateRequest, User user) {
+        if (dietCreateRequest.getDietFoods() == null || dietCreateRequest.getDietFoods().isEmpty()) {
+            throw new CustomException(ErrorCode.MEAL_FOOD_EMPTY);
         }
 
-        dietCreateRequest.getMeals().forEach(mealCreateRequest -> {
-            Meal meal = mealService.createMealWithMealFoods(mealCreateRequest, diet, user);
-            diet.addMeal(meal);
+        Diet diet = new Diet(user, dietCreateRequest.getName(), dietCreateRequest.getDietType(), dietCreateRequest.getDietEntryType(), dietCreateRequest.getDietTime());
+
+        dietRepository.save(diet);
+
+        dietCreateRequest.getDietFoods().forEach(dietFoodCreateRequest -> {
+            DietFood dietFood = dietFoodService.createDietFoodWithFoods(dietFoodCreateRequest, diet);
+            diet.addDietFood(dietFood);
         });
-
-        return dietRepository.save(diet);
+        return diet;
     }
 }

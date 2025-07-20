@@ -1,4 +1,4 @@
-package org.example.kuit_kac.domain.meal_food.dto;
+package org.example.kuit_kac.domain.diet_food.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
@@ -11,7 +11,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Schema(description = "끼니에 포함될 단일 음식 정보 요청 DTO")
-public class MealFoodUpdateRequest {
+public class DietFoodUpdateRequest {
     @Schema(description = "음식의 고유 식별자 (Food ID)", example = "101", requiredMode = Schema.RequiredMode.REQUIRED)
     private Long foodId;
 
