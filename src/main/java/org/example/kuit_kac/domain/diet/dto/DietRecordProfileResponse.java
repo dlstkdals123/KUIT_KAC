@@ -23,11 +23,11 @@ public class DietRecordProfileResponse {
     @Schema(description = "식단의 이름", example = "점심1", requiredMode = Schema.RequiredMode.REQUIRED)
     private String name;
 
-    @Schema(description = "식단의 유형", example = "LUNCH", requiredMode = Schema.RequiredMode.REQUIRED)
-    private DietType dietType;
+    @Schema(description = "식단의 유형", example = "점심", requiredMode = Schema.RequiredMode.REQUIRED)
+    private String dietType;
 
-    @Schema(description = "식단의 항목 종류", example = "RECORD", requiredMode = Schema.RequiredMode.REQUIRED)
-    private DietEntryType dietEntryType;
+    @Schema(description = "식단의 항목 종류", example = "기록", requiredMode = Schema.RequiredMode.REQUIRED)
+    private String dietEntryType;
 
     @Schema(description = "식단의 시간", example = "2025-07-10T12:00:00", requiredMode = Schema.RequiredMode.REQUIRED)
     private LocalDateTime dietTime;
@@ -60,8 +60,8 @@ public class DietRecordProfileResponse {
         return new DietRecordProfileResponse(
             diet.getId(),
             diet.getName(),
-            diet.getDietType(),
-            diet.getDietEntryType(),
+            diet.getDietType().getKoreanName(),
+            diet.getDietEntryType().getKoreanName(),
             diet.getDietTime(),
             diet.getCreatedAt(),
             diet.getUpdatedAt(),
