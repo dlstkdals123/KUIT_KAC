@@ -25,8 +25,9 @@ public class Food {
     @Column(name = "unit_num", nullable = false)
     private Long unitNum;
 
-    @Column(name = "food_type", nullable = false, length = 20)
-    private String foodType;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "food_type", nullable = false)
+    private FoodType foodType;
 
     @Column(name = "is_processed_food", nullable = false)
     private Boolean isProcessedFood = false;

@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.example.kuit_kac.domain.food.model.Food;
 import org.example.kuit_kac.domain.food.model.Aifood;
+import org.example.kuit_kac.domain.food.model.FoodType;
 
 import java.time.LocalDateTime;
 
@@ -24,8 +25,11 @@ public class FoodResponse {
     @Schema(description = "단위당 개수 또는 중량 (예: 1공기 = 250g, 1캔 = 330ml, 1개 = 100g)", example = "250")
     private Long unitNum;
 
-    @Schema(description = "음식대분류명 (예: 밥류, 과자류·빵류 또는 떡류)", example = "밥류")
-    private String foodType;
+    @Schema(description = "음식대분류명", example = "RICE")
+    private FoodType foodType;
+
+    @Schema(description = "음식대분류명 (한국어)", example = "밥류")
+    private String foodTypeKorean;
 
     @Schema(description = "가공식품 여부", example = "true")
     private Boolean isProcessedFood;
@@ -58,6 +62,7 @@ public class FoodResponse {
                 food.getUnitType(),
                 food.getUnitNum(),
                 food.getFoodType(),
+                food.getFoodType().getKoreanName(),
                 food.getIsProcessedFood(),
                 food.getCalorie(),
                 food.getCarbohydrate(),
@@ -76,6 +81,7 @@ public class FoodResponse {
                 aifood.getUnitType(),
                 aifood.getUnitNum(),
                 aifood.getFoodType(),
+                aifood.getFoodType().getKoreanName(),
                 aifood.getIsProcessedFood(),
                 aifood.getCalorie(),
                 aifood.getCarbohydrate(),
