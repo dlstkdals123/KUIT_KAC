@@ -16,6 +16,7 @@ import org.example.kuit_kac.domain.food.repository.FoodRepository;
 import org.example.kuit_kac.domain.user.model.User;
 import org.example.kuit_kac.exception.CustomException;
 import org.example.kuit_kac.exception.ErrorCode;
+import org.example.kuit_kac.global.util.EnumConverter;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -81,7 +82,15 @@ public class DietService {
             diet.addDietFood(newDietFood);
         }
 
-        Optional.ofNullable(request.getDietType()).ifPresent(diet::setDietType);
+        // 한국어를 ENUM으로 변환하여 설정
+        Optional.ofNullable(request.getDietType())
+                .map(EnumConverter::fromKoreanDietType)
+                .ifPresent(diet::setDietType);
+        
+        Optional.ofNullable(request.getDietEntryType())
+                .map(EnumConverter::fromKoreanDietEntryType)
+                .ifPresent(diet::setDietEntryType);
+        
         Optional.ofNullable(request.getDietTime()).ifPresent(diet::setDietTime);
 
         return diet;
@@ -93,7 +102,7 @@ public class DietService {
             throw new CustomException(ErrorCode.MEAL_FOOD_EMPTY);
         }
 
-        Diet diet = new Diet(user, dietCreateRequest.getName(), dietCreateRequest.getDietType(), dietCreateRequest.getDietEntryType(), dietCreateRequest.getDietTime());
+        Diet diet = new Diet(user, dietCreateRequest.getName(), dietCreateRequest.getDietTypeEnum(), dietCreateRequest.getDietEntryTypeEnum(), dietCreateRequest.getDietTime());
 
         dietRepository.save(diet);
 

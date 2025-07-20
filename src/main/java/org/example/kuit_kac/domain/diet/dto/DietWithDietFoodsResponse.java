@@ -26,11 +26,11 @@ public class DietWithDietFoodsResponse {
     @Schema(description = "식단 이름", example = "오늘의 아침")
     private String name;
 
-    @Schema(description = "식단 유형", example = "BREAKFAST", allowableValues = {"BREAKFAST", "LUNCH", "DINNER", "SNACK", "FASTING", "TEMPLATE"})
-    private DietType dietType;
+    @Schema(description = "식단 유형", example = "아침", allowableValues = {"아침", "점심", "저녁", "간식", "단식", "나만의 식단"})
+    private String dietType;
 
-    @Schema(description = "식단 기록 유형", example = "RECORD", allowableValues = {"RECORD", "PLAN", "AI_PLAN", "DINING_OUT", "DRINKING"})
-    private DietEntryType dietEntryType;
+    @Schema(description = "식단 기록 유형", example = "기록", allowableValues = {"기록", "계획", "AI 계획", "외식", "술자리"})
+    private String dietEntryType;
 
     @Schema(description = "식단 시간", example = "2025-07-10T08:00:00")
     private LocalDateTime dietTime;
@@ -60,8 +60,8 @@ public class DietWithDietFoodsResponse {
                 diet.getId(),
                 diet.getUser().getId(),
                 diet.getName(),
-                diet.getDietType(),
-                diet.getDietEntryType(),
+                diet.getDietType().getKoreanName(),
+                diet.getDietEntryType().getKoreanName(),
                 diet.getDietTime(),
                 diet.getCreatedAt(),
                 diet.getUpdatedAt(),
