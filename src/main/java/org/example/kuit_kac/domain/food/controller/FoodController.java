@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/foods")
-@Tag(name = "음식 관리", description = "음식 정보 조회, 생성, 수정, 삭제 등 음식 관련 모든 기능을 제공합니다.")
+@Tag(name = "음식 관리", description = "음식 정보 조회, 생성, 수정, 삭제 등 음식 관련 모든 기능을 제공합니다. local database 사용 시 삭제 예정입니다.")
 @RequiredArgsConstructor
 public class FoodController {
     private final FoodService foodService;
@@ -45,7 +45,7 @@ public class FoodController {
     }
 
     @GetMapping("/names")
-    @Operation(summary = "모든 음식의 이름을 조회", description = "모든 음식의 ID와 이름을 조회합니다. local database 사용 시 삭제 예정입니다.")
+    @Operation(summary = "모든 음식의 이름을 조회", description = "모든 음식의 ID와 이름을 조회합니다.")
     public ResponseEntity<List<FoodNameResponse>> getFoodNames() {
         List<Food> foods = foodService.findAll();
         List<FoodNameResponse> foodNameResponses = foods.stream()
