@@ -6,13 +6,16 @@ import org.example.kuit_kac.domain.diet.service.DietService;
 import org.example.kuit_kac.domain.home.dto.HomeSummaryResponse;
 import org.example.kuit_kac.domain.home.model.FoodSummary;
 import org.example.kuit_kac.domain.home.repository.WeightRepository;
+import org.example.kuit_kac.domain.user.model.GenderType;
 import org.example.kuit_kac.domain.user.model.User;
 import org.example.kuit_kac.domain.user.repository.UserRepository;
+import org.example.kuit_kac.domain.user_information.model.UserInformation;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.swing.*;
 import java.time.LocalDate;
+import java.time.Period;
 import java.util.List;
 
 @Service
@@ -59,4 +62,16 @@ public class HomeSummaryService {
         return Math.round(value * 100.0) / 100.0;
     }
 
+    public double calculateDailyCalorieGoal(User user, UserInformation info, double currentWeight) {
+        int age = user.getAge();
+        double bmr = (user.getGender() == GenderType.MALE)
+                ? 10 * user.getTargetWeight() + 6.25 * user.getHeight() - 5 * age + 5
+                : 10 * user.getTargetWeight() + 6.25 * user.getHeight() - 5 * age - 161;
+        double weightLoss = currentWeight - user.getTargetWeight();
+        int dietDays = info.getDietVelocity().getPeriodInDays();
+
+        double dailyDeficit = (weightLoss * 7700) / dietDays; // 일일감량칼로리 / 다이어트기간
+
+        return bmr - dailyDeficit;
+    }
 }
