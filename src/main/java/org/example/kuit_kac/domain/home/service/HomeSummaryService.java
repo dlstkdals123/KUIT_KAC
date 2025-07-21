@@ -6,6 +6,7 @@ import org.example.kuit_kac.domain.diet.service.DietService;
 import org.example.kuit_kac.domain.home.dto.HomeSummaryResponse;
 import org.example.kuit_kac.domain.home.model.FoodSummary;
 import org.example.kuit_kac.domain.home.repository.WeightRepository;
+import org.example.kuit_kac.domain.user.model.User;
 import org.example.kuit_kac.domain.user.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -57,4 +58,5 @@ public class HomeSummaryService {
     private double round(double value) {
         return Math.round(value * 100.0) / 100.0;
     }
+
 }
