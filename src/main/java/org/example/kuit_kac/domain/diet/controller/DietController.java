@@ -3,6 +3,7 @@ package org.example.kuit_kac.domain.diet.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 import org.example.kuit_kac.domain.diet.dto.*;
