@@ -7,18 +7,18 @@ import jakarta.validation.constraints.Positive;
 
 import java.time.LocalDateTime;
 
-@Schema(description = "식단에 포함될 음식 생성 요청 DTO")
-public record DietFoodGeneralCreateRequest(
-    @Schema(description = "음식 ID", example = "10", requiredMode = Schema.RequiredMode.REQUIRED)
+@Schema(description = "식단 음식 수정 요청 DTO")
+public record DietFoodUpdateRequest(
+    @Schema(description = "음식 ID", example = "10")
     @NotNull(message = "음식 ID는 필수입니다.")
     Long foodId,
 
-    @Schema(description = "음식 섭취량", example = "1.0", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(description = "음식 섭취량", example = "1.0")
     @Positive(message = "음식 섭취량은 0보다 커야 합니다.")
     @DecimalMin(value = "0.1", message = "음식 섭취량은 0.1 이상이어야 합니다.")
     double quantity,
 
-    @Schema(description = "음식 섭취 시간", example = "2024-06-01T12:00:00", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(description = "음식 섭취 시간", example = "2024-06-01T12:00:00")
     @NotNull(message = "음식 섭취 시간은 필수입니다.")
     LocalDateTime dietTime
 ) {} 
