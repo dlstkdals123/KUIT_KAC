@@ -37,7 +37,7 @@ public class DietAifood {
     @Column(nullable = false)
     private double quantity;
 
-    @Column(name = "diet_time", nullable = false)
+    @Column(name = "diet_time", nullable = true)
     private LocalDateTime dietTime;
 
     @Column(nullable = false, updatable = false)

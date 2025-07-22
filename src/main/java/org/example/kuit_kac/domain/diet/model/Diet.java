@@ -97,10 +97,11 @@ public class Diet {
         this.updatedAt = LocalDateTime.now();
     }
 
-    @Builder
-    public Diet(User user, DietType dietType) {
+    public Diet(User user, String name, DietType dietType, DietEntryType dietEntryType) {
         this.user = user;
+        this.name = name;
         this.dietType = dietType;
+        this.dietEntryType = dietEntryType;
     }
 
     public void addDietFood(DietFood dietFood) {
