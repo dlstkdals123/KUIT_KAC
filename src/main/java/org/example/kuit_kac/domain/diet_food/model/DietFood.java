@@ -63,4 +63,9 @@ public class DietFood {
         this.quantity = quantity;
         this.dietTime = dietTime;
     }
+
+    public void update(double quantity, LocalDateTime dietTime) {
+        this.quantity = quantity;
+        this.dietTime = dietTime;
+    }
 }
