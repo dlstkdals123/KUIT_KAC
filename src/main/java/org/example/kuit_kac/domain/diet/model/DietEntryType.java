@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum DietEntryType {
     RECORD("RECORD", "기록"),
+    FASTING("FASTING", "단식"),
     PLAN("PLAN", "계획"),
     AI_PLAN("AI_PLAN", "AI 계획"),
     DINING_OUT("DINING_OUT", "외식"),

@@ -77,10 +77,6 @@ public class Diet {
     @Column(name = "diet_entry_type")
     private DietEntryType dietEntryType;
 
-    @Setter
-    @Column(name = "diet_time", nullable = false)
-    private LocalDateTime dietTime;
-
     @OneToMany(mappedBy = "diet", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<DietFood> dietFoods = new ArrayList<>();
 
@@ -105,12 +101,11 @@ public class Diet {
     }
 
     @Builder
-    public Diet(User user, String name, DietType dietType, DietEntryType dietEntryType, LocalDateTime dietTime) {
+    public Diet(User user, String name, DietType dietType, DietEntryType dietEntryType) {
         this.user = user;
         this.name = name;
         this.dietType = dietType;
         this.dietEntryType = dietEntryType;
-        this.dietTime = dietTime;
     }
 
     public void addDietFood(DietFood dietFood) {
