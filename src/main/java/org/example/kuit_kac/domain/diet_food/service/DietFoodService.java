@@ -48,7 +48,14 @@ public class DietFoodService {
     public DietFood updateDietFood(Long dietFoodId, DietFoodUpdateRequest request) {
         DietFood dietFood = dietFoodRepository.findById(dietFoodId)
                 .orElseThrow(() -> new CustomException(ErrorCode.DIET_FOOD_NOT_FOUND));
-        dietFood.update(request.quantity(), request.dietTime());
+
+        Food food = foodService.getFoodById(request.foodId());
+        dietFood.update(food, request.quantity(), request.dietTime());
         return dietFoodRepository.save(dietFood);
+    }
+
+    public void updateDietFoodsWithDietTime(List<DietFood> dietFoods, LocalDateTime dietTime) {
+        dietFoods.forEach(dietFood -> dietFood.update(dietFood.getFood(), dietFood.getQuantity(), dietTime));
+        dietFoodRepository.saveAll(dietFoods);
     }
 }
