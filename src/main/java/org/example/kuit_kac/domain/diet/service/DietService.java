@@ -10,10 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-
 @Service
 @RequiredArgsConstructor
 public class DietService {
@@ -21,10 +17,7 @@ public class DietService {
     private final DietRepository dietRepository;
 
     @Transactional(readOnly = true)
-    public List<Diet> getDietsByUserId(Long userId, DietEntryType dietEntryType, LocalDate date) {
-        LocalDateTime startOfDay = date.atStartOfDay(); // 00:00:00
-        LocalDateTime endOfDay = date.atTime(LocalTime.MAX); // 23:59:59
-        List<Diet> diets = dietRepository.findByUserIdAndDietEntryTypeAndDietTimeBetween(userId, dietEntryType, startOfDay, endOfDay);
-        return diets;
+    public List<Diet> getDietsByUserId(Long userId, DietEntryType dietEntryType) {
+        return dietRepository.findByUserIdAndDietEntryType(userId, dietEntryType);
     }
 }
