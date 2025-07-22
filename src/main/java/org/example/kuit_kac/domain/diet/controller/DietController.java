@@ -14,8 +14,10 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import org.example.kuit_kac.global.util.TimeRange;
 import org.example.kuit_kac.domain.user.model.User;
-import org.example.kuit_kac.domain.user.repository.UserRepository;
+import org.example.kuit_kac.domain.user.service.UserService;
 import org.example.kuit_kac.domain.diet_food.service.DietFoodService;
+import org.springframework.transaction.annotation.Transactional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/diets")
@@ -25,8 +27,7 @@ public class DietController {
 
     private final DietService dietService;
     private final DietFoodService dietFoodService;
-
-    private final UserRepository userRepository;
+    private final UserService userService;
 
     @GetMapping("/records/profiles")
     @Operation(summary = "사용자 ID로 식단 기록 조회", description = "제공된 사용자 ID를 사용하여 해당 사용자의 오늘의 식단 기록을 조회합니다.")
@@ -46,11 +47,11 @@ public class DietController {
 
     @PostMapping
     @Operation(summary = "식단 생성", description = "식단과 식단에 포함된 음식들을 생성합니다.")
+    @Transactional
     public ResponseEntity<Long> createDiet(@RequestBody DietCreateRequest request) {
-        User user = userRepository.findById(request.userId())
-                .orElseThrow(() -> new IllegalArgumentException("유저 없음"));
+        User user = userService.getUserById(request.userId());
 
-        Diet diet = dietService.createDiet(user, DietType.valueOf(request.dietType()));
+        Diet diet = dietService.createDiet(user, DietType.getDietType(request.dietType()));
 
         dietFoodService.createDietFoods(request.foods(), diet);
         return ResponseEntity.ok(diet.getId());

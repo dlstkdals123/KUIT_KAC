@@ -1,5 +1,8 @@
 package org.example.kuit_kac.domain.diet.model;
 
+import org.example.kuit_kac.exception.CustomException;
+import org.example.kuit_kac.exception.ErrorCode;
+
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -14,4 +17,12 @@ public enum DietType {
 
     private final String value;
     private final String koreanName;
+
+    public static DietType getDietType(String dietType) {
+        try {
+            return DietType.valueOf(dietType);
+        } catch (IllegalArgumentException e) {
+            throw new CustomException(ErrorCode.DIET_TYPE_INVALID);
+        }
+    }
 }

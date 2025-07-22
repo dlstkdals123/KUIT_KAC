@@ -25,6 +25,7 @@ public class DietService {
 
     @Transactional
     public Diet createDiet(User user, DietType dietType) {
+
         Diet diet = new Diet(user, dietType);
 
         return dietRepository.save(diet);
