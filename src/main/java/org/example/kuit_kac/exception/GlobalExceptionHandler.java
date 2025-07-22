@@ -52,25 +52,8 @@ public class GlobalExceptionHandler {
 
     private HttpStatus convertErrorCodeToHttpStatus(ErrorCode errorCode) {
         switch (errorCode) {
-            case USER_NOT_FOUND:
-            case DIET_BY_USER_ID_NOT_FOUND:
-            case DIET_BY_USER_ID_AND_DIET_TYPE_NOT_FOUND:
-            case DIET_BY_USER_ID_AND_DIET_TYPE_AND_DATE_NOT_FOUND:
-            case DIET_NOT_FOUND:
-            case MEAL_DIET_NOT_FOUND:
-            case MEAL_NOT_FOUND:
-            case FOOD_NOT_FOUND:
-                return HttpStatus.NOT_FOUND;
-
             case DIET_TYPE_INVALID:
-            case ONLY_DIET_CANNOT_CONTAIN_MEALS:
-            case DIET_MEAL_EMPTY:
-            case MEAL_FOOD_EMPTY:
                 return HttpStatus.BAD_REQUEST;
-
-            case DIET_EXIST:
-                return HttpStatus.CONFLICT;
-
             default:
                 return HttpStatus.INTERNAL_SERVER_ERROR;
         }
