@@ -9,7 +9,9 @@ public enum ErrorCode {
 
     // 식단(Diet) 관련 에러 코드
     DIET_NOT_FOUND("DIET_001", "존재하지 않는 식단입니다."),
-    DIET_TYPE_INVALID("DIET_002", "유효하지 않은 식단 유형입니다."),
+    DIET_TYPE_INVALID("DIET_002", "유효하지 않은 식단 종류입니다."),
+    DIET_ENTRY_TYPE_INVALID("DIET_003", "유효하지 않은 식단 항목 종류입니다."),
+    DIET_ENTRY_TYPE_MUST_HAVE_FOOD("DIET_004", "해당 항목 종류에는 최소 하나 이상의 음식을 포함해야 합니다."),
 
     // 음식(Food) 관련 에러 코드
     FOOD_NOT_FOUND("FOOD_001", "존재하지 않는 음식입니다.");

@@ -1,5 +1,6 @@
 package org.example.kuit_kac.domain.diet.model;
 
+import org.example.kuit_kac.global.util.EnumConverter;
 import org.example.kuit_kac.exception.CustomException;
 import org.example.kuit_kac.exception.ErrorCode;
 
@@ -19,8 +20,10 @@ public enum DietType {
     private final String koreanName;
 
     public static DietType getDietType(String dietType) {
+        DietType fromKorean = EnumConverter.fromKoreanDietType(dietType);
+        if (fromKorean != null) return fromKorean;
         try {
-            return DietType.valueOf(dietType);
+            return DietType.valueOf(dietType.toUpperCase());
         } catch (IllegalArgumentException e) {
             throw new CustomException(ErrorCode.DIET_TYPE_INVALID);
         }

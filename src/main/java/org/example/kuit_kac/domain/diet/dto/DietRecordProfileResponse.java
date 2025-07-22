@@ -1,12 +1,12 @@
 package org.example.kuit_kac.domain.diet.dto;
 
 import org.example.kuit_kac.domain.diet.model.Diet;
-import org.example.kuit_kac.domain.food.dto.FoodProfileResponse;
 import org.example.kuit_kac.global.util.TimeRange;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import org.example.kuit_kac.domain.diet_food.dto.DietFoodProfileResponse;
 
 @Schema(description = "식단 기록 응답 DTO")
 public record DietRecordProfileResponse(
@@ -32,16 +32,16 @@ public record DietRecordProfileResponse(
     Double totalKcal,
 
     @Schema(description = "식단에 포함된 음식 목록", requiredMode = Schema.RequiredMode.REQUIRED)
-    List<FoodProfileResponse> dietFoods
+    List<DietFoodProfileResponse> dietFoods
 ) {
     public static DietRecordProfileResponse from(Diet diet, TimeRange timeRange) {
-        List<FoodProfileResponse> foodProfiles = diet.getDietFoods().stream()
+        List<DietFoodProfileResponse> foodProfiles = diet.getDietFoods().stream()
                 .filter(dietFood -> dietFood.getDietTime().isAfter(timeRange.start()) && dietFood.getDietTime().isBefore(timeRange.end()))
-                .map(dietFood -> FoodProfileResponse.from(dietFood))
+                .map(DietFoodProfileResponse::from)
                 .toList();
 
         double totalKcal = foodProfiles.stream()
-                .mapToDouble(food -> food.getQuantity() * food.getCalorie())
+                .mapToDouble(dietFood -> dietFood.quantity() * dietFood.food().getCalorie())
                 .sum();
 
         return new DietRecordProfileResponse(

@@ -15,18 +15,15 @@ import java.util.List;
 import org.example.kuit_kac.global.util.TimeRange;
 import org.example.kuit_kac.domain.user.model.User;
 import org.example.kuit_kac.domain.user.service.UserService;
-import org.example.kuit_kac.domain.diet_food.service.DietFoodService;
-import org.springframework.transaction.annotation.Transactional;
-import java.util.stream.Collectors;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/diets")
-@Tag(name = "식단 관리", description = "식단 정보 조회, 생성, 수정, 삭제 등 식단 관련 기능을 제공합니다.")
+@Tag(name = "식단 관리", description = "식단을 생성하고 관리하는 API입니다.")
 @RequiredArgsConstructor
 public class DietController {
 
     private final DietService dietService;
-    private final DietFoodService dietFoodService;
     private final UserService userService;
 
     @GetMapping("/records/profiles")
@@ -45,15 +42,27 @@ public class DietController {
         return ResponseEntity.ok(responses);
     }
 
-    @PostMapping
-    @Operation(summary = "식단 생성", description = "식단과 식단에 포함된 음식들을 생성합니다.")
-    @Transactional
-    public ResponseEntity<Long> createDiet(@RequestBody DietCreateRequest request) {
+    @PostMapping("/template")
+    @Operation(summary = "나만의 식단 생성", description = "유저 ID와 식단 이름, 음식을 입력하여 나만의 식단을 생성합니다.")
+    public ResponseEntity<Long> createTemplateDiet(@RequestBody @Valid DietTemplateCreateRequest request) {
         User user = userService.getUserById(request.userId());
+        Long dietId = dietService.createTemplateDiet(user, request.name(), request.foods());
+        return ResponseEntity.ok(dietId);
+    }
 
-        Diet diet = dietService.createDiet(user, DietType.getDietType(request.dietType()));
+    @PostMapping("/simple")
+    @Operation(summary = "단식, 외식, 술자리 식단 생성", description = "유저 ID와 식단 항목 종류를 입력하여 음식을 포함하지 않는 식단을 생성합니다.")
+    public ResponseEntity<Long> createSimpleDiet(@RequestBody @Valid DietSimpleCreateRequest request) {
+        User user = userService.getUserById(request.userId());
+        Long dietId = dietService.createSimpleDiet(user, request.dietType(), request.dietEntryType());
+        return ResponseEntity.ok(dietId);
+    }
 
-        dietFoodService.createDietFoods(request.foods(), diet);
-        return ResponseEntity.ok(diet.getId());
+    @PostMapping("/general")
+    @Operation(summary = "식단, 계획, AI 계획 식단 생성", description = "유저 ID와 식단 이름, 식단 항목 종류, 식단 음식을 입력하여 음식을 포함하는 식단을 생성합니다.")
+    public ResponseEntity<Long> createGeneralDiet(@RequestBody @Valid DietGeneralCreateRequest request) {
+        User user = userService.getUserById(request.userId());
+        Long dietId = dietService.createGeneralDiet(user, request.name(), request.dietType(), request.dietEntryType(), request.foods());
+        return ResponseEntity.ok(dietId);
     }
 }

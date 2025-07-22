@@ -6,7 +6,6 @@ import lombok.Getter;
 
 import java.time.LocalDateTime;
 
-import org.example.kuit_kac.domain.diet_food.model.DietFood;
 import org.example.kuit_kac.domain.food.model.Food;
 
 @Getter
@@ -18,9 +17,6 @@ public class FoodProfileResponse {
 
     @Schema(description = "음식 이름", example = "국밥_돼지머리")
     private String name;
-
-    @Schema(description = "음식의 양", example = "0.5", requiredMode = Schema.RequiredMode.REQUIRED)
-    private Double quantity;
 
     @Schema(description = "음식의 단위 타입", example = "그릇", requiredMode = Schema.RequiredMode.REQUIRED)
     private String unitType;
@@ -40,12 +36,10 @@ public class FoodProfileResponse {
     @Schema(description = "음식 정보 최종 수정일시", example = "2023-01-01T00:00:00")
     private LocalDateTime updatedAt;
 
-    public static FoodProfileResponse from(DietFood dietFood) {
-        Food food = dietFood.getFood(); 
+    public static FoodProfileResponse from(Food food) {
         return new FoodProfileResponse(
             food.getId(), 
             food.getName(), 
-            dietFood.getQuantity(),
             food.getUnitType(), 
             food.getFoodType().getKoreanName(), 
             food.getIsProcessedFood(), 

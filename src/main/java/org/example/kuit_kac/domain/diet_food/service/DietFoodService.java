@@ -5,7 +5,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.example.kuit_kac.domain.diet_food.model.DietFood;
 import org.example.kuit_kac.domain.diet_food.repository.DietFoodRepository;
-import org.example.kuit_kac.domain.diet_food.dto.DietFoodCreateRequest;
+import org.example.kuit_kac.domain.diet_food.dto.DietFoodGeneralCreateRequest;
+import org.example.kuit_kac.domain.diet_food.dto.DietFoodTemplateCreateRequest;
 import org.example.kuit_kac.domain.food.model.Food;
 import org.example.kuit_kac.domain.food.service.FoodService;
 import org.example.kuit_kac.domain.diet.model.Diet;
@@ -19,11 +20,21 @@ public class DietFoodService {
     private final DietFoodRepository dietFoodRepository;
     private final FoodService foodService;
 
-    public List<DietFood> createDietFoods(List<DietFoodCreateRequest> foodRequests, Diet diet) {
+    public List<DietFood> createGeneralDietFoods(List<DietFoodGeneralCreateRequest> foodRequests, Diet diet) {
         List<DietFood> dietFoods = foodRequests.stream()
                 .map(foodReq -> {
                     Food food = foodService.getFoodById(foodReq.foodId());
                     return new DietFood(diet, food, foodReq.quantity(), foodReq.dietTime());
+                })
+                .collect(Collectors.toList());
+        return dietFoodRepository.saveAll(dietFoods);
+    }
+
+    public List<DietFood> createTemplateDietFoods(List<DietFoodTemplateCreateRequest> foodRequests, Diet diet) {
+        List<DietFood> dietFoods = foodRequests.stream()
+                .map(foodReq -> {
+                    Food food = foodService.getFoodById(foodReq.foodId());
+                    return new DietFood(diet, food, foodReq.quantity(), null);
                 })
                 .collect(Collectors.toList());
         return dietFoodRepository.saveAll(dietFoods);
