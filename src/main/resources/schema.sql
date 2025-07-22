@@ -51,7 +51,6 @@ CREATE TABLE `diet` (
     `name`         varchar(30)           NULL,
     `diet_type`    ENUM('BREAKFAST', 'LUNCH', 'DINNER', 'SNACK', 'TEMPLATE') NOT NULL,
     `diet_entry_type` ENUM('RECORD', 'FASTING', 'PLAN', 'AI_PLAN', 'DINING_OUT', 'DRINKING') NULL,
-    `diet_time`    datetime              NULL,
     `created_at`   datetime              NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `updated_at`   datetime              NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON DELETE CASCADE
@@ -104,6 +103,7 @@ CREATE TABLE `diet_food` (
     `diet_id`      bigint                NOT NULL,
     `food_id`      bigint                NOT NULL,
     `quantity`     double                NOT NULL,
+    `diet_time`    datetime              NOT NULL,
     `created_at`   datetime              NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `updated_at`   datetime              NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (`diet_id`) REFERENCES `diet`(`id`) ON DELETE CASCADE,
@@ -115,6 +115,7 @@ CREATE TABLE `diet_aifood` (
     `diet_id`      bigint                NOT NULL,
     `aifood_id`    bigint                NOT NULL,
     `quantity`     double                NOT NULL,
+    `diet_time`    datetime              NOT NULL,
     `created_at`   datetime              NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `updated_at`   datetime              NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (`diet_id`) REFERENCES `diet`(`id`) ON DELETE CASCADE,
