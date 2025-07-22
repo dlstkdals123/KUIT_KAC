@@ -3,7 +3,6 @@ package org.example.kuit_kac.domain.diet.model;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import lombok.AccessLevel;
 import lombok.Builder;
 import org.example.kuit_kac.domain.diet_food.model.DietFood;
@@ -67,12 +66,10 @@ public class Diet {
     @Column(nullable = false, length = 30)
     private String name;
 
-    @Setter
     @Enumerated(EnumType.STRING)
     @Column(name = "diet_type", nullable = false)
     private DietType dietType;
 
-    @Setter
     @Enumerated(EnumType.STRING)
     @Column(name = "diet_entry_type")
     private DietEntryType dietEntryType;
@@ -100,7 +97,6 @@ public class Diet {
         this.updatedAt = LocalDateTime.now();
     }
 
-    @Builder
     public Diet(User user, String name, DietType dietType, DietEntryType dietEntryType) {
         this.user = user;
         this.name = name;
