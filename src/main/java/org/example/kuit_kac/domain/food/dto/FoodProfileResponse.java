@@ -40,7 +40,8 @@ public class FoodProfileResponse {
     @Schema(description = "음식 정보 최종 수정일시", example = "2023-01-01T00:00:00")
     private LocalDateTime updatedAt;
 
-    public static FoodProfileResponse from(DietFood dietFood, Food food) {
+    public static FoodProfileResponse from(DietFood dietFood) {
+        Food food = dietFood.getFood(); 
         return new FoodProfileResponse(
             food.getId(), 
             food.getName(), 

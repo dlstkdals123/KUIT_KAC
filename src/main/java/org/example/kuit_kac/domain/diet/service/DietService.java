@@ -5,6 +5,8 @@ import lombok.RequiredArgsConstructor;
 import org.example.kuit_kac.domain.diet.model.Diet;
 import org.example.kuit_kac.domain.diet.model.DietEntryType;
 import org.example.kuit_kac.domain.diet.repository.DietRepository;
+import org.example.kuit_kac.domain.user.model.User;
+import org.example.kuit_kac.domain.diet.model.DietType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,5 +21,12 @@ public class DietService {
     @Transactional(readOnly = true)
     public List<Diet> getDietsByUserId(Long userId, DietEntryType dietEntryType) {
         return dietRepository.findByUserIdAndDietEntryType(userId, dietEntryType);
+    }
+
+    @Transactional
+    public Diet createDiet(User user, DietType dietType) {
+        Diet diet = new Diet(user, dietType);
+
+        return dietRepository.save(diet);
     }
 }

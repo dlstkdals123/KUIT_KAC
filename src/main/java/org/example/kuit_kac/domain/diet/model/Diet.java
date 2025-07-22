@@ -67,12 +67,10 @@ public class Diet {
     @Column(nullable = false, length = 30)
     private String name;
 
-    @Setter
     @Enumerated(EnumType.STRING)
     @Column(name = "diet_type", nullable = false)
     private DietType dietType;
 
-    @Setter
     @Enumerated(EnumType.STRING)
     @Column(name = "diet_entry_type")
     private DietEntryType dietEntryType;
@@ -101,11 +99,9 @@ public class Diet {
     }
 
     @Builder
-    public Diet(User user, String name, DietType dietType, DietEntryType dietEntryType) {
+    public Diet(User user, DietType dietType) {
         this.user = user;
-        this.name = name;
         this.dietType = dietType;
-        this.dietEntryType = dietEntryType;
     }
 
     public void addDietFood(DietFood dietFood) {
