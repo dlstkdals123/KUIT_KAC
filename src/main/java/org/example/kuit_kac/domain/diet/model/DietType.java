@@ -10,7 +10,6 @@ public enum DietType {
     LUNCH("LUNCH", "점심"),
     DINNER("DINNER", "저녁"),
     SNACK("SNACK", "간식"),
-    FASTING("FASTING", "단식"),
     TEMPLATE("TEMPLATE", "나만의 식단");
 
     private final String value;

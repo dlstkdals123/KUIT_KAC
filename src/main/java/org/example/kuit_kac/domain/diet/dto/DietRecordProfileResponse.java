@@ -4,8 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import org.example.kuit_kac.domain.diet.model.Diet;
-import org.example.kuit_kac.domain.diet.model.DietEntryType;
-import org.example.kuit_kac.domain.diet.model.DietType;
 import org.example.kuit_kac.domain.food.dto.FoodProfileResponse;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -28,9 +26,6 @@ public class DietRecordProfileResponse {
 
     @Schema(description = "식단의 항목 종류", example = "기록", requiredMode = Schema.RequiredMode.REQUIRED)
     private String dietEntryType;
-
-    @Schema(description = "식단의 시간", example = "2025-07-10T12:00:00", requiredMode = Schema.RequiredMode.REQUIRED)
-    private LocalDateTime dietTime;
 
     @Schema(description = "식단 정보 생성일시", example = "2025-07-10T12:00:00")
     private LocalDateTime createdAt;
@@ -62,7 +57,6 @@ public class DietRecordProfileResponse {
             diet.getName(),
             diet.getDietType().getKoreanName(),
             diet.getDietEntryType().getKoreanName(),
-            diet.getDietTime(),
             diet.getCreatedAt(),
             diet.getUpdatedAt(),
             totalKcal,
