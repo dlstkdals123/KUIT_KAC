@@ -9,7 +9,7 @@ import org.example.kuit_kac.domain.diet.dto.*;
 import org.example.kuit_kac.domain.diet.model.*;
 import org.example.kuit_kac.domain.diet.service.*;
 import org.example.kuit_kac.domain.diet_food.dto.DietFoodCreateRequest;
-import org.example.kuit_kac.domain.diet_food.dto.DietFoodUpdateRequest;
+import org.example.kuit_kac.domain.diet_food.model.DietFood;
 import org.example.kuit_kac.domain.diet_food.service.DietFoodService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -115,19 +115,11 @@ public class DietController {
             @RequestParam("dietTime") LocalDateTime dietTime
     ) {
         Diet diet = dietService.getDietById(dietId);
-        dietFoodService.createDietFoodsWithDietTime(requests, diet, dietTime);
-        DietRecordProfileResponse response = DietRecordProfileResponse.from(diet);
-        return ResponseEntity.ok(response);
-    }
-
-    @PatchMapping("/{dietId}/foods/{dietFoodId}")
-    @Operation(summary = "식단에 음식 수정", description = "식단 ID와 음식 ID를 입력하여 식단에 음식을 수정합니다.")
-    public ResponseEntity<DietRecordProfileResponse> updateFoodInDiet(
-        @PathVariable("dietId") Long dietId,
-        @PathVariable("dietFoodId") Long dietFoodId,
-        @RequestBody @Valid DietFoodUpdateRequest request) {
-        dietFoodService.updateDietFood(dietFoodId, request);
-        Diet diet = dietService.getDietById(dietId);
+        List<DietFood> newDietFoods = dietFoodService.createDietFoodsWithDietTime(requests, diet, dietTime);
+        
+        newDietFoods.forEach(diet::addDietFood);
+        dietFoodService.updateDietFoodsWithDietTime(diet.getDietFoods(), dietTime);
+        
         DietRecordProfileResponse response = DietRecordProfileResponse.from(diet);
         return ResponseEntity.ok(response);
     }
