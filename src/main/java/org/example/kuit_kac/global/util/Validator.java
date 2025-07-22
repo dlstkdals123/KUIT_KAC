@@ -9,8 +9,4 @@ public class Validator {
         return str == null || str.isEmpty();
     }
 
-    public static boolean isLocalTime0000(LocalTime time) {
-        return time.equals(LocalTime.MIN);
-    }
-
 }
