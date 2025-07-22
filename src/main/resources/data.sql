@@ -15,12 +15,15 @@ INSERT INTO `weight` (`user_id`, `weight`) VALUES
 INSERT INTO `diet` (`user_id`, `name`, `diet_type`, `diet_entry_type`, `diet_time`) VALUES
 (1, '오늘의 아침 기록', 'BREAKFAST', 'RECORD', CONCAT(CURDATE(), ' 09:00:00')),
 (1, '오늘의 점심 기록', 'LUNCH', 'RECORD', CONCAT(CURDATE(), ' 13:00:00')),
+(1, '오늘의 저녁 기록', 'DINNER', 'RECORD', CONCAT(CURDATE(), ' 18:00:00')),
 (1, '나만의 아침', 'TEMPLATE', NULL, CURDATE()),
 (1, '나만의 점심', 'TEMPLATE', NULL, CURDATE()),
 (1, '나만의 저녁', 'TEMPLATE', NULL, CURDATE()),
 (2, '아침 계획', 'BREAKFAST', 'PLAN', NULL),
 (2, '점심 계획', 'LUNCH', 'PLAN', NULL),
-(2, '저녁 계획', 'DINNER', 'PLAN', NULL);
+(2, '저녁 계획', 'DINNER', 'PLAN', NULL),
+(2, NULL, 'BREAKFAST', 'FASTING', NULL);
+
 
 INSERT INTO `food` (`name`, `unit_type`, `unit_num`, `food_type`, `is_processed_food`, `calorie`, `carbohydrate`, `is_high_carbonhydrate`, `protein`, `is_high_protein`, `fat`, `is_high_fat`, `sugar`, `score`) VALUES
 ('국밥_돼지머리', '그릇', 500, 'NORMAL_RICE', FALSE, 137.0, 6.7, FALSE, 5.16, FALSE, 15.94, FALSE, 0.16, 75),

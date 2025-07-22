@@ -4,8 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import org.example.kuit_kac.domain.diet.model.Diet;
-import org.example.kuit_kac.domain.diet.model.DietEntryType;
-import org.example.kuit_kac.domain.diet.model.DietType;
 import org.example.kuit_kac.domain.food.dto.FoodProfileResponse;
 
 import io.swagger.v3.oas.annotations.media.Schema;
