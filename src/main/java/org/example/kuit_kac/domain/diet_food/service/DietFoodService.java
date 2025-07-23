@@ -41,4 +41,8 @@ public class DietFoodService {
                 .collect(Collectors.toList());
         return dietFoodRepository.saveAll(dietFoods);
     }
+
+    public void deleteDietFoods(List<DietFood> dietFoods) {
+        dietFoodRepository.deleteAll(dietFoods);
+    }
 }

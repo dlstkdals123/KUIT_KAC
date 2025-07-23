@@ -15,8 +15,6 @@ import java.util.List;
 import org.example.kuit_kac.global.util.TimeRange;
 import org.example.kuit_kac.domain.user.model.User;
 import org.example.kuit_kac.domain.user.service.UserService;
-import org.example.kuit_kac.exception.CustomException;
-import org.example.kuit_kac.exception.ErrorCode;
 
 import jakarta.validation.Valid;
 import java.util.Objects;
@@ -75,7 +73,7 @@ public class DietController {
         return ResponseEntity.ok(response);
     }
 
-    @PutMapping("/{dietId}/template")
+    @PutMapping("/template/{dietId}")
     @Operation(summary = "나만의 식단 수정", description = "식단 ID와 식단 이름, 음식을 입력하여 나만의 식단을 수정합니다.")
     public ResponseEntity<DietRecordProfileResponse> updateTemplateDiet(
             @PathVariable("dietId") Long dietId,
@@ -85,6 +83,16 @@ public class DietController {
         dietService.updateTemplateDiet(diet, request.name(), request.foods());
         DietRecordProfileResponse response = DietRecordProfileResponse.from(diet);
         return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping("/template/{dietId}")
+    @Operation(summary = "나만의 식단 삭제", description = "식단 ID를 입력하여 나만의 식단을 삭제합니다.")
+    public ResponseEntity<Void> deleteTemplateDiet(
+            @PathVariable("dietId") Long dietId
+    ) {
+        Diet diet = dietService.getDietById(dietId);
+        dietService.deleteDiet(diet);
+        return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/simple")
@@ -109,7 +117,17 @@ public class DietController {
         return ResponseEntity.ok(response);
     }
 
-    @PutMapping("/{dietId}/general")
+    @DeleteMapping("/general/{dietId}")
+    @Operation(summary = "식단, 계획, AI 계획 식단 삭제", description = "식단 ID를 입력하여 식단, 계획, AI 계획 식단을 삭제합니다.")
+    public ResponseEntity<Void> deleteGeneralDiet(
+            @PathVariable("dietId") Long dietId
+    ) {
+        Diet diet = dietService.getDietById(dietId);
+        dietService.deleteDiet(diet);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/general/{dietId}")
     @Operation(summary = "식단, 계획, AI 계획 식단 수정", description = "식단 ID와 식단 이름, 식단 항목 종류, 식단 음식을 입력하여 음식을 포함하는 식단을 수정합니다.")
     public ResponseEntity<DietRecordProfileResponse> updateGeneralDiet(
             @PathVariable("dietId") Long dietId,
@@ -121,8 +139,6 @@ public class DietController {
         return ResponseEntity.ok(response);
     }
 
-
-
     @PostMapping("/snack")
     @Operation(summary = "간식 식단 생성", description = "유저 ID와 식단 음식 섭취 시간을 입력하여 간식 식단을 생성합니다.")
     public ResponseEntity<DietRecordProfileResponse> createSnackDiet(
@@ -132,5 +148,15 @@ public class DietController {
         Diet diet = dietService.createSnackDiet(user, request.name(), request.dietEntryType(), request.foods());
         DietRecordProfileResponse response = DietRecordProfileResponse.from(diet);
         return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping("/snack/{dietId}")
+    @Operation(summary = "간식 식단 삭제", description = "식단 ID를 입력하여 간식 식단을 삭제합니다.")
+    public ResponseEntity<Void> deleteSnackDiet(
+            @PathVariable("dietId") Long dietId
+    ) {
+        Diet diet = dietService.getDietById(dietId);
+        dietService.deleteDiet(diet);
+        return ResponseEntity.noContent().build();
     }
 }

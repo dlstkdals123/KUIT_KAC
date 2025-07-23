@@ -115,6 +115,12 @@ public class DietService {
         return saved;
     }
 
+    @Transactional
+    public void deleteDiet(Diet diet) {
+        dietFoodService.deleteDietFoods(diet.getDietFoods());
+        dietRepository.delete(diet);
+    }
+
     private boolean isSimpleDietEntryType(DietEntryType entryType) {
         return entryType == DietEntryType.FASTING || entryType == DietEntryType.DINING_OUT || entryType == DietEntryType.DRINKING;
     }
