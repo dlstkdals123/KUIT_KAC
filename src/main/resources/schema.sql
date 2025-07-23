@@ -132,8 +132,8 @@ CREATE TABLE `diet_aifood` (
 CREATE TABLE `routine` (
     `id`            bigint AUTO_INCREMENT NOT NULL PRIMARY KEY,
     `user_id`       bigint                NOT NULL,
-    `name`          varchar(50)           NULL,
-    `exercise_date` date                  NULL,
+    `name`          varchar(50)           NOT NULL,
+    `exercise_date` datetime              NULL,
     `type`          ENUM('RECORD', 'TEMPLATE') NOT NULL,
     `created_at`    datetime              NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `updated_at`    datetime              NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,

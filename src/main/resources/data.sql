@@ -172,3 +172,47 @@ INSERT INTO `diet_aifood` (`diet_id`, `aifood_id`, `quantity`, `diet_time`) VALU
 (9, 3, 2.5, CONCAT(CURDATE(), ' 18:00:00')),
 (9, 4, 0.5, CONCAT(CURDATE(), ' 18:00:00'));
 
+-- 운동 관련 샘플 데이터
+
+INSERT INTO `exercise` (`name`, `target_muscle_group`, `met_value`)
+VALUES
+('벤치프레스', 'CHEST', 5.0),
+('스쿼트', 'LEG', 7.0),
+('데드리프트', 'BACK', 6.5);
+
+INSERT INTO `routine` (`user_id`, `name`, `exercise_date`, `type`)
+VALUES
+(1, '상체 기록', CONCAT(CURDATE(), ' 08:00:00'), 'RECORD'),
+(1, '하체 기록', CONCAT(CURDATE(), ' 12:00:00'), 'RECORD'),
+(1, '상체 루틴', null, 'TEMPLATE');
+
+INSERT INTO `routine_exercise` (`routine_id`, `exercise_id`)
+VALUES
+(1, 1), -- 1번 루틴에 벤치프레스
+(1, 3), -- 1번 루틴에 데드리프트
+(2, 2); -- 2번 루틴에 스쿼트
+
+INSERT INTO `exercise_detail` (`routine_exercise_id`, `time`, `intensity`)
+VALUES
+(1, 30, 'NORMAL'), -- 벤치프레스 30분
+(2, 20, 'TIGHT'),  -- 데드리프트 20분
+(3, 40, 'LOOSE');  -- 스쿼트 40분
+
+-- 벤치프레스: 1세트(10회), 2세트(8회)
+INSERT INTO `exercise_set` (`routine_exercise_id`, `count`, `set_order`)
+VALUES
+(1, 10, 1),
+(1, 8, 2);
+
+-- 데드리프트: 1세트(60kg, 8개), 2세트(70kg, 6개)
+INSERT INTO `exercise_set` (`routine_exercise_id`, `weight_kg`, `weight_num`, `set_order`)
+VALUES
+(2, 60, 8, 1),
+(2, 70, 6, 2);
+
+-- 스쿼트: 1세트(거리 100m), 2세트(거리 120m)
+INSERT INTO `exercise_set` (`routine_exercise_id`, `distance`, `set_order`)
+VALUES
+(3, 100, 1),
+(3, 120, 2);
+
