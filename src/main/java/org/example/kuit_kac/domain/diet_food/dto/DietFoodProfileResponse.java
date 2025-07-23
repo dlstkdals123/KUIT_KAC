@@ -8,6 +8,9 @@ import java.time.LocalDateTime;
 
 @Schema(description = "식단에 포함된 음식 상세 정보 DTO")
 public record DietFoodProfileResponse(
+    @Schema(description = "음식 고유 식별자 (ID)", example = "1", requiredMode = Schema.RequiredMode.REQUIRED)
+    Long id,
+
     @Schema(description = "음식 섭취 시간") 
     LocalDateTime dietTime,
 
@@ -19,6 +22,7 @@ public record DietFoodProfileResponse(
 ) {
     public static DietFoodProfileResponse from(DietFood dietFood) {
         return new DietFoodProfileResponse(
+                dietFood.getId(),
                 dietFood.getDietTime(),
                 dietFood.getQuantity(),
                 FoodProfileResponse.from(dietFood.getFood())

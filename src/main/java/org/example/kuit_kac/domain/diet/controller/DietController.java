@@ -15,7 +15,9 @@ import java.util.List;
 import org.example.kuit_kac.global.util.TimeRange;
 import org.example.kuit_kac.domain.user.model.User;
 import org.example.kuit_kac.domain.user.service.UserService;
+
 import jakarta.validation.Valid;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/diets")
@@ -37,6 +39,7 @@ public class DietController {
 
         List<DietRecordProfileResponse> responses = diets.stream()
                 .map(diet -> DietRecordProfileResponse.from(diet, timeRange))
+                .filter(Objects::nonNull)
                 .toList();
 
         return ResponseEntity.ok(responses);
@@ -53,6 +56,7 @@ public class DietController {
 
         List<DietRecordProfileResponse> responses = diets.stream()
                 .map(diet -> DietRecordProfileResponse.from(diet, timeRange))
+                .filter(Objects::nonNull)
                 .toList();
 
         return ResponseEntity.ok(responses);
@@ -60,25 +64,111 @@ public class DietController {
 
     @PostMapping("/template")
     @Operation(summary = "나만의 식단 생성", description = "유저 ID와 식단 이름, 음식을 입력하여 나만의 식단을 생성합니다.")
-    public ResponseEntity<Long> createTemplateDiet(@RequestBody @Valid DietTemplateCreateRequest request) {
+    public ResponseEntity<DietRecordProfileResponse> createTemplateDiet(
+            @RequestBody @Valid DietTemplateCreateRequest request
+    ) {
         User user = userService.getUserById(request.userId());
-        Long dietId = dietService.createTemplateDiet(user, request.name(), request.foods());
-        return ResponseEntity.ok(dietId);
+        Diet diet = dietService.createTemplateDiet(user, request.name(), request.foods());
+        DietRecordProfileResponse response = DietRecordProfileResponse.from(diet);
+        return ResponseEntity.ok(response);
+    }
+
+    @PutMapping("/template/{dietId}")
+    @Operation(summary = "나만의 식단 수정", description = "식단 ID와 식단 이름, 음식을 입력하여 나만의 식단을 수정합니다.")
+    public ResponseEntity<DietRecordProfileResponse> updateTemplateDiet(
+            @PathVariable("dietId") Long dietId,
+            @RequestBody @Valid DietTemplateUpdateRequest request
+    ) {
+        Diet diet = dietService.getDietById(dietId);
+        dietService.updateTemplateDiet(diet, request.name(), request.foods());
+        DietRecordProfileResponse response = DietRecordProfileResponse.from(diet);
+        return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping("/template/{dietId}")
+    @Operation(summary = "나만의 식단 삭제", description = "식단 ID를 입력하여 나만의 식단을 삭제합니다.")
+    public ResponseEntity<Void> deleteTemplateDiet(
+            @PathVariable("dietId") Long dietId
+    ) {
+        Diet diet = dietService.getDietById(dietId);
+        dietService.deleteDiet(diet);
+        return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/simple")
     @Operation(summary = "단식, 외식, 술자리 식단 생성", description = "유저 ID와 식단 항목 종류를 입력하여 음식을 포함하지 않는 식단을 생성합니다.")
-    public ResponseEntity<Long> createSimpleDiet(@RequestBody @Valid DietSimpleCreateRequest request) {
+    public ResponseEntity<DietRecordProfileResponse> createSimpleDiet(
+            @RequestBody @Valid DietSimpleCreateRequest request
+    ) {
         User user = userService.getUserById(request.userId());
-        Long dietId = dietService.createSimpleDiet(user, request.dietType(), request.dietEntryType());
-        return ResponseEntity.ok(dietId);
+        Diet diet = dietService.createSimpleDiet(user, request.dietType(), request.dietEntryType());
+        DietRecordProfileResponse response = DietRecordProfileResponse.from(diet);
+        return ResponseEntity.ok(response);
     }
 
     @PostMapping("/general")
     @Operation(summary = "식단, 계획, AI 계획 식단 생성", description = "유저 ID와 식단 이름, 식단 항목 종류, 식단 음식을 입력하여 음식을 포함하는 식단을 생성합니다.")
-    public ResponseEntity<Long> createGeneralDiet(@RequestBody @Valid DietGeneralCreateRequest request) {
+    public ResponseEntity<DietRecordProfileResponse> createGeneralDiet(
+            @RequestBody @Valid DietGeneralCreateRequest request
+    ) {
         User user = userService.getUserById(request.userId());
-        Long dietId = dietService.createGeneralDiet(user, request.name(), request.dietType(), request.dietEntryType(), request.foods());
-        return ResponseEntity.ok(dietId);
+        Diet diet = dietService.createGeneralDiet(user, request.name(), request.dietType(), request.dietEntryType(), request.dietTime(), request.foods());
+        DietRecordProfileResponse response = DietRecordProfileResponse.from(diet);
+        return ResponseEntity.ok(response);
+    }
+
+    @PutMapping("/general/{dietId}")
+    @Operation(summary = "식단, 계획, AI 계획 식단 수정", description = "식단 ID와 식단 이름, 식단 항목 종류, 식단 음식을 입력하여 음식을 포함하는 식단을 수정합니다.")
+    public ResponseEntity<DietRecordProfileResponse> updateGeneralDiet(
+            @PathVariable("dietId") Long dietId,
+            @RequestBody @Valid DietGeneralUpdateRequest request
+    ) {
+        Diet diet = dietService.getDietById(dietId);
+        dietService.updateGeneralDiet(diet, request.name(), request.dietTime(), request.foods());
+        DietRecordProfileResponse response = DietRecordProfileResponse.from(diet);
+        return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping("/general/{dietId}")
+    @Operation(summary = "식단, 계획, AI 계획 식단 삭제", description = "식단 ID를 입력하여 식단, 계획, AI 계획 식단을 삭제합니다.")
+    public ResponseEntity<Void> deleteGeneralDiet(
+            @PathVariable("dietId") Long dietId
+    ) {
+        Diet diet = dietService.getDietById(dietId);
+        dietService.deleteDiet(diet);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/snack")
+    @Operation(summary = "간식 식단 생성", description = "유저 ID와 식단 음식 섭취 시간을 입력하여 간식 식단을 생성합니다.")
+    public ResponseEntity<DietRecordProfileResponse> createSnackDiet(
+            @RequestBody @Valid DietSnackCreateRequest request
+    ) {
+        User user = userService.getUserById(request.userId());
+        Diet diet = dietService.createSnackDiet(user, request.name(), request.dietEntryType(), request.foods());
+        DietRecordProfileResponse response = DietRecordProfileResponse.from(diet);
+        return ResponseEntity.ok(response);
+    }
+
+    @PutMapping("/snack/{dietId}")
+    @Operation(summary = "간식 식단 수정", description = "식단 ID와 식단 음식 섭취 시간을 입력하여 간식 식단을 수정합니다.")
+    public ResponseEntity<DietRecordProfileResponse> updateSnackDiet(
+            @PathVariable("dietId") Long dietId,
+            @RequestBody @Valid DietSnackUpdateRequest request
+    ) {
+        Diet diet = dietService.getDietById(dietId);
+        dietService.updateSnackDiet(diet, request.name(), request.foods());
+        DietRecordProfileResponse response = DietRecordProfileResponse.from(diet);
+        return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping("/snack/{dietId}")
+    @Operation(summary = "간식 식단 삭제", description = "식단 ID를 입력하여 간식 식단을 삭제합니다.")
+    public ResponseEntity<Void> deleteSnackDiet(
+            @PathVariable("dietId") Long dietId
+    ) {
+        Diet diet = dietService.getDietById(dietId);
+        dietService.deleteDiet(diet);
+        return ResponseEntity.noContent().build();
     }
 }
