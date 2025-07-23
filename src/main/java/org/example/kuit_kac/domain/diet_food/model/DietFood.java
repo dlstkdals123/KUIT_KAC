@@ -63,4 +63,10 @@ public class DietFood {
         this.quantity = quantity;
         this.dietTime = dietTime;
     }
+
+    public void update(Food food, double quantity, LocalDateTime dietTime) {
+        this.food = food;
+        this.quantity = quantity;
+        this.dietTime = dietTime;
+    }
 }
