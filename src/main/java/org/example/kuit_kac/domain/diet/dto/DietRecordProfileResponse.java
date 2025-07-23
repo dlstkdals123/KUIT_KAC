@@ -7,6 +7,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDateTime;
 import java.util.List;
 import org.example.kuit_kac.domain.diet_food.dto.DietFoodProfileResponse;
+import org.example.kuit_kac.domain.food.dto.FoodProfileResponse;
+import org.example.kuit_kac.domain.food.model.FoodStatusType;
 
 @Schema(description = "식단 기록 응답 DTO")
 public record DietRecordProfileResponse(
@@ -21,6 +23,9 @@ public record DietRecordProfileResponse(
 
     @Schema(description = "식단의 항목 종류", example = "기록", requiredMode = Schema.RequiredMode.REQUIRED)
     String dietEntryType,
+
+    @Schema(description = "식단의 상태", example = "양호", requiredMode = Schema.RequiredMode.REQUIRED)
+    String foodStatusType,
 
     @Schema(description = "식단 정보 생성일시", example = "2025-07-10T12:00:00")
     LocalDateTime createdAt,
@@ -44,11 +49,18 @@ public record DietRecordProfileResponse(
                 .mapToDouble(dietFood -> dietFood.quantity() * dietFood.food().getCalorie())
                 .sum();
 
+        List<FoodProfileResponse> foodProfileResponses = foodProfiles.stream()
+                .map(DietFoodProfileResponse::food)
+                .toList();
+
+        FoodStatusType foodStatusType = FoodStatusType.getFoodStatusType(foodProfileResponses);
+
         return new DietRecordProfileResponse(
                 diet.getId(),
                 diet.getName(),
                 diet.getDietType().getKoreanName(),
                 diet.getDietEntryType().getKoreanName(),
+                foodStatusType.getKoreanName(),
                 diet.getCreatedAt(),
                 diet.getUpdatedAt(),
                 totalKcal,
