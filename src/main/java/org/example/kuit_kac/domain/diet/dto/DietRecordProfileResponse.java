@@ -40,6 +40,10 @@ public record DietRecordProfileResponse(
                 .map(DietFoodProfileResponse::from)
                 .toList();
 
+        if (foodProfiles.isEmpty()) {
+            return null;
+        }
+
         return from(foodProfiles, diet);
     }
 

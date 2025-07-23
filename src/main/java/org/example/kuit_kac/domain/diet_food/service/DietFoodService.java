@@ -7,11 +7,8 @@ import org.example.kuit_kac.domain.diet_food.model.DietFood;
 import org.example.kuit_kac.domain.diet_food.repository.DietFoodRepository;
 import org.example.kuit_kac.domain.diet_food.dto.DietFoodCreateRequest;
 import org.example.kuit_kac.domain.diet_food.dto.DietFoodSnackCreateRequest;
-import org.example.kuit_kac.domain.diet_food.dto.DietFoodUpdateRequest;
 import org.example.kuit_kac.domain.food.model.Food;
 import org.example.kuit_kac.domain.food.service.FoodService;
-import org.example.kuit_kac.exception.CustomException;
-import org.example.kuit_kac.exception.ErrorCode;
 import org.example.kuit_kac.domain.diet.model.Diet;
 
 import java.time.LocalDateTime;
@@ -43,19 +40,5 @@ public class DietFoodService {
                 })
                 .collect(Collectors.toList());
         return dietFoodRepository.saveAll(dietFoods);
-    }
-
-    public DietFood updateDietFood(Long dietFoodId, DietFoodUpdateRequest request) {
-        DietFood dietFood = dietFoodRepository.findById(dietFoodId)
-                .orElseThrow(() -> new CustomException(ErrorCode.DIET_FOOD_NOT_FOUND));
-
-        Food food = foodService.getFoodById(request.foodId());
-        dietFood.update(food, request.quantity(), request.dietTime());
-        return dietFoodRepository.save(dietFood);
-    }
-
-    public void updateDietFoodsWithDietTime(List<DietFood> dietFoods, LocalDateTime dietTime) {
-        dietFoods.forEach(dietFood -> dietFood.update(dietFood.getFood(), dietFood.getQuantity(), dietTime));
-        dietFoodRepository.saveAll(dietFoods);
     }
 }

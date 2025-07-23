@@ -32,16 +32,25 @@ public class DietService {
     }
 
     @Transactional
-    public Diet createTemplateDiet(User user, String name, LocalDateTime dietTime, List<DietFoodCreateRequest> foods) {
+    public Diet createTemplateDiet(User user, String name, List<DietFoodCreateRequest> foods) {
         // diet_type = TEMPLATE, diet_entry_type = null
         if (foods == null || foods.isEmpty()) {
             throw new CustomException(ErrorCode.DIET_ENTRY_TYPE_MUST_HAVE_FOOD);
         }
         Diet diet = new Diet(user, name, DietType.TEMPLATE, null);
         Diet saved = dietRepository.save(diet);
-        List<DietFood> dietFoods = dietFoodService.createDietFoodsWithDietTime(foods, saved, dietTime);
+        List<DietFood> dietFoods = dietFoodService.createDietFoodsWithDietTime(foods, saved, null);
         dietFoods.forEach(saved::addDietFood);
         return saved;
+    }
+
+    @Transactional
+    public Diet updateTemplateDiet(Diet diet, String name, List<DietFoodCreateRequest> foods) {
+        diet.setName(name);
+        diet.getDietFoods().clear();
+        List<DietFood> dietFoods = dietFoodService.createDietFoodsWithDietTime(foods, diet, null);
+        dietFoods.forEach(diet::addDietFood);
+        return dietRepository.save(diet);
     }
 
     @Transactional
@@ -86,6 +95,15 @@ public class DietService {
         List<DietFood> dietFoods = dietFoodService.createDietFoodsWithDietTime(foods, saved, dietTime);
         dietFoods.forEach(saved::addDietFood);
         return saved;
+    }
+
+    @Transactional
+    public Diet updateGeneralDiet(Diet diet, String name, LocalDateTime dietTime, List<DietFoodCreateRequest> foods) {
+        diet.setName(name);
+        diet.getDietFoods().clear();
+        List<DietFood> dietFoods = dietFoodService.createDietFoodsWithDietTime(foods, diet, dietTime);
+        dietFoods.forEach(diet::addDietFood);
+        return dietRepository.save(diet);
     }
 
     @Transactional
