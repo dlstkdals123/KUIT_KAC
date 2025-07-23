@@ -116,6 +116,15 @@ public class DietService {
     }
 
     @Transactional
+    public Diet updateSnackDiet(Diet diet, String name, List<DietFoodSnackCreateRequest> foods) {
+        diet.setName(name);
+        diet.getDietFoods().clear();
+        List<DietFood> dietFoods = dietFoodService.createDietFoodsSnack(foods, diet);
+        dietFoods.forEach(diet::addDietFood);
+        return dietRepository.save(diet);
+    }
+
+    @Transactional
     public void deleteDiet(Diet diet) {
         dietFoodService.deleteDietFoods(diet.getDietFoods());
         dietRepository.delete(diet);
