@@ -30,6 +30,9 @@ public class FoodProfileResponse {
     @Schema(description = "음식의 칼로리", example = "137.0", requiredMode = Schema.RequiredMode.REQUIRED)
     private Double calorie;
 
+    @Schema(description = "음식의 점수", example = "1", requiredMode = Schema.RequiredMode.REQUIRED)
+    private int score;
+
     @Schema(description = "음식 정보 생성일시", example = "2023-01-01T00:00:00")
     private LocalDateTime createdAt;
 
@@ -44,6 +47,7 @@ public class FoodProfileResponse {
             food.getFoodType().getKoreanName(), 
             food.getIsProcessedFood(), 
             food.getCalorie(), 
+            food.getScore(),
             food.getCreatedAt(), 
             food.getUpdatedAt());
     }
