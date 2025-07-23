@@ -10,12 +10,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
-@Schema(description = "템플릿 식단 생성 요청 DTO")
-public record DietTemplateCreateRequest(
-    @Schema(description = "유저 ID", example = "1", requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotNull(message = "유저 ID는 필수입니다.")
-    Long userId,
-
+@Schema(description = "템플릿 식단 수정 요청 DTO")
+public record DietTemplateUpdateRequest(
     @Schema(description = "식단 이름", example = "나만의 다이어트 식단", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotBlank(message = "식단 이름은 필수입니다.")
     String name,

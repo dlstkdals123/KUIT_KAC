@@ -40,6 +40,22 @@ public record DietRecordProfileResponse(
                 .map(DietFoodProfileResponse::from)
                 .toList();
 
+        if (foodProfiles.isEmpty()) {
+            return null;
+        }
+
+        return from(foodProfiles, diet);
+    }
+
+    public static DietRecordProfileResponse from(Diet diet) {
+        List<DietFoodProfileResponse> foodProfiles = diet.getDietFoods().stream()
+                .map(DietFoodProfileResponse::from)
+                .toList();
+
+        return from(foodProfiles, diet);
+    }
+
+    private static DietRecordProfileResponse from(List<DietFoodProfileResponse> foodProfiles, Diet diet) {
         double totalKcal = foodProfiles.stream()
                 .mapToDouble(dietFood -> dietFood.quantity() * dietFood.food().getCalorie())
                 .sum();
@@ -47,8 +63,8 @@ public record DietRecordProfileResponse(
         return new DietRecordProfileResponse(
                 diet.getId(),
                 diet.getName(),
-                diet.getDietType().getKoreanName(),
-                diet.getDietEntryType().getKoreanName(),
+                diet.getDietType() != null ? diet.getDietType().getKoreanName() : null,
+                diet.getDietEntryType() != null ? diet.getDietEntryType().getKoreanName() : null,
                 diet.getCreatedAt(),
                 diet.getUpdatedAt(),
                 totalKcal,
