@@ -31,6 +31,11 @@ public class DietService {
         return dietRepository.findByUserIdAndDietEntryType(userId, dietEntryType);
     }
 
+    @Transactional(readOnly = true)
+    public List<Diet> getDietsByUserId(Long userId, DietType dietType) {
+        return dietRepository.findByUserIdAndDietType(userId, dietType);
+    }
+
     @Transactional
     public Diet createTemplateDiet(User user, String name, List<DietFoodCreateRequest> foods) {
         // diet_type = TEMPLATE, diet_entry_type = null
