@@ -117,16 +117,6 @@ public class DietController {
         return ResponseEntity.ok(response);
     }
 
-    @DeleteMapping("/general/{dietId}")
-    @Operation(summary = "식단, 계획, AI 계획 식단 삭제", description = "식단 ID를 입력하여 식단, 계획, AI 계획 식단을 삭제합니다.")
-    public ResponseEntity<Void> deleteGeneralDiet(
-            @PathVariable("dietId") Long dietId
-    ) {
-        Diet diet = dietService.getDietById(dietId);
-        dietService.deleteDiet(diet);
-        return ResponseEntity.noContent().build();
-    }
-
     @PutMapping("/general/{dietId}")
     @Operation(summary = "식단, 계획, AI 계획 식단 수정", description = "식단 ID와 식단 이름, 식단 항목 종류, 식단 음식을 입력하여 음식을 포함하는 식단을 수정합니다.")
     public ResponseEntity<DietRecordProfileResponse> updateGeneralDiet(
@@ -139,6 +129,16 @@ public class DietController {
         return ResponseEntity.ok(response);
     }
 
+    @DeleteMapping("/general/{dietId}")
+    @Operation(summary = "식단, 계획, AI 계획 식단 삭제", description = "식단 ID를 입력하여 식단, 계획, AI 계획 식단을 삭제합니다.")
+    public ResponseEntity<Void> deleteGeneralDiet(
+            @PathVariable("dietId") Long dietId
+    ) {
+        Diet diet = dietService.getDietById(dietId);
+        dietService.deleteDiet(diet);
+        return ResponseEntity.noContent().build();
+    }
+
     @PostMapping("/snack")
     @Operation(summary = "간식 식단 생성", description = "유저 ID와 식단 음식 섭취 시간을 입력하여 간식 식단을 생성합니다.")
     public ResponseEntity<DietRecordProfileResponse> createSnackDiet(
@@ -146,6 +146,18 @@ public class DietController {
     ) {
         User user = userService.getUserById(request.userId());
         Diet diet = dietService.createSnackDiet(user, request.name(), request.dietEntryType(), request.foods());
+        DietRecordProfileResponse response = DietRecordProfileResponse.from(diet);
+        return ResponseEntity.ok(response);
+    }
+
+    @PutMapping("/snack/{dietId}")
+    @Operation(summary = "간식 식단 수정", description = "식단 ID와 식단 음식 섭취 시간을 입력하여 간식 식단을 수정합니다.")
+    public ResponseEntity<DietRecordProfileResponse> updateSnackDiet(
+            @PathVariable("dietId") Long dietId,
+            @RequestBody @Valid DietSnackUpdateRequest request
+    ) {
+        Diet diet = dietService.getDietById(dietId);
+        dietService.updateSnackDiet(diet, request.name(), request.foods());
         DietRecordProfileResponse response = DietRecordProfileResponse.from(diet);
         return ResponseEntity.ok(response);
     }
