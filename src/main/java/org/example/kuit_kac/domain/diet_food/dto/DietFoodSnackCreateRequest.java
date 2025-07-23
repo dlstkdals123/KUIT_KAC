@@ -2,6 +2,7 @@ package org.example.kuit_kac.domain.diet_food.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Positive;
 
@@ -17,6 +18,7 @@ public record DietFoodSnackCreateRequest(
     @Schema(description = "음식 섭취량", example = "1.0", requiredMode = Schema.RequiredMode.REQUIRED)
     @Positive(message = "음식 섭취량은 0보다 커야 합니다.")
     @DecimalMin(value = "0.1", message = "음식 섭취량은 0.1 이상이어야 합니다.")
+    @DecimalMax(value = "100", message = "음식 섭취량은 100 이하이어야 합니다.")
     double quantity,
 
     @Schema(description = "음식 섭취 시간", example = "2025-07-22T12:00:00")
