@@ -16,8 +16,9 @@ public class WeightService {
 
     // 1. 가장 최근 최중 조회
     @Transactional(readOnly = true)
-    public Optional<Weight> getLatestWeightByUserId(Long userId) {
-        return weightRepository.findTopByUserIdOrderByCreatedAtDesc(userId);
+    public Weight getLatestWeightByUserId(Long userId) {
+        return weightRepository.findTopByUserIdOrderByCreatedAtDesc(userId)
+                .orElseThrow(()-> new RuntimeException("최근 체중 정보가 없습니다."));
     }
 
     // 2. 오늘의 체중 저장 or 수정
