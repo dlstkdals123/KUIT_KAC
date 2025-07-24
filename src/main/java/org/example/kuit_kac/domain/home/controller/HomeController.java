@@ -28,7 +28,7 @@ public class HomeController {
             @Parameter(description = "조회할 사용자의 고유 ID", example = "1")
             @RequestParam("userId") Long userId) {
 
-        List<Diet> diets = dietService.getDietsByUserId(userId, DietEntryType.RECORD, LocalDate.now());
+        List<Diet> diets = dietService.getDietsByUserId(userId, DietEntryType.RECORD);
 
         List<DietRecordProfileResponse> dietRecordResponses = diets.stream()
                 .map(DietRecordProfileResponse::from)
