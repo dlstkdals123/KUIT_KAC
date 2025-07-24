@@ -134,7 +134,7 @@ CREATE TABLE `routine` (
     `user_id`       bigint                NOT NULL,
     `name`          varchar(50)           NOT NULL,
     `routine_type`  ENUM('RECORD', 'TEMPLATE') NOT NULL,
-    `routine_date` datetime              NULL,
+    `routine_time` datetime              NULL,
     `created_at`    datetime              NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `updated_at`    datetime              NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON DELETE CASCADE

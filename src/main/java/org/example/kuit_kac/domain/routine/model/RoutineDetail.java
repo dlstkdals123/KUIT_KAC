@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-@Table(name = "exercise_detail")
+@Table(name = "routine_detail")
 public class RoutineDetail {
 
     @Id

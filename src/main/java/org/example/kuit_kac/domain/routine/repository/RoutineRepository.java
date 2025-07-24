@@ -10,5 +10,5 @@ import java.util.List;
 
 @Repository
 public interface RoutineRepository extends JpaRepository<Routine, Long> {
-    List<Routine> findByUserIdAndRoutineTypeAndRoutineDateTimeBetween(Long userId, RoutineType routineType, LocalDateTime startDateTime, LocalDateTime endDateTime);
+    List<Routine> findByUserIdAndRoutineTypeAndRoutineTimeBetween(Long userId, RoutineType routineType, LocalDateTime startDateTime, LocalDateTime endDateTime);
 }

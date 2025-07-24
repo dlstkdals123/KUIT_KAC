@@ -188,8 +188,8 @@ INSERT INTO `exercise` (`name`, `target_muscle_group`, `met_value`) VALUES
 ('카프 레이즈', 'CALVES', 3.5),
 ('크런치', 'ABDOMINALS', 3.0);
 
-INSERT INTO `routine` (`user_id`, `name`, `routine_date`, `routine_type`) VALUES
-(1, '상체 기록', CONCAT(CURDATE(), ' 08:00:00'), 'RECORD'),
+INSERT INTO `routine` (`user_id`, `name`, `routine_time`, `routine_type`) VALUES
+(1, '상체 기록', CONCAT(CURDATE(), ' 01:00:00'), 'RECORD'),
 (1, '하체 기록', CONCAT(CURDATE(), ' 12:00:00'), 'RECORD'),
 (1, '상체 루틴', null, 'TEMPLATE');
 
