@@ -1,8 +1,6 @@
 package org.example.kuit_kac.domain.routine.dto;
 
-import org.example.kuit_kac.domain.routine.model.Exercise;
 import org.example.kuit_kac.domain.routine.model.Routine;
-import org.example.kuit_kac.global.util.TimeRange;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.time.LocalDateTime;
@@ -29,24 +27,18 @@ public record RoutineRecordProfileResponse(
     LocalDateTime updatedAt,
 
     @Schema(description = "운동에 포함된 운동 목록", requiredMode = Schema.RequiredMode.REQUIRED)
-    List<RoutineProfileResponse> routineProfiles
+    List<RoutineExerciseProfileResponse> routineExerciseProfiles
 ) {
 
     public static RoutineRecordProfileResponse from(Routine routine) {
-        List<RoutineProfileResponse> routineProfiles = routine.getRoutineProfiles().stream()
-                .map(RoutineProfileResponse::from)
+        List<RoutineExerciseProfileResponse> routineExerciseProfiles = routine.getRoutineExercises().stream()
+                .map(RoutineExerciseProfileResponse::from)
                 .toList();
 
-        return from(routineProfiles, routine);
+        return from(routineExerciseProfiles, routine);
     }
 
-    private static RoutineRecordProfileResponse from(List<RoutineProfileResponse> routineProfiles, Routine routine) {
-        List<RoutineProfileResponse> routineProfileResponses = routineProfiles.stream()
-                .map(RoutineProfileResponse::food)
-                .toList();
-
-        RoutineStatusType routineStatusType = RoutineStatusType.getRoutineStatusType(routineProfileResponses);
-
+    private static RoutineRecordProfileResponse from(List<RoutineExerciseProfileResponse> routineExerciseProfiles, Routine routine) {
         return new RoutineRecordProfileResponse(
                 routine.getId(),
                 routine.getName(),
@@ -54,7 +46,7 @@ public record RoutineRecordProfileResponse(
                 routine.getRoutineTime(),
                 routine.getCreatedAt(),
                 routine.getUpdatedAt(),
-                routineProfiles
+                routineExerciseProfiles
         );
     }
 }
