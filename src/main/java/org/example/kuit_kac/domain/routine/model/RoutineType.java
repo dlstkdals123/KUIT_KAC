@@ -10,8 +10,8 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum RoutineType {
-    RECORD("RECORD", "기록 루틴"),
-    TEMPLATE("TEMPLATE", "템플릿 루틴");
+    RECORD("RECORD", "기록"),
+    TEMPLATE("TEMPLATE", "나만의 루틴");
 
     private final String value;
     private final String koreanName;

@@ -14,11 +14,11 @@ public record RoutineGeneralCreateRequest(
     @NotNull(message = "유저 ID는 필수입니다.")
     Long userId,
 
-    @Schema(description = "루틴 이름", example = "아침식단", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(description = "루틴 이름", example = "상체 루틴1", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotBlank(message = "루틴 이름은 필수입니다.")
     String name,
 
-    @Schema(description = "루틴 종류", example = "아침", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(description = "루틴 종류", example = "기록", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotBlank(message = "루틴 종류는 필수입니다.")
     String routineType,
 

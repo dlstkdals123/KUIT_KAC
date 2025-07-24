@@ -10,12 +10,12 @@ import java.util.List;
 
 @Schema(description = "일반 루틴 수정 요청 DTO")
 public record RoutineGeneralUpdateRequest(
-    @Schema(description = "루틴 이름", example = "아침식단", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(description = "루틴 이름", example = "상체 루틴1", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotBlank(message = "루틴 이름은 필수입니다.")
     String name,
 
     @Schema(description = "루틴 운동 목록", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotNull(message = "루틴 운동 목록은 필수입니다.")
-    @Size(min = 1, message = "음식은 한 개 이상 등록해야 합니다.")
+    @Size(min = 1, message = "루틴 운동 목록은 한 개 이상 등록해야 합니다.")
     List<@Valid RoutineExerciseCreateRequest> routineExercises
 ) {} 
