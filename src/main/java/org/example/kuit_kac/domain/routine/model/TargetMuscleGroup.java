@@ -1,4 +1,4 @@
-package org.example.kuit_kac.domain.exercise.model;
+package org.example.kuit_kac.domain.routine.model;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

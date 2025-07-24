@@ -19,6 +19,8 @@ public enum ErrorCode {
 
     TARGET_MUSCLE_GROUP_INVALID("TARGET_MUSCLE_GROUP_001", "유효하지 않은 근육 그룹 타입입니다."),
 
+    ROUTINE_TYPE_INVALID("ROUTINE_TYPE_001", "유효하지 않은 루틴 타입입니다."),
+
     // 유저(User) 관련 에러 코드
     USER_NOT_FOUND("USER_001", "존재하지 않는 유저입니다."),
 

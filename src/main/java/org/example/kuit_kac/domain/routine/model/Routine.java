@@ -1,4 +1,4 @@
-package org.example.kuit_kac.domain.exercise.model;
+package org.example.kuit_kac.domain.routine.model;
 
 import jakarta.persistence.*;
 import lombok.*;
@@ -45,12 +45,12 @@ public class Routine {
     @Column(nullable = false, length = 50)
     private String name;
 
-    @Column(nullable = true)
-    private LocalDateTime exerciseDate;
-
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private RoutineType type;
+    private RoutineType routineType;
+
+    @Column(nullable = true)
+    private LocalDateTime routineTime;
 
     @OneToMany(mappedBy = "routine", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RoutineExercise> routineExercises = new ArrayList<>();
@@ -72,11 +72,11 @@ public class Routine {
         this.updatedAt = LocalDateTime.now();
     }
 
-    public Routine(User user, String name, LocalDateTime exerciseDate, RoutineType type) {
+    public Routine(User user, String name, LocalDateTime routineTime, RoutineType routineType) {
         this.user = user;
         this.name = name;
-        this.exerciseDate = exerciseDate;
-        this.type = type;
+        this.routineTime = routineTime;
+        this.routineType = routineType;
     }
 
     public void addRoutineExercise(RoutineExercise routineExercise) {

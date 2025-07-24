@@ -1,37 +1,32 @@
-package org.example.kuit_kac.domain.exercise.model;
+package org.example.kuit_kac.domain.routine.model;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-@Table(name = "routine_exercise")
-@NamedEntityGraphs({
-    @NamedEntityGraph(
-        name = "RoutineExercise.withExercise", 
-        attributeNodes = @NamedAttributeNode("exercise")
-    )
-})
-public class RoutineExercise {
+@Table(name = "exercise_detail")
+public class RoutineDetail {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Setter
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "routine_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
-    private Routine routine;
+    @JoinColumn(name = "routine_exercise_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+    private RoutineExercise routineExercise;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "exercise_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
-    private Exercise exercise;
+    @Column(nullable = true)
+    private Integer time;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = true)
+    private Intensity intensity;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -48,10 +43,5 @@ public class RoutineExercise {
     @PreUpdate
     protected void onUpdate() {
         this.updatedAt = LocalDateTime.now();
-    }
-
-    public RoutineExercise(Routine routine, Exercise exercise) {
-        this.routine = routine;
-        this.exercise = exercise;
     }
 }

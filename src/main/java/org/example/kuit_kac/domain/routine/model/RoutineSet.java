@@ -1,4 +1,4 @@
-package org.example.kuit_kac.domain.exercise.model;
+package org.example.kuit_kac.domain.routine.model;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "exercise_set")
-public class ExerciseSet {
+public class RoutineSet {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
