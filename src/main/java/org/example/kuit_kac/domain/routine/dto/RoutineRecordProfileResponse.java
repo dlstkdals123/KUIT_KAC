@@ -17,9 +17,6 @@ public record RoutineRecordProfileResponse(
     @Schema(description = "루틴의 유형", example = "기록", requiredMode = Schema.RequiredMode.REQUIRED)
     String routineType,
 
-    @Schema(description = "루틴 시간", example = "2025-07-24T12:00:00")
-    LocalDateTime routineTime,
-
     @Schema(description = "식단 정보 생성일시", example = "2025-07-10T12:00:00")
     LocalDateTime createdAt,
 
@@ -43,7 +40,6 @@ public record RoutineRecordProfileResponse(
                 routine.getId(),
                 routine.getName(),
                 routine.getRoutineType() != null ? routine.getRoutineType().getKoreanName() : null,
-                routine.getRoutineTime(),
                 routine.getCreatedAt(),
                 routine.getUpdatedAt(),
                 routineExerciseProfiles

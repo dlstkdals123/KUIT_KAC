@@ -31,7 +31,13 @@ public enum ErrorCode {
     FOOD_NOT_FOUND("FOOD_001", "존재하지 않는 음식입니다."),
 
     // 식단 음식(DietFood) 관련 에러 코드
-    DIET_FOOD_NOT_FOUND("DIET_FOOD_001", "존재하지 않는 식단 음식입니다.");
+    DIET_FOOD_NOT_FOUND("DIET_FOOD_001", "존재하지 않는 식단 음식입니다."),
+    
+    // 루틴(Routine) 관련 에러 코드
+    ROUTINE_NOT_FOUND("ROUTINE_001", "존재하지 않는 루틴입니다."),
+    
+    // 운동(Exercise) 관련 에러 코드
+    EXERCISE_NOT_FOUND("EXERCISE_001", "존재하지 않는 운동입니다.");
 
     private final String code;
     private final String message;
