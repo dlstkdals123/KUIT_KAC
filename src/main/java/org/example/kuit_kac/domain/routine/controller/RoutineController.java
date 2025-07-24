@@ -42,20 +42,21 @@ public class RoutineController {
         return ResponseEntity.ok(responses);
     }
 
-//     @GetMapping("/template/profiles")
-//     @Operation(summary = "사용자 ID로 나만의 식단 조회", description = "제공된 사용자 ID를 사용하여 해당 사용자의 나만의 식단을 조회합니다.")
-//     public ResponseEntity<List<DietRecordProfileResponse>> getTemplateDiets(
-//             @Parameter(description = "조회할 사용자의 고유 ID", example = "1")
-//             @RequestParam("userId") Long userId) {
+    @GetMapping("/template/profiles")
+    @Operation(summary = "사용자 ID로 나만의 식단 조회", description = "제공된 사용자 ID를 사용하여 해당 사용자의 나만의 식단을 조회합니다.")
+    public ResponseEntity<List<RoutineRecordProfileResponse>> getTemplateDiets(
+            @Parameter(description = "조회할 사용자의 고유 ID", example = "1")
+            @RequestParam("userId") Long userId) {
 
-//         List<Diet> diets = dietService.getDietsByUserId(userId, DietType.TEMPLATE);
+        List<Routine> routines = routineService.getRoutinesByUserId(userId, RoutineType.TEMPLATE);
 
-//         List<DietRecordProfileResponse> responses = diets.stream()
-//                 .map(DietRecordProfileResponse::from)
-//                 .toList();
+        List<RoutineRecordProfileResponse> responses = routines.stream()
+                .map(RoutineRecordProfileResponse::from)
+                .filter(Objects::nonNull)
+                .toList();
 
-//         return ResponseEntity.ok(responses);
-//     }
+        return ResponseEntity.ok(responses);
+    }
 
 //     @PostMapping("/template")
 //     @Operation(summary = "나만의 식단 생성", description = "유저 ID와 식단 이름, 음식을 입력하여 나만의 식단을 생성합니다.")

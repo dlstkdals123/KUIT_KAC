@@ -19,7 +19,12 @@ public class RoutineService {
 
     @Transactional(readOnly = true)
     public List<Routine> getRoutinesByUserIdBetween(Long userId, RoutineType routineType, LocalDateTime startDateTime, LocalDateTime endDateTime) {
-        return routineRepository.findByUserIdAndRoutineTypeAndRoutineTimeBetween(userId, routineType, startDateTime, endDateTime);
+        return routineRepository.findByUserIdAndRoutineTypeAndCreatedAtBetween(userId, routineType, startDateTime, endDateTime);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Routine> getRoutinesByUserId(Long userId, RoutineType routineType) {
+        return routineRepository.findByUserIdAndRoutineType(userId, routineType);
     }
 
     // @Transactional

@@ -49,9 +49,6 @@ public class Routine {
     @Column(nullable = false)
     private RoutineType routineType;
 
-    @Column(nullable = true)
-    private LocalDateTime routineTime;
-
     @OneToMany(mappedBy = "routine", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RoutineExercise> routineExercises = new ArrayList<>();
 
@@ -72,10 +69,9 @@ public class Routine {
         this.updatedAt = LocalDateTime.now();
     }
 
-    public Routine(User user, String name, LocalDateTime routineTime, RoutineType routineType) {
+    public Routine(User user, String name, RoutineType routineType) {
         this.user = user;
         this.name = name;
-        this.routineTime = routineTime;
         this.routineType = routineType;
     }
 
