@@ -3,6 +3,9 @@ package org.example.kuit_kac.global.util;
 import org.example.kuit_kac.domain.diet.model.DietEntryType;
 import org.example.kuit_kac.domain.diet.model.DietType;
 import org.example.kuit_kac.domain.food.model.FoodType;
+import org.example.kuit_kac.domain.routine.model.Intensity;
+import org.example.kuit_kac.domain.routine.model.RoutineType;
+import org.example.kuit_kac.domain.routine.model.TargetMuscleGroup;
 import org.example.kuit_kac.domain.user.model.GenderType;
 
 import java.util.Arrays;
@@ -41,5 +44,29 @@ public class EnumConverter {
 
     public static FoodType fromKoreanFoodType(String koreanName) {
         return FOOD_TYPE_MAP.get(koreanName);
+    }
+
+    // Intensity 변환
+    private static final Map<String, Intensity> INTENSITY_MAP = Arrays.stream(Intensity.values())
+            .collect(Collectors.toMap(Intensity::getKoreanName, intensity -> intensity));
+
+    public static Intensity fromKoreanIntensity(String koreanName) {
+        return INTENSITY_MAP.get(koreanName);
+    }
+
+    // TargetMuscleGroup 변환
+    private static final Map<String, TargetMuscleGroup> TARGET_MUSCLE_GROUP_MAP = Arrays.stream(TargetMuscleGroup.values())
+            .collect(Collectors.toMap(TargetMuscleGroup::getKoreanName, targetMuscleGroup -> targetMuscleGroup));
+
+    public static TargetMuscleGroup fromKoreanTargetMuscleGroup(String koreanName) {
+        return TARGET_MUSCLE_GROUP_MAP.get(koreanName);
+    }
+
+    // RoutineType 변환
+    private static final Map<String, RoutineType> ROUTINE_TYPE_MAP = Arrays.stream(RoutineType.values())
+            .collect(Collectors.toMap(RoutineType::getKoreanName, routineType -> routineType));
+
+    public static RoutineType fromKoreanRoutineType(String koreanName) {
+        return ROUTINE_TYPE_MAP.get(koreanName);
     }
 } 
