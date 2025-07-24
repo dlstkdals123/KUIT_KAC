@@ -47,8 +47,8 @@ public class RoutineController {
     }
 
     @GetMapping("/template/profiles")
-    @Operation(summary = "사용자 ID로 나만의 식단 조회", description = "제공된 사용자 ID를 사용하여 해당 사용자의 나만의 식단을 조회합니다.")
-    public ResponseEntity<List<RoutineRecordProfileResponse>> getTemplateDiets(
+    @Operation(summary = "사용자 ID로 나만의 루틴 조회", description = "제공된 사용자 ID를 사용하여 해당 사용자의 나만의 루틴을 조회합니다.")
+    public ResponseEntity<List<RoutineRecordProfileResponse>> getTemplateRoutines(
             @Parameter(description = "조회할 사용자의 고유 ID", example = "1")
             @RequestParam("userId") Long userId) {
 
