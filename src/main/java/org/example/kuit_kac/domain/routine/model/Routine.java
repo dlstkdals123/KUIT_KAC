@@ -42,6 +42,7 @@ public class Routine {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    @Setter
     @Column(nullable = false, length = 50)
     private String name;
 
