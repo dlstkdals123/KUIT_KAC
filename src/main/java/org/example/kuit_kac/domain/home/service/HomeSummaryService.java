@@ -23,6 +23,7 @@ import java.util.List;
 public class HomeSummaryService {
     private final DietService dietService;
 
+    // 하루 섭취 영양소 요약
     @Transactional(readOnly = true)
     public HomeSummaryResponse getTodayHomeSummary(long userId) {
         List<FoodSummary> foodSummaries = dietService.getTodayFoodSummary(userId, LocalDate.now());
@@ -62,6 +63,7 @@ public class HomeSummaryService {
         return Math.round(value * 100.0) / 100.0;
     }
 
+    // 기초대사량 계산
     public double calculateDailyCalorieGoal(User user, UserInformation info, double currentWeight) {
         int age = user.getAge();
         double bmr = (user.getGender() == GenderType.MALE)

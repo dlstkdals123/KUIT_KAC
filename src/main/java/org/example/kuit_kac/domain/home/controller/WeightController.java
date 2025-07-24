@@ -21,10 +21,9 @@ public class WeightController {
         return ResponseEntity.ok(HomeWeightResponse.from(weight));
     }
 
-    @PutMapping("/{userId}")
-    public ResponseEntity<Void> updateWeight(@PathVariable Long userId,
-                                             @RequestBody HomeWeightRequest request) {
-        weightService.saveOrUpdateTodayWeight(userId, request.getWeight());
+    @PutMapping
+    public ResponseEntity<Void> updateWeight(@RequestBody HomeWeightRequest request) {
+        weightService.saveOrUpdateTodayWeight(request.getUserId(), request.getWeight());
         return ResponseEntity.ok().build();
     }
 }

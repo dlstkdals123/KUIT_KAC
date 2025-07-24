@@ -8,6 +8,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class HomeWeightRequest {
-    private long userId;
+    private Long userId;
     private double weight;
 }

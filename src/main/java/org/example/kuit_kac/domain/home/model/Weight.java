@@ -19,7 +19,7 @@ public class Weight {
     private long id;
 
     @Column(name = "user_id", nullable = false)
-    private long user_id;
+    private long userId;
 
     @Column(name = "weight", nullable = false)
     private double weight;
@@ -43,7 +43,7 @@ public class Weight {
 
     @Builder
     public Weight(long user_id, double weight) {
-        this.user_id = user_id;
+        this.userId = user_id;
         this.weight = weight;
     }
 

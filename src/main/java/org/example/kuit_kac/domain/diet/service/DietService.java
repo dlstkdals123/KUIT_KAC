@@ -114,6 +114,7 @@ public class DietService {
         return diet;
     }
 
+    // 하루 섭취 음식 조회
     @Transactional(readOnly = true)
     public List<FoodSummary> getTodayFoodSummary(long userId, LocalDate date) {
         LocalDateTime startOfDay = date.atStartOfDay(); // 00:00:00
