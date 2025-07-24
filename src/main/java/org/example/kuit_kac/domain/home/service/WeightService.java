@@ -17,13 +17,13 @@ public class WeightService {
     // 1. 가장 최근 최중 조회
     @Transactional(readOnly = true)
     public Optional<Weight> getLatestWeightByUserId(Long userId) {
-        return weightRepository.findTopByUserIdOrderByCreatedAtDesc();
+        return weightRepository.findTopByUserIdOrderByCreatedAtDesc(userId);
     }
 
     // 2. 오늘의 체중 저장 or 수정
     @Transactional
     public Weight saveOrUpdateTodayWeight(Long userId, double weightValue) {
-        Optional<Weight> latestWeightOpt = weightRepository.findTopByUserIdOrderByCreatedAtDesc();
+        Optional<Weight> latestWeightOpt = weightRepository.findTopByUserIdOrderByCreatedAtDesc(userId);
 
         LocalDate today = LocalDate.now();
 

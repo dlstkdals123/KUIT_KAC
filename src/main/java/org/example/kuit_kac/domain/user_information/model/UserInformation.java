@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.example.kuit_kac.domain.home.model.DietVelocity;
+import org.example.kuit_kac.domain.user.model.User;
 
 @Getter
 @NoArgsConstructor
@@ -11,11 +12,14 @@ import org.example.kuit_kac.domain.home.model.DietVelocity;
 @Table(name = "user_information")
 public class UserInformation {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
-
     @Column(name = "user_id", nullable = false)
     private long userId;
+
+    @OneToOne
+    @MapsId
+    @JoinColumn(name = "user_id")
+    private User user;
+
 
     @Enumerated(EnumType.STRING)
     @Column(name = "diet_velocity", nullable = false)
