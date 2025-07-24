@@ -4,8 +4,8 @@ DROP TABLE IF EXISTS `diet_food`;
 DROP TABLE IF EXISTS `diet`;
 DROP TABLE IF EXISTS `weight`;
 DROP TABLE IF EXISTS `user_information`;
-DROP TABLE IF EXISTS `exercise_set`;
-DROP TABLE IF EXISTS `exercise_detail`;
+DROP TABLE IF EXISTS `routine_set`;
+DROP TABLE IF EXISTS `routine_detail`;
 DROP TABLE IF EXISTS `routine_exercise`;
 DROP TABLE IF EXISTS `routine`;
 DROP TABLE IF EXISTS `aifood`;
@@ -133,8 +133,8 @@ CREATE TABLE `routine` (
     `id`            bigint AUTO_INCREMENT NOT NULL PRIMARY KEY,
     `user_id`       bigint                NOT NULL,
     `name`          varchar(50)           NOT NULL,
-    `exercise_date` datetime              NULL,
-    `type`          ENUM('RECORD', 'TEMPLATE') NOT NULL,
+    `routine_type`  ENUM('RECORD', 'TEMPLATE') NOT NULL,
+    `routine_date` datetime              NULL,
     `created_at`    datetime              NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `updated_at`    datetime              NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON DELETE CASCADE
@@ -159,7 +159,7 @@ CREATE TABLE `routine_exercise` (
     FOREIGN KEY (`exercise_id`) REFERENCES `exercise`(`id`) ON DELETE CASCADE
 );
 
-CREATE TABLE `exercise_detail` (
+CREATE TABLE `routine_detail` (
     `id`                    bigint AUTO_INCREMENT NOT NULL PRIMARY KEY,
     `routine_exercise_id`   bigint                NOT NULL,
     `time`                  int                   NULL,
@@ -169,7 +169,7 @@ CREATE TABLE `exercise_detail` (
     FOREIGN KEY (`routine_exercise_id`) REFERENCES `routine_exercise`(`id`) ON DELETE CASCADE
 );
 
-CREATE TABLE `exercise_set` (
+CREATE TABLE `routine_set` (
     `id`                    bigint AUTO_INCREMENT NOT NULL PRIMARY KEY,
     `routine_exercise_id`   bigint                NOT NULL,
     `count`                 int                   NULL DEFAULT 0,
