@@ -8,7 +8,7 @@ DROP TABLE IF EXISTS `routine_set`;
 DROP TABLE IF EXISTS `routine_detail`;
 DROP TABLE IF EXISTS `routine_exercise`;
 DROP TABLE IF EXISTS `routine`;
-DROP TABLE IF EXISTS `aifood`;
+DROP TABLE IF EXISTS `aifood`;x
 DROP TABLE IF EXISTS `food`;
 DROP TABLE IF EXISTS `user`;
 DROP TABLE IF EXISTS `exercise`;
@@ -134,7 +134,6 @@ CREATE TABLE `routine` (
     `user_id`       bigint                NOT NULL,
     `name`          varchar(50)           NOT NULL,
     `routine_type`  ENUM('RECORD', 'TEMPLATE') NOT NULL,
-    `routine_time` datetime              NULL,
     `created_at`    datetime              NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `updated_at`    datetime              NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON DELETE CASCADE
