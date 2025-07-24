@@ -18,7 +18,7 @@ public class RoutineService {
     private final RoutineRepository routineRepository;
 
     @Transactional(readOnly = true)
-    public List<Routine> getRoutinesByUserId(Long userId, RoutineType routineType, LocalDateTime startDateTime, LocalDateTime endDateTime) {
+    public List<Routine> getRoutinesByUserIdBetween(Long userId, RoutineType routineType, LocalDateTime startDateTime, LocalDateTime endDateTime) {
         return routineRepository.findByUserIdAndRoutineTypeAndRoutineDateTimeBetween(userId, routineType, startDateTime, endDateTime);
     }
 
