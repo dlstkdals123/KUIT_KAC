@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.AccessLevel;
-import lombok.Builder;
 import org.example.kuit_kac.domain.diet_food.model.DietFood;
 import org.example.kuit_kac.domain.diet_food.model.DietAifood;
 import org.example.kuit_kac.domain.user.model.User;
@@ -63,23 +62,18 @@ public class Diet {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
-
+    
+    @Setter
     @Column(nullable = false, length = 30)
     private String name;
 
-    @Setter
     @Enumerated(EnumType.STRING)
     @Column(name = "diet_type", nullable = false)
     private DietType dietType;
 
-    @Setter
     @Enumerated(EnumType.STRING)
     @Column(name = "diet_entry_type")
     private DietEntryType dietEntryType;
-
-    @Setter
-    @Column(name = "diet_time", nullable = false)
-    private LocalDateTime dietTime;
 
     @OneToMany(mappedBy = "diet", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<DietFood> dietFoods = new ArrayList<>();
@@ -104,13 +98,11 @@ public class Diet {
         this.updatedAt = LocalDateTime.now();
     }
 
-    @Builder
-    public Diet(User user, String name, DietType dietType, DietEntryType dietEntryType, LocalDateTime dietTime) {
+    public Diet(User user, String name, DietType dietType, DietEntryType dietEntryType) {
         this.user = user;
         this.name = name;
         this.dietType = dietType;
         this.dietEntryType = dietEntryType;
-        this.dietTime = dietTime;
     }
 
     public void addDietFood(DietFood dietFood) {
