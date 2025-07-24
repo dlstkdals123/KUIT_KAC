@@ -18,7 +18,6 @@ import org.example.kuit_kac.domain.user.service.UserService;
 
 import jakarta.validation.Valid;
 import java.util.Objects;
-
 @RestController
 @RequestMapping("/diets")
 @Tag(name = "식단 관리", description = "식단을 생성하고 관리하는 API입니다.")

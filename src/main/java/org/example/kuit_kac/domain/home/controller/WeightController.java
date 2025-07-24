@@ -16,8 +16,7 @@ public class WeightController {
 
     @GetMapping("/{userId}")
     public ResponseEntity<HomeWeightResponse> getLatestWeight(@PathVariable Long userId) {
-        Weight weight = weightService.getLatestWeightByUserId(userId)
-                .orElseThrow(() -> new RuntimeException("체중 기록 없음")); // 기록없을경우
+        Weight weight = weightService.getLatestWeightByUserId(userId);
         return ResponseEntity.ok(HomeWeightResponse.from(weight));
     }
 
