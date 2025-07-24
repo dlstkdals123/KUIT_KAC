@@ -1,29 +1,57 @@
 package org.example.kuit_kac.domain.exercise.model;
 
-import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
-import lombok.*;
+import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "routine_exercise")
-@Schema(description = "루틴별 운동")
+@NamedEntityGraphs({
+    @NamedEntityGraph(
+        name = "RoutineExercise.withExercise", 
+        attributeNodes = @NamedAttributeNode("exercise")
+    )
+})
 public class RoutineExercise {
-    @Schema(description = "루틴-운동 ID")
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Schema(description = "루틴 ID")
-    private Long routineId;
+    @Setter
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "routine_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+    private Routine routine;
 
-    @Schema(description = "운동 ID")
-    private Long exerciseId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "exercise_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+    private Exercise exercise;
 
-    @Schema(description = "생성일")
+    @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    @Schema(description = "수정일")
+    @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
+
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    public RoutineExercise(Routine routine, Exercise exercise) {
+        this.routine = routine;
+        this.exercise = exercise;
+    }
 }

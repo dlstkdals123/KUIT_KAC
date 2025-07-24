@@ -1,35 +1,86 @@
 package org.example.kuit_kac.domain.exercise.model;
 
-import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
+
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.example.kuit_kac.domain.user.model.User;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "routine")
-@Schema(description = "운동 루틴")
+@NamedEntityGraphs({
+    // Routine.withRoutineExercisesAndExercise: routineExercises -> exercise 를 페치
+    @NamedEntityGraph(
+        name = "Routine.withRoutineExercisesAndExercise",
+        attributeNodes = @NamedAttributeNode(
+            value = "routineExercises",
+            subgraph = "routineExercisesSubgraph"
+        ),
+        subgraphs = @NamedSubgraph(
+            name = "routineExercisesSubgraph",
+            attributeNodes = @NamedAttributeNode("exercise")
+        )
+    ),
+    // Routine.withRoutineExercises: routineExercises 필드를 페치
+    @NamedEntityGraph(
+        name = "Routine.withRoutineExercises",
+        attributeNodes = @NamedAttributeNode("routineExercises")
+    )
+})
+
 public class Routine {
-    @Schema(description = "루틴 ID")
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Schema(description = "유저 ID")
-    private Long userId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
-    @Schema(description = "루틴 이름")
+    @Column(nullable = false, length = 50)
     private String name;
 
-    @Schema(description = "운동 날짜")
+    @Column(nullable = true)
     private LocalDateTime exerciseDate;
 
-    @Schema(description = "루틴 타입")
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private RoutineType type;
 
-    @Schema(description = "생성일")
+    @OneToMany(mappedBy = "routine", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<RoutineExercise> routineExercises = new ArrayList<>();
+
+    @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    @Schema(description = "수정일")
+    @Column(nullable = false)
     private LocalDateTime updatedAt;
+
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    public Routine(User user, String name, LocalDateTime exerciseDate, RoutineType type) {
+        this.user = user;
+        this.name = name;
+        this.exerciseDate = exerciseDate;
+        this.type = type;
+    }
+
+    public void addRoutineExercise(RoutineExercise routineExercise) {
+        this.routineExercises.add(routineExercise);
+        routineExercise.setRoutine(this);
+    }
 }

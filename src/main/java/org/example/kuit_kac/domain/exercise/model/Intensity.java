@@ -1,13 +1,28 @@
 package org.example.kuit_kac.domain.exercise.model;
 
-import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import org.example.kuit_kac.global.util.EnumConverter;
+import org.example.kuit_kac.exception.CustomException;
+import org.example.kuit_kac.exception.ErrorCode;
 
-@Schema(description = "운동 강도")
+@Getter
+@RequiredArgsConstructor
 public enum Intensity {
-    @Schema(description = "느슨함")
-    LOOSE,
-    @Schema(description = "보통")
-    NORMAL,
-    @Schema(description = "강함")
-    TIGHT
+    LOOSE("LOOSE", "느슨함"),
+    NORMAL("NORMAL", "보통"),
+    TIGHT("TIGHT", "강함");
+
+    private final String value;
+    private final String koreanName;
+
+    public static Intensity getIntensity(String intensity) {
+        Intensity fromKorean = EnumConverter.fromKoreanIntensity(intensity);
+        if (fromKorean != null) return fromKorean;
+        try {
+            return Intensity.valueOf(intensity.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new CustomException(ErrorCode.INTENSITY_INVALID);
+        }
+    }
 }
