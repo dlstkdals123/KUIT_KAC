@@ -1,44 +1,58 @@
 package org.example.kuit_kac.domain.exercise.model;
 
-import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
-import lombok.*;
+import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
 import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "exercise_set")
-@Schema(description = "운동 세트")
 public class ExerciseSet {
-    @Schema(description = "세트 ID")
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Schema(description = "루틴-운동 ID")
-    private Long routineExerciseId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "routine_exercise_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+    private RoutineExercise routineExercise;
 
-    @Schema(description = "횟수")
-    private Integer count;
+    @Column(nullable = true)
+    private Integer count = 0;
 
-    @Schema(description = "무게(kg)")
-    private Integer weightKg;
+    @Column(name = "weight_kg", nullable = true)
+    private Integer weightKg = 0;
 
-    @Schema(description = "무게 개수")
-    private Integer weightNum;
+    @Column(name = "weight_num", nullable = true)
+    private Integer weightNum = 0;
 
-    @Schema(description = "거리")
-    private Integer distance;
+    @Column(nullable = true)
+    private Integer distance = 0;
 
-    @Schema(description = "시간")
-    private Double time;
+    @Column(nullable = true)
+    private Double time = 0.0;
 
-    @Schema(description = "세트 순서")
-    private Integer setOrder;
+    @Column(name = "set_order", nullable = true)
+    private Integer setOrder = 0;
 
-    @Schema(description = "생성일")
+    @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    @Schema(description = "수정일")
+    @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
+
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        this.updatedAt = LocalDateTime.now();
+    }
 }

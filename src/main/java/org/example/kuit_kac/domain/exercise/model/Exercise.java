@@ -1,9 +1,9 @@
 package org.example.kuit_kac.domain.exercise.model;
 
-import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
-import lombok.*;
+import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
@@ -11,23 +11,36 @@ import java.time.LocalDateTime;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 @Table(name = "exercise")
-@Schema(description = "운동 종목")
 public class Exercise {
-    @Schema(description = "운동 ID")
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Schema(description = "운동 이름")
+    @Column(nullable = true, length = 40)
     private String name;
 
-    @Schema(description = "타겟 근육 그룹")
-    private String targetMuscleGroup;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "target_muscle_group", nullable = false)
+    private TargetMuscleGroup targetMuscleGroup;
 
-    @Schema(description = "MET 값")
-    private Double metValue;
+    @Column(name = "met_value", nullable = true)
+    private Double metValue = 0.0;
 
-    @Schema(description = "생성일")
+    @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
-    @Schema(description = "수정일")
+    @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
+
+    @PrePersist
+    protected void onCreate() {
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        this.updatedAt = LocalDateTime.now();
+    }
 }

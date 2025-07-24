@@ -4,6 +4,8 @@ import org.example.kuit_kac.domain.diet.model.DietEntryType;
 import org.example.kuit_kac.domain.diet.model.DietType;
 import org.example.kuit_kac.domain.food.model.FoodType;
 import org.example.kuit_kac.domain.user.model.GenderType;
+import org.example.kuit_kac.domain.exercise.model.Intensity;
+import org.example.kuit_kac.domain.exercise.model.TargetMuscleGroup;
 
 import java.util.Arrays;
 import java.util.Map;
@@ -41,5 +43,21 @@ public class EnumConverter {
 
     public static FoodType fromKoreanFoodType(String koreanName) {
         return FOOD_TYPE_MAP.get(koreanName);
+    }
+
+    // Intensity 변환
+    private static final Map<String, Intensity> INTENSITY_MAP = Arrays.stream(Intensity.values())
+            .collect(Collectors.toMap(Intensity::getKoreanName, intensity -> intensity));
+
+    public static Intensity fromKoreanIntensity(String koreanName) {
+        return INTENSITY_MAP.get(koreanName);
+    }
+
+    // TargetMuscleGroup 변환
+    private static final Map<String, TargetMuscleGroup> TARGET_MUSCLE_GROUP_MAP = Arrays.stream(TargetMuscleGroup.values())
+            .collect(Collectors.toMap(TargetMuscleGroup::getKoreanName, targetMuscleGroup -> targetMuscleGroup));
+
+    public static TargetMuscleGroup fromKoreanTargetMuscleGroup(String koreanName) {
+        return TARGET_MUSCLE_GROUP_MAP.get(koreanName);
     }
 } 
