@@ -8,6 +8,13 @@ import lombok.RequiredArgsConstructor;
 import org.example.kuit_kac.domain.diet.dto.*;
 import org.example.kuit_kac.domain.diet.model.*;
 import org.example.kuit_kac.domain.diet.service.*;
+import org.example.kuit_kac.domain.home.dto.HomeNutritionResponse;
+import org.example.kuit_kac.domain.home.dto.HomeSummaryResponse;
+import org.example.kuit_kac.domain.home.dto.HomeWeightRequest;
+import org.example.kuit_kac.domain.home.dto.HomeWeightResponse;
+import org.example.kuit_kac.domain.home.model.Weight;
+import org.example.kuit_kac.domain.home.service.HomeSummaryService;
+import org.example.kuit_kac.domain.home.service.WeightService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,24 +23,38 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/home")
-@Tag(name = "홈", description = "식단 정보 조회, 생성, 수정, 삭제 등 식단 관련 기능을 제공합니다.")
+@Tag(name = "홈", description = "하루의 남은 칼로리, 일주일 요약 관련 기능을 제공합니다.")
 @RequiredArgsConstructor
 public class HomeController {
 
-    private final DietService dietService;
+    private final HomeSummaryService homeSummaryService;
+    private final WeightService weightService;
 
-    @GetMapping("/records/profiles")
-    @Operation(summary = "사용자 ID로 식단 기록 조회", description = "제공된 사용자 ID를 사용하여 해당 사용자의 오늘의 식단 기록을 조회합니다.")
-    public ResponseEntity<List<DietRecordProfileResponse>> getDietRecords(
+    @GetMapping("/summary")
+    @Operation(summary = "홈 요약", description = "제공된 사용자 ID를 사용하여 오늘 남은 칼로리, 목표 일일 칼로리, 현재 체중을 제공합니다.")
+    public ResponseEntity<HomeSummaryResponse> getHomeSummary(
             @Parameter(description = "조회할 사용자의 고유 ID", example = "1")
             @RequestParam("userId") Long userId) {
 
-        List<Diet> diets = dietService.getDietsByUserId(userId, DietEntryType.RECORD);
+        HomeSummaryResponse response = homeSummaryService.getTodayHomeSummary(userId);
+        return ResponseEntity.ok(response);
+    }
 
-        List<DietRecordProfileResponse> dietRecordResponses = diets.stream()
-                .map(DietRecordProfileResponse::from)
-                .toList();
+    @GetMapping("weight/{userId}")
+    @Operation(summary = "오늘 섭취 영양소", description = "오늘 섭취한 영양소들의 목표량, 섭취량, 섭취비율을 제공합니다.")
+    public ResponseEntity<HomeWeightResponse> getLatestWeight(@PathVariable Long userId) {
+        Weight weight = weightService.getLatestWeightByUserId(userId);
+        return ResponseEntity.ok(HomeWeightResponse.from(weight));
+    }
 
-        return ResponseEntity.ok(dietRecordResponses);
+    @PutMapping("weight")
+    public ResponseEntity<Void> updateWeight(@RequestBody HomeWeightRequest request) {
+        weightService.saveOrUpdateTodayWeight(request.getUserId(), request.getWeight());
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("nutrition")
+    public ResponseEntity<HomeNutritionResponse> getNutrition(@PathVariable Long userId) {
+
     }
 }

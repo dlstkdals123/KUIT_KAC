@@ -16,6 +16,7 @@ import org.example.kuit_kac.domain.user.service.UserService;
 import org.example.kuit_kac.domain.user_information.model.UserInformation;
 import org.example.kuit_kac.domain.user_information.repository.UserInformationRepository;
 import org.example.kuit_kac.domain.user_information.service.UserInformationService;
+import org.example.kuit_kac.global.util.TimeRange;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,7 +29,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 // TODO: 컨트롤러로 로직분리
 public class HomeSummaryService {
-    private final DietService dietService;
     private final DietRepository dietRepository;
     private final UserService userService;
     private final UserInformationService userInformationService;
@@ -36,13 +36,12 @@ public class HomeSummaryService {
 
     // 하루 섭취 영양소 요약
     @Transactional(readOnly = true)
-    public HomeSummaryResponse getTodayHomeSummary(long userId, LocalDate date) {
-        /*
-        TODO 가져와야하는 정보: 일일섭취목표 - 오늘 먹은 음식들의 칼로리 합산 - 운동해서 소모한 칼로리 = 몇칼로리 남았는지 계산(음수 반환 가능)
-         */
+    public HomeSummaryResponse getTodayHomeSummary(Long userId) {
+        // 가져와야하는 정보: 일일섭취목표 - 오늘 먹은 음식들의 칼로리 합산 - 운동해서 소모한 칼로리 = 몇칼로리 남았는지 계산(음수 반환 가능)
 
-        LocalDateTime startOfDay = date.atStartOfDay(); // 00:00:00
-        LocalDateTime endOfDay = date.plusDays(1).atStartOfDay().minusNanos(1); // 23:59:59
+        TimeRange timeRange = TimeRange.getTodayDietTimeRange();
+        LocalDateTime startOfDay = timeRange.start();
+        LocalDateTime endOfDay = timeRange.end();
 
         // 날짜정보로 식단기록 가져오기
         List<Diet> diets = dietRepository.findByUserIdAndDietTimeBetween(userId, startOfDay, endOfDay);
@@ -58,12 +57,16 @@ public class HomeSummaryService {
             }
         }
 
+        double currentWeight = weightService.getLatestWeightByUserId(userId).getWeight();
+        // TODO 운동소모 칼로리 더미데이터 300.0kcal
+        double remainingKCalorie = totalKCalorie - 300.0;
 
-
-        return calculateDailyKCalorieGoal(userId)
-
-
-
+        return new HomeSummaryResponse(
+                calculateDailyKCalorieGoal(userId), // 일일섭취목표
+                totalKCalorie,
+                currentWeight,
+                remainingKCalorie
+        );
     }
 
     // 소수점 둘째자리까지 반올림
