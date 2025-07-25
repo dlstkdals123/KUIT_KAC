@@ -102,6 +102,10 @@ dependencies {
     // Spring Boot Starter Validation: Bean Validation 기능을 제공하는 의존성입니다.
     // 'validation' 패키지에 있는 모든 검증 어노테이션(예: @Valid, @NotNull, @NotBlank 등)을 사용할 수 있습니다.
     implementation("org.springframework.boot:spring-boot-starter-validation")
+
+    // OpenAI Java: OpenAI API를 사용하기 위한 클라이언트 라이브러리입니다.
+    implementation("com.theokanning.openai-gpt3-java:api:0.12.0")
+    implementation("com.theokanning.openai-gpt3-java:service:0.12.0")
 }
 
 tasks.withType<Test> {
