@@ -19,9 +19,9 @@ INSERT INTO `diet` (`user_id`, `name`, `diet_type`, `diet_entry_type`) VALUES
 (1, '나만의 아침', 'TEMPLATE', NULL),
 (1, '나만의 점심', 'TEMPLATE', NULL),
 (1, '나만의 저녁', 'TEMPLATE', NULL),
-(2, '아침 계획', 'BREAKFAST', 'PLAN'),
-(2, '점심 계획', 'LUNCH', 'PLAN'),
-(2, '저녁 계획', 'DINNER', 'PLAN'),
+(2, NULL, 'BREAKFAST', 'PLAN'),
+(2, NULL, 'LUNCH', 'PLAN'),
+(2, NULL, 'DINNER', 'PLAN'),
 (2, NULL, 'BREAKFAST', 'FASTING');
 
 
@@ -144,12 +144,12 @@ INSERT INTO `diet_food` (`diet_id`, `food_id`, `quantity`, `diet_time`) VALUES
 (5, 23, 0.7, NULL),
 (6, 25, 2.0, NULL),
 (6, 27, 1.1, NULL),
-(7, 29, 1.3, CONCAT(CURDATE(), ' 08:00:00')),
-(7, 31, 2.4, CONCAT(CURDATE(), ' 08:00:00')),
-(8, 33, 0.6, CONCAT(CURDATE(), ' 12:00:00')),
-(8, 35, 1.8, CONCAT(CURDATE(), ' 12:00:00')),
-(9, 37, 2.5, CONCAT(CURDATE(), ' 18:00:00')),
-(9, 39, 0.5, CONCAT(CURDATE(), ' 18:00:00'));
+(7, 29, 1.3, CONCAT(CURDATE(), ' 03:00:00')),
+(7, 31, 2.4, CONCAT(CURDATE(), ' 03:00:00')),
+(8, 33, 0.6, CONCAT(CURDATE(), ' 03:00:00')),
+(8, 35, 1.8, CONCAT(CURDATE(), ' 03:00:00')),
+(9, 37, 2.5, CONCAT(CURDATE(), ' 03:00:00')),
+(9, 39, 0.5, CONCAT(CURDATE(), ' 03:00:00'));
 
 -- diet_aifood 샘플 데이터
 INSERT INTO `diet_aifood` (`diet_id`, `aifood_id`, `quantity`, `diet_time`) VALUES
@@ -165,12 +165,12 @@ INSERT INTO `diet_aifood` (`diet_id`, `aifood_id`, `quantity`, `diet_time`) VALU
 (5, 5, 1.7, NULL),
 (6, 4, 2.2, NULL),
 (6, 1, 0.6, NULL),
-(7, 3, 1.8, CONCAT(CURDATE(), ' 08:00:00')),
-(7, 5, 2.0, CONCAT(CURDATE(), ' 08:00:00')),
-(8, 5, 0.9, CONCAT(CURDATE(), ' 12:00:00')),
-(8, 2, 1.4, CONCAT(CURDATE(), ' 12:00:00')),
-(9, 3, 2.5, CONCAT(CURDATE(), ' 18:00:00')),
-(9, 4, 0.5, CONCAT(CURDATE(), ' 18:00:00'));
+(7, 3, 1.8, CONCAT(CURDATE(), ' 03:00:00')),
+(7, 5, 2.0, CONCAT(CURDATE(), ' 03:00:00')),
+(8, 5, 0.9, CONCAT(CURDATE(), ' 03:00:00')),
+(8, 2, 1.4, CONCAT(CURDATE(), ' 03:00:00')),
+(9, 3, 2.5, CONCAT(CURDATE(), ' 03:00:00')),
+(9, 4, 0.5, CONCAT(CURDATE(), ' 03:00:00'));
 
 -- 운동 관련 샘플 데이터
 

@@ -11,8 +11,8 @@ import java.util.List;
 
 import org.example.kuit_kac.domain.diet_food.dto.DietFoodCreateRequest;
 
-@Schema(description = "일반 식단 수정 요청 DTO")
-public record DietGeneralUpdateRequest(
+@Schema(description = "식단 기록 수정 요청 DTO")
+public record DietRecordUpdateRequest(
     @Schema(description = "식단 이름", example = "아침식단", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotBlank(message = "식단 이름은 필수입니다.")
     String name,
