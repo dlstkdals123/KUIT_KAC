@@ -6,7 +6,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 import org.example.kuit_kac.domain.diet_food.dto.DietFoodCreateRequest;
@@ -17,9 +17,9 @@ public record DietRecordUpdateRequest(
     @NotBlank(message = "식단 이름은 필수입니다.")
     String name,
 
-    @Schema(description = "식단 음식 섭취 시간", example = "2025-07-22T12:00:00")
+    @Schema(description = "식단 음식 섭취 시간", example = "12:00:00")
     @NotNull(message = "식단 음식 섭취 시간은 필수입니다.")
-    LocalDateTime dietTime,
+    LocalTime dietTime,
 
     @Schema(description = "음식 목록", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotNull(message = "음식 목록은 필수입니다.")

@@ -11,6 +11,7 @@ import org.example.kuit_kac.domain.food.model.Food;
 import org.example.kuit_kac.domain.food.service.FoodService;
 import org.example.kuit_kac.domain.diet.model.Diet;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -36,7 +37,8 @@ public class DietFoodService {
         List<DietFood> dietFoods = foodRequests.stream()
                 .map(foodReq -> {
                     Food food = foodService.getFoodById(foodReq.foodId());
-                    return new DietFood(diet, food, foodReq.quantity(), foodReq.dietTime());
+                    LocalDateTime dietDateTime = foodReq.dietTime().atDate(LocalDate.now());
+                    return new DietFood(diet, food, foodReq.quantity(), dietDateTime);
                 })
                 .collect(Collectors.toList());
         return dietFoodRepository.saveAll(dietFoods);

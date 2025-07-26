@@ -41,7 +41,7 @@ public record DietRecordProfileResponse(
 ) {
     public static DietRecordProfileResponse from(Diet diet, TimeRange timeRange) {
         List<DietFoodProfileResponse> dietFoodProfiles = diet.getDietFoods().stream()
-                .filter(dietFood -> dietFood.getDietTime().isAfter(timeRange.start()) && dietFood.getDietTime().isBefore(timeRange.end()))
+                .filter(dietFood -> !dietFood.getDietTime().isBefore(timeRange.start()) && dietFood.getDietTime().isBefore(timeRange.start().plusDays(1)))
                 .map(DietFoodProfileResponse::from)
                 .toList();
 
