@@ -10,7 +10,9 @@ import org.example.kuit_kac.domain.diet.model.DietType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import org.example.kuit_kac.exception.CustomException;
 import org.example.kuit_kac.exception.ErrorCode;
@@ -75,7 +77,7 @@ public class DietService {
     }
 
     @Transactional
-    public Diet createRecordDiet(User user, String name, String dietTypeStr, DietEntryType dietEntryType, LocalDateTime dietTime, List<DietFoodCreateRequest> foods) {
+    public Diet createRecordDiet(User user, String name, String dietTypeStr, DietEntryType dietEntryType, LocalTime dietTime, List<DietFoodCreateRequest> foods) {
         // dietType가 동일한 것이 이미 있으면 안됩니다.
         DietType dietType = DietType.getDietType(dietTypeStr);
 
@@ -90,18 +92,20 @@ public class DietService {
         }
 
         // 3. 모든 검증 통과 후 저장
+        LocalDateTime dietDateTime = dietTime.atDate(LocalDate.now());
         Diet diet = new Diet(user, name, dietType, dietEntryType);
         Diet saved = dietRepository.save(diet);
-        List<DietFood> dietFoods = dietFoodService.createDietFoodsWithDietTime(foods, saved, dietTime);
+        List<DietFood> dietFoods = dietFoodService.createDietFoodsWithDietTime(foods, saved, dietDateTime);
         dietFoods.forEach(saved::addDietFood);
         return saved;
     }
 
     @Transactional
-    public Diet updateRecordDiet(Diet diet, String name, LocalDateTime dietTime, List<DietFoodCreateRequest> foods) {
+    public Diet updateRecordDiet(Diet diet, String name, LocalTime dietTime, List<DietFoodCreateRequest> foods) {
         diet.setName(name);
         diet.getDietFoods().clear();
-        List<DietFood> dietFoods = dietFoodService.createDietFoodsWithDietTime(foods, diet, dietTime);
+        LocalDateTime dietDateTime = dietTime.atDate(LocalDate.now());
+        List<DietFood> dietFoods = dietFoodService.createDietFoodsWithDietTime(foods, diet, dietDateTime);
         dietFoods.forEach(diet::addDietFood);
         return dietRepository.save(diet);
     }
