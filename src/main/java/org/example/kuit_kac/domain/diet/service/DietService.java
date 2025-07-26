@@ -10,7 +10,6 @@ import org.example.kuit_kac.domain.diet.model.DietType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import org.example.kuit_kac.exception.CustomException;
@@ -126,9 +125,8 @@ public class DietService {
     }
 
     @Transactional
-    public Diet createPlanDiet(User user, String dietTypeStr, LocalDate dietTime, List<DietFoodCreateRequest> foods) {
-        TimeRange timeRange = TimeRange.getTodayTimeRange();
-        LocalDateTime dietDateTime = dietTime.atTime(timeRange.start().toLocalTime());
+    public Diet createPlanDiet(User user, String dietTypeStr, List<DietFoodCreateRequest> foods) {
+        LocalDateTime dietDateTime = TimeRange.getTodayTimeRange().start();
         Diet diet = new Diet(user, null, DietType.getDietType(dietTypeStr), DietEntryType.PLAN);
         Diet saved = dietRepository.save(diet);
         List<DietFood> dietFoods = dietFoodService.createDietFoodsWithDietTime(foods, saved, dietDateTime);
@@ -137,9 +135,8 @@ public class DietService {
     }
 
     @Transactional
-    public Diet updatePlanDiet(Diet diet, LocalDate dietTime, List<DietFoodCreateRequest> foods) {
-        TimeRange timeRange = TimeRange.getTodayTimeRange();
-        LocalDateTime dietDateTime = dietTime.atTime(timeRange.start().toLocalTime());
+    public Diet updatePlanDiet(Diet diet, List<DietFoodCreateRequest> foods) {
+        LocalDateTime dietDateTime = TimeRange.getTodayTimeRange().start();
         diet.getDietFoods().clear();
         List<DietFood> dietFoods = dietFoodService.createDietFoodsWithDietTime(foods, diet, dietDateTime);
         dietFoods.forEach(diet::addDietFood);
