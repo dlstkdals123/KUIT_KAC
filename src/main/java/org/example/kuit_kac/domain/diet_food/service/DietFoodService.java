@@ -10,6 +10,7 @@ import org.example.kuit_kac.domain.diet_food.dto.DietFoodSnackCreateRequest;
 import org.example.kuit_kac.domain.food.model.Food;
 import org.example.kuit_kac.domain.food.service.FoodService;
 import org.example.kuit_kac.domain.diet.model.Diet;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -45,4 +46,11 @@ public class DietFoodService {
     public void deleteDietFoods(List<DietFood> dietFoods) {
         dietFoodRepository.deleteAll(dietFoods);
     }
+
+    @Transactional(readOnly = true)
+    public List<DietFood> getDietFoodsByDietIdAndTimeRange(Long userId, LocalDateTime start, LocalDateTime end) {
+        return dietFoodRepository.findByDiet_UserIdAndDietTimeBetween(userId, start, end);
+    }
+
+
 }

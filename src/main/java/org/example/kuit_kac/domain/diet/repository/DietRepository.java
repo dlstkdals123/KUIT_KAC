@@ -17,9 +17,7 @@ public interface DietRepository extends JpaRepository<Diet, Long> {
 
     List<Diet> findByUserIdAndDietType(Long userId, DietType dietType);
 
-    List<Diet> findByUserIdAndDietEntryTypeAndDietTimeBetween(Long userId, DietEntryType dietEntryType, LocalDateTime startOfDay, LocalDateTime endOfDay);
+//    List<Diet> findByUserIdAndDietEntryTypeAndDietTimeBetween(Long userId, DietEntryType dietEntryType, LocalDateTime startOfDay, LocalDateTime endOfDay);
 
-    @EntityGraph(value = "Diet.withDietFoodsAndFood", type = EntityGraph.EntityGraphType.LOAD)
-    List<Diet> findByUserIdAndDietTimeBetween(long userId, LocalDateTime start, LocalDateTime end);
     List<Diet> findByUserIdAndDietEntryType(Long userId, DietEntryType dietEntryType);
 }

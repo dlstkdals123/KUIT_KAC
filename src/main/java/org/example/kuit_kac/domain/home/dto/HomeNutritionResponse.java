@@ -16,4 +16,9 @@ public class HomeNutritionResponse {
     private int proteinTaken;
     private int sugarTaken;
     private int fatTaken;
+
+    private int carbRatio;
+    private int proteinRatio;
+    private int sugarRatio;
+    private int fatRatio;
 }
