@@ -4,6 +4,7 @@ import org.example.kuit_kac.domain.diet.model.Diet;
 import org.example.kuit_kac.domain.diet.model.DietEntryType;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import java.time.LocalDateTime;
 import org.example.kuit_kac.domain.diet.model.DietType;
@@ -16,8 +17,6 @@ public interface DietRepository extends JpaRepository<Diet, Long> {
     List<Diet> findByDietType(DietType dietType);
 
     List<Diet> findByUserIdAndDietType(Long userId, DietType dietType);
-
-//    List<Diet> findByUserIdAndDietEntryTypeAndDietTimeBetween(Long userId, DietEntryType dietEntryType, LocalDateTime startOfDay, LocalDateTime endOfDay);
 
     List<Diet> findByUserIdAndDietEntryType(Long userId, DietEntryType dietEntryType);
 }

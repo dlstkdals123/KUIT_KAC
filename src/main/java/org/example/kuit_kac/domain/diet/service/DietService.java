@@ -9,6 +9,7 @@ import org.example.kuit_kac.domain.diet_food.model.DietFood;
 import org.example.kuit_kac.domain.diet_food.service.DietFoodService;
 import org.example.kuit_kac.domain.user.model.User;
 import org.example.kuit_kac.domain.diet.model.DietType;
+import org.example.kuit_kac.global.util.TimeRange;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -155,6 +156,29 @@ public class DietService {
     @Transactional(readOnly = true)
     public Diet getDietById(Long dietId) {
         return dietRepository.findById(dietId).orElseThrow(() -> new CustomException(ErrorCode.DIET_NOT_FOUND));
+    }
+
+    public long countDietFoodWithConditions(
+            Long userId,
+            DietEntryType entryType,
+            boolean onlyLateNight, // 야식(밤 9시 ~ 새벽 3시) 필터링 여부
+            TimeRange timeRange
+    ) {
+        List<DietFood> dietFoods = dietFoodService.getDietFoodsByDietIdAndTimeRange(
+                userId, timeRange.start(), timeRange.end()
+        );
+        return dietFoods.stream()
+                .filter(dietFood -> dietFood.getDiet() != null)
+                // entryType == null(야식 필터링 요청) 경우 모든 식단의 시간 검사
+                // entryType 지정될 경우 그 entryType의 식단만 검사
+                .filter(dietFood -> entryType == null || dietFood.getDiet().getDietEntryType() == entryType)
+                .filter(dietFood -> {
+                    if (!onlyLateNight) return true;
+                    int hour = dietFood.getDietTime().getHour();
+                    return hour >= 21 || hour < 3;
+                })
+                .count();
+
     }
 
 }

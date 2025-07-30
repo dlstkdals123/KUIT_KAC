@@ -1,30 +1,22 @@
 package org.example.kuit_kac.domain.home.service;
 
 import lombok.RequiredArgsConstructor;
-import org.example.kuit_kac.domain.diet.model.Diet;
 import org.example.kuit_kac.domain.diet.repository.DietRepository;
-import org.example.kuit_kac.domain.diet.service.DietService;
 import org.example.kuit_kac.domain.diet_food.model.DietFood;
 import org.example.kuit_kac.domain.diet_food.repository.DietFoodRepository;
 import org.example.kuit_kac.domain.food.model.Food;
 import org.example.kuit_kac.domain.home.dto.HomeSummaryResponse;
-import org.example.kuit_kac.domain.home.model.Weight;
-import org.example.kuit_kac.domain.home.repository.WeightRepository;
 import org.example.kuit_kac.domain.user.model.GenderType;
 import org.example.kuit_kac.domain.user.model.User;
-import org.example.kuit_kac.domain.user.repository.UserRepository;
 import org.example.kuit_kac.domain.user.service.UserService;
 import org.example.kuit_kac.domain.user_information.model.UserInformation;
-import org.example.kuit_kac.domain.user_information.repository.UserInformationRepository;
 import org.example.kuit_kac.domain.user_information.service.UserInformationService;
 import org.example.kuit_kac.global.util.TimeRange;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -46,7 +38,7 @@ public class HomeSummaryService {
         LocalDateTime endOfDay = timeRange.end();
 
         // 날짜정보로 식단기록 가져오기
-        List<DietFood> dietFoods = dietFoodRepository.findByDiet_UserIdAndDietTimeBetween(userId, startOfDay, endOfDay);
+        List<DietFood> dietFoods = dietFoodRepository.findByDietUserIdAndDietTimeBetween(userId, startOfDay, endOfDay);
 
         // 오늘 섭취 칼로리 계산
         double totalKCalorie = 0;

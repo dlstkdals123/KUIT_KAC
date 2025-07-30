@@ -8,11 +8,9 @@ import lombok.RequiredArgsConstructor;
 import org.example.kuit_kac.domain.diet.dto.*;
 import org.example.kuit_kac.domain.diet.model.*;
 import org.example.kuit_kac.domain.diet.service.*;
-import org.example.kuit_kac.domain.home.dto.HomeNutritionResponse;
-import org.example.kuit_kac.domain.home.dto.HomeSummaryResponse;
-import org.example.kuit_kac.domain.home.dto.HomeWeightRequest;
-import org.example.kuit_kac.domain.home.dto.HomeWeightResponse;
+import org.example.kuit_kac.domain.home.dto.*;
 import org.example.kuit_kac.domain.home.model.Weight;
+import org.example.kuit_kac.domain.home.service.CoachReportService;
 import org.example.kuit_kac.domain.home.service.HomeNutritionService;
 import org.example.kuit_kac.domain.home.service.HomeSummaryService;
 import org.example.kuit_kac.domain.home.service.WeightService;
@@ -31,6 +29,7 @@ public class HomeController {
     private final HomeSummaryService homeSummaryService;
     private final WeightService weightService;
     private final HomeNutritionService homeNutritionService;
+    private final CoachReportService coachReportService;
 
     @GetMapping("/summary")
     @Operation(summary = "홈 요약", description = "제공된 사용자 ID를 사용하여 오늘 남은 칼로리, 목표 일일 칼로리, 현재 체중을 제공합니다.")
@@ -59,5 +58,11 @@ public class HomeController {
     public ResponseEntity<HomeNutritionResponse> getNutrition(@PathVariable Long userId) {
         HomeNutritionResponse homeNutritionResponse = homeNutritionService.getTodayNutrition(userId);
         return ResponseEntity.ok(homeNutritionResponse);
+    }
+
+    @GetMapping("/coach-report")
+    public ResponseEntity<HomeCoachReportResponse> getCoachReport(@PathVariable Long userId) {
+        HomeCoachReportResponse homeCoachReportResponse = coachReportService.getCoachReport(userId);
+        return ResponseEntity.ok(homeCoachReportResponse);
     }
 }
