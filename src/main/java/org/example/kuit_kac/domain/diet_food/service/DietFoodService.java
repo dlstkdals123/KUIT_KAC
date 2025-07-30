@@ -49,8 +49,7 @@ public class DietFoodService {
 
     @Transactional(readOnly = true)
     public List<DietFood> getDietFoodsByDietIdAndTimeRange(Long userId, LocalDateTime start, LocalDateTime end) {
-        return dietFoodRepository.findByDiet_UserIdAndDietTimeBetween(userId, start, end);
+        return dietFoodRepository.findByDietUserIdAndDietTimeBetween(userId, start, end);
     }
-
 
 }
