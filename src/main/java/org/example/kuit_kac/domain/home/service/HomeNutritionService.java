@@ -28,7 +28,7 @@ public class HomeNutritionService {
         // 오늘 목표 칼로리 계산
         double todayTotalKCalorieGoal = homeSummaryService.calculateDailyKCalorieGoal(userId);
 
-        TimeRange timeRange = TimeRange.getTodayDietTimeRange();
+        TimeRange timeRange = TimeRange.getTodayTimeRange();
         LocalDateTime startOfDay = timeRange.start();
         LocalDateTime endOfDay = timeRange.end();
 
