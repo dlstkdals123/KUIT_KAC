@@ -8,10 +8,12 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.web.bind.annotation.PathVariable;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Repository
-public interface WeightRepository extends JpaRepository<Weight, Long>{
+public interface WeightRepository extends JpaRepository<Weight, Long> {
     Optional<Weight> findTopByUserIdOrderByCreatedAtDesc(Long userId);
 }

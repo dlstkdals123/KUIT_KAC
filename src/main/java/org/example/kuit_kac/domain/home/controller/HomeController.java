@@ -14,6 +14,7 @@ import org.example.kuit_kac.domain.home.service.CoachReportService;
 import org.example.kuit_kac.domain.home.service.HomeNutritionService;
 import org.example.kuit_kac.domain.home.service.HomeSummaryService;
 import org.example.kuit_kac.domain.home.service.WeightService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -41,8 +42,14 @@ public class HomeController {
         return ResponseEntity.ok(response);
     }
 
+    @PostMapping("/weight")
+    @Operation(summary = "")
+    public ResponseEntity<Void> createWeight(@RequestBody HomeWeightRequest request) {
+        weightService.saveOrUpdateTodayWeight(request.getUserId(), request.getWeight());
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
     @GetMapping("/weight/{userId}")
-    @Operation(summary = "오늘 섭취 영양소", description = "오늘 섭취한 영양소들의 목표량, 섭취량, 섭취비율을 제공합니다.")
     public ResponseEntity<HomeWeightResponse> getLatestWeight(@PathVariable Long userId) {
         Weight weight = weightService.getLatestWeightByUserId(userId);
         return ResponseEntity.ok(HomeWeightResponse.from(weight));

@@ -3,10 +3,12 @@ package org.example.kuit_kac.domain.home.service;
 import lombok.RequiredArgsConstructor;
 import org.example.kuit_kac.domain.home.model.Weight;
 import org.example.kuit_kac.domain.home.repository.WeightRepository;
+import org.example.kuit_kac.global.util.TimeRange;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
