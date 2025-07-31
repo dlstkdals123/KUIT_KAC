@@ -33,7 +33,7 @@ public class HomeSummaryService {
     public HomeSummaryResponse getTodayHomeSummary(Long userId) {
         // 가져와야하는 정보: 일일섭취목표 - 오늘 먹은 음식들의 칼로리 합산 - 운동해서 소모한 칼로리 = 몇칼로리 남았는지 계산(음수 반환 가능)
 
-        TimeRange timeRange = TimeRange.getTodayDietTimeRange();
+        TimeRange timeRange = TimeRange.getTodayTimeRange();
         LocalDateTime startOfDay = timeRange.start();
         LocalDateTime endOfDay = timeRange.end();
 

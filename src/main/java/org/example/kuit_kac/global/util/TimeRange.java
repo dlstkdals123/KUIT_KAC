@@ -1,6 +1,5 @@
 package org.example.kuit_kac.global.util;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public record TimeRange(LocalDateTime start, LocalDateTime end) {
@@ -14,9 +13,9 @@ public record TimeRange(LocalDateTime start, LocalDateTime end) {
         return new TimeRange(start, end);
     }
 
-    public static TimeRange getPastWeekDietTimeRange() {
+    public static TimeRange getPastWeekTimeRange() {
         // 오늘 기준 하루 시작 시점(오전 3시)
-        LocalDateTime todayStart = getTodayDietTimeRange().start();
+        LocalDateTime todayStart = getTodayTimeRange().start();
         LocalDateTime start = todayStart.minusDays(6);
         LocalDateTime end = todayStart.plusDays(1).withHour(2).withMinute(59).withNano(999_999_999);
         return new TimeRange(start, end);

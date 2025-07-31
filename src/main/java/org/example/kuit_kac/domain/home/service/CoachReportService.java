@@ -34,7 +34,7 @@ public class CoachReportService {
     DietFoodRepository dietFoodRepository;
 
     public HomeCoachReportResponse getCoachReport(Long userId) {
-        TimeRange range = TimeRange.getPastWeekDietTimeRange();
+        TimeRange range = TimeRange.getPastWeekTimeRange();
 
         // 일주일 외식 횟수 가져오기
         long diningOutCount = dietService.countDietFoodWithConditions(userId, DietEntryType.DINING_OUT, false, range);
