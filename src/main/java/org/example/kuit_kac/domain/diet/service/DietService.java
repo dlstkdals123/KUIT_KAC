@@ -5,8 +5,11 @@ import lombok.RequiredArgsConstructor;
 import org.example.kuit_kac.domain.diet.model.Diet;
 import org.example.kuit_kac.domain.diet.model.DietEntryType;
 import org.example.kuit_kac.domain.diet.repository.DietRepository;
+import org.example.kuit_kac.domain.diet_food.model.DietFood;
+import org.example.kuit_kac.domain.diet_food.service.DietFoodService;
 import org.example.kuit_kac.domain.user.model.User;
 import org.example.kuit_kac.domain.diet.model.DietType;
+import org.example.kuit_kac.global.util.TimeRange;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -14,13 +17,12 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
+
 import org.example.kuit_kac.exception.CustomException;
 import org.example.kuit_kac.exception.ErrorCode;
 import org.example.kuit_kac.global.util.TimeRange;
 import org.example.kuit_kac.domain.diet_food.dto.DietFoodCreateRequest;
 import org.example.kuit_kac.domain.diet_food.dto.DietFoodSnackCreateRequest;
-import org.example.kuit_kac.domain.diet_food.model.DietFood;
-import org.example.kuit_kac.domain.diet_food.service.DietFoodService;
 
 @Service
 @RequiredArgsConstructor
@@ -45,6 +47,7 @@ public class DietService {
         if (foods == null || foods.isEmpty()) {
             throw new CustomException(ErrorCode.DIET_ENTRY_TYPE_MUST_HAVE_FOOD);
         }
+
         Diet diet = new Diet(user, name, DietType.TEMPLATE, null);
         Diet saved = dietRepository.save(diet);
         List<DietFood> dietFoods = dietFoodService.createDietFoodsWithDietTime(foods, saved, null);
@@ -56,6 +59,7 @@ public class DietService {
     public Diet updateTemplateDiet(Diet diet, String name, List<DietFoodCreateRequest> foods) {
         diet.setName(name);
         diet.getDietFoods().clear();
+
         List<DietFood> dietFoods = dietFoodService.createDietFoodsWithDietTime(foods, diet, null);
         dietFoods.forEach(diet::addDietFood);
         return dietRepository.save(diet);
@@ -98,6 +102,11 @@ public class DietService {
         List<DietFood> dietFoods = dietFoodService.createDietFoodsWithDietTime(foods, saved, dietDateTime);
         dietFoods.forEach(saved::addDietFood);
         return saved;
+    }
+
+    // 소수점 둘째자리까지 반올림
+    private double round(double value) {
+        return Math.round(value * 100.0) / 100.0;
     }
 
     @Transactional
@@ -164,6 +173,29 @@ public class DietService {
     @Transactional(readOnly = true)
     public Diet getDietById(Long dietId) {
         return dietRepository.findById(dietId).orElseThrow(() -> new CustomException(ErrorCode.DIET_NOT_FOUND));
+    }
+
+    public long countDietFoodWithConditions(
+            Long userId,
+            DietEntryType entryType,
+            boolean onlyLateNight, // 야식(밤 9시 ~ 새벽 3시) 필터링 여부
+            TimeRange timeRange
+    ) {
+        List<DietFood> dietFoods = dietFoodService.getDietFoodsByDietIdAndTimeRange(
+                userId, timeRange.start(), timeRange.end()
+        );
+        return dietFoods.stream()
+                .filter(dietFood -> dietFood.getDiet() != null)
+                // entryType == null(야식 필터링 요청) 경우 모든 식단의 시간 검사
+                // entryType 지정될 경우 그 entryType의 식단만 검사
+                .filter(dietFood -> entryType == null || dietFood.getDiet().getDietEntryType() == entryType)
+                .filter(dietFood -> {
+                    if (!onlyLateNight) return true;
+                    int hour = dietFood.getDietTime().getHour();
+                    return hour >= 21 || hour < 3;
+                })
+                .count();
+
     }
 
 }
