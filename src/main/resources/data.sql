@@ -3,8 +3,8 @@ INSERT INTO `user` (`nickname`, `password`, `email`, `gender`, `age`, `height`, 
 ('user1', 'hashed_password_1', 'user1@example.com', 'MALE', 30, 175, 70.5),
 ('user2', 'hashed_password_2', 'user2@example.com', 'FEMALE', 25, 163, 55.0);
 
-INSERT INTO `user_information` (`user_id`, `has_diet_experience`, `diet_fail_reason`, `appetite_type`, `weekly_eating_out_count`, `eating_out_type`, `diet_velocity`) VALUES
-(1, TRUE, '야식', 'BIG', '2-3', 'KOREAN', 'COACH');
+INSERT INTO `user_information` (`user_id`, `diet_velocity`) VALUES
+(1, 'COACH');
 
 INSERT INTO `weight` (`user_id`, `weight`) VALUES
 (1, 85.0),
