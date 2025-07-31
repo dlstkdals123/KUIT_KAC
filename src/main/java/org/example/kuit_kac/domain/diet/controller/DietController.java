@@ -33,7 +33,7 @@ public class DietController {
             @Parameter(description = "조회할 사용자의 고유 ID", example = "1")
             @RequestParam("userId") Long userId) {
 
-        TimeRange timeRange = TimeRange.getTodayDietTimeRange();
+        TimeRange timeRange = TimeRange.getTodayTimeRange();
         List<Diet> diets = dietService.getDietsByUserId(userId, DietEntryType.RECORD);
 
         List<DietRecordProfileResponse> responses = diets.stream()
@@ -50,7 +50,7 @@ public class DietController {
             @Parameter(description = "조회할 사용자의 고유 ID", example = "1")
             @RequestParam("userId") Long userId) {
 
-        TimeRange timeRange = TimeRange.getTodayDietTimeRange();
+        TimeRange timeRange = TimeRange.getTodayTimeRange();
         List<Diet> diets = dietService.getDietsByUserId(userId, DietEntryType.PLAN);
 
         List<DietRecordProfileResponse> responses = diets.stream()
