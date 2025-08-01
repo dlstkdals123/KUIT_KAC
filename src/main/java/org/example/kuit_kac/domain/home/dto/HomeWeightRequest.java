@@ -16,6 +16,7 @@ public class HomeWeightRequest {
     @NotNull(message = "유저 ID는 필수입니다.")
     private Long userId;
 
+    @Schema(description = "체중")
     @Positive(message = "체중은 0.0보다 커야 합니다.")
     private double weight;
 }
