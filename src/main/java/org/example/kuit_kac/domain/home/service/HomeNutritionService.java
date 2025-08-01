@@ -11,6 +11,7 @@ import org.example.kuit_kac.domain.food.model.Food;
 import org.example.kuit_kac.domain.home.dto.HomeNutritionResponse;
 import org.example.kuit_kac.global.util.TimeRange;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -24,6 +25,7 @@ public class HomeNutritionService {
     DietFoodService dietFoodService; //
     HomeSummaryService homeSummaryService;
 
+    @Transactional(readOnly = true)
     public HomeNutritionResponse getTodayNutrition(Long userId) {
         // 오늘 목표 칼로리 계산
         double todayTotalKCalorieGoal = homeSummaryService.calculateDailyKCalorieGoal(userId);

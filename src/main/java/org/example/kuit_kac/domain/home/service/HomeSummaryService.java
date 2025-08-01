@@ -61,11 +61,6 @@ public class HomeSummaryService {
         );
     }
 
-    // 소수점 둘째자리까지 반올림
-    private double round(double value) {
-        return Math.round(value * 100.0) / 100.0;
-    }
-
     // 일일섭취목표 칼로리 계산
     public double calculateDailyKCalorieGoal(Long userId) {
         // 일일섭취목표 : BMR - 일일감량목표칼로리
