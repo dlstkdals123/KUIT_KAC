@@ -12,6 +12,7 @@ import org.example.kuit_kac.domain.home.dto.HomeCoachReportResponse;
 import org.example.kuit_kac.domain.home.model.Level;
 import org.example.kuit_kac.global.util.TimeRange;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.LocalDate;
@@ -28,11 +29,11 @@ public class CoachReportService {
     // 술자리: 1주일간 0회/1회(주의)/2회이상(위험) : 주의/위험 둘다 '잦은'으로 통일
     // 배달어플:  일단 0회, 1회, 2회로 하자
     // 야식: 일단 0회, 1회, 2회로 하자
-    // 시간대를 datetime?으로 일주일로 설정
 
     DietService dietService;
     DietFoodService dietFoodService;
 
+    @Transactional(readOnly = true)
     public HomeCoachReportResponse getCoachReport(Long userId) {
         TimeRange range = TimeRange.getPastWeekDietTimeRange();
 
