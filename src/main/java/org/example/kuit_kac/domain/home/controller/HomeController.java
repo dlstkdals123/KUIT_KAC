@@ -33,6 +33,11 @@ public class HomeController {
     private final HomeNutritionService homeNutritionService;
     private final CoachReportService coachReportService;
 
+    @GetMapping
+    public String home() {
+        return "로그인 성공";
+    }
+
     @GetMapping("/summary")
     @Operation(summary = "홈 요약", description = "제공된 사용자 ID를 사용하여 오늘 남은 칼로리, 목표 일일 칼로리, 현재 체중을 제공합니다.")
     public ResponseEntity<HomeSummaryResponse> getHomeSummary(
