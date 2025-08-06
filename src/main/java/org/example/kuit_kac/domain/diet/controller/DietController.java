@@ -12,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import org.example.kuit_kac.global.util.TimeRange;
 import org.example.kuit_kac.domain.user.model.User;
 import org.example.kuit_kac.domain.user.service.UserService;
 
@@ -33,12 +32,10 @@ public class DietController {
             @Parameter(description = "조회할 사용자의 고유 ID", example = "1")
             @RequestParam("userId") Long userId) {
 
-        TimeRange timeRange = TimeRange.getTodayTimeRange();
         List<Diet> diets = dietService.getDietsByUserId(userId, DietEntryType.RECORD);
 
         List<DietRecordProfileResponse> responses = diets.stream()
-                .map(diet -> DietRecordProfileResponse.from(diet, timeRange))
-                .filter(Objects::nonNull)
+                .map(DietRecordProfileResponse::todayFrom)
                 .toList();
 
         return ResponseEntity.ok(responses);
@@ -50,11 +47,10 @@ public class DietController {
             @Parameter(description = "조회할 사용자의 고유 ID", example = "1")
             @RequestParam("userId") Long userId) {
 
-        TimeRange timeRange = TimeRange.getTodayTimeRange();
         List<Diet> diets = dietService.getDietsByUserId(userId, DietEntryType.PLAN);
 
         List<DietRecordProfileResponse> responses = diets.stream()
-                .map(diet -> DietRecordProfileResponse.from(diet, timeRange))
+                .map(DietRecordProfileResponse::todayFrom)
                 .filter(Objects::nonNull)
                 .toList();
 
