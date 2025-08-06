@@ -1,8 +1,6 @@
 package org.example.kuit_kac.domain.oauth.service;
 
 import lombok.RequiredArgsConstructor;
-import org.example.kuit_kac.domain.oauth.model.KakaoUser;
-import org.example.kuit_kac.domain.oauth.repository.KakaoUserRepository;
 import org.example.kuit_kac.domain.user.model.User;
 import org.example.kuit_kac.domain.user.repository.UserRepository;
 import org.example.kuit_kac.domain.user.service.UserService;
@@ -23,7 +21,6 @@ import java.util.Map;
 @Service
 public class KakaoOAuth2UserService extends DefaultOAuth2UserService {
 
-    private final UserRepository userRepository;
     private final UserService userService;
 
     @Override

@@ -21,14 +21,14 @@ public class User {
     @Column(name = "kakao_id", nullable = false, unique = true)
     private String kakaoId;
 
-    @Column(nullable = false, unique = true, length = 20)
-    private String nickname;
-
-    @Column(nullable = false, length = 100)
-    private String password;
-
-    @Column(nullable = false, unique = true, length = 50)
-    private String email;
+//    @Column(nullable = false, unique = true, length = 20)
+//    private String nickname;
+//
+//    @Column(nullable = false, length = 100)
+//    private String password;
+//
+//    @Column(nullable = false, unique = true, length = 50)
+//    private String email;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -60,14 +60,10 @@ public class User {
         this.updatedAt = LocalDateTime.now();
     }
 
-    public User(String nickname, String email) {
-        this.nickname = nickname;
-        this.email = email;
-    }
-
     @Builder
     public User(String kakaoId) {
         this.kakaoId = kakaoId;
     }
 }
+
 
