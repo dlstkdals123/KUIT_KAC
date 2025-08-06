@@ -18,4 +18,9 @@ public class UserService {
         return userRepository.findById(id)
                 .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
     }
+
+    public User findOrCreateByKakaoId(String kakaoId) {
+        return userRepository.findByKakaoId(kakaoId)
+                .orElseGet(() -> userRepository.save(new User(kakaoId)));
+    }
 }

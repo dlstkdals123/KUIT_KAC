@@ -121,3 +121,5 @@ CREATE TABLE `diet_aifood` (
     FOREIGN KEY (`diet_id`) REFERENCES `diet`(`id`) ON DELETE CASCADE,
     FOREIGN KEY (`aifood_id`) REFERENCES `aifood`(`id`) ON DELETE CASCADE
 );
+
+ALTER TABLE user ADD COLUMN kakao_id VARCHAR(255) UNIQUE;

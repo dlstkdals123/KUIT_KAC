@@ -1,6 +1,7 @@
 package org.example.kuit_kac.domain.user.model;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -15,6 +16,10 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    // 카카오 로그인 사용자 식별자
+    @Column(name = "kakao_id", nullable = false, unique = true)
+    private String kakaoId;
 
     @Column(nullable = false, unique = true, length = 20)
     private String nickname;
@@ -53,6 +58,16 @@ public class User {
     @PreUpdate
     protected void onUpdate() {
         this.updatedAt = LocalDateTime.now();
+    }
+
+    public User(String nickname, String email) {
+        this.nickname = nickname;
+        this.email = email;
+    }
+
+    @Builder
+    public User(String kakaoId) {
+        this.kakaoId = kakaoId;
     }
 }
 

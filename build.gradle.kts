@@ -102,6 +102,8 @@ dependencies {
     // Spring Boot Starter Validation: Bean Validation 기능을 제공하는 의존성입니다.
     // 'validation' 패키지에 있는 모든 검증 어노테이션(예: @Valid, @NotNull, @NotBlank 등)을 사용할 수 있습니다.
     implementation("org.springframework.boot:spring-boot-starter-validation")
+
+    implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
 }
 
 tasks.withType<Test> {
