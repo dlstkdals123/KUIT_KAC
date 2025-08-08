@@ -57,6 +57,10 @@ public class DietService {
 
     @Transactional
     public Diet updateTemplateDiet(Diet diet, String name, List<DietFoodCreateRequest> foods) {
+        if (foods == null || foods.isEmpty()) {
+            throw new CustomException(ErrorCode.DIET_ENTRY_TYPE_MUST_HAVE_FOOD);
+        }
+
         diet.setName(name);
         diet.getDietFoods().clear();
 
