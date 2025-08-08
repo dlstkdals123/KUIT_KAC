@@ -47,11 +47,25 @@ public class DietController {
             @Parameter(description = "조회할 사용자의 고유 ID", example = "1")
             @RequestParam("userId") Long userId) {
 
-        List<Diet> diets = dietService.getDietsByUserId(userId, DietEntryType.PLAN);
+        List<Diet> diets = dietService.getPlansByUserId(userId);
 
         List<DietRecordProfileResponse> responses = diets.stream()
                 .map(DietRecordProfileResponse::todayFrom)
-                .filter(Objects::nonNull)
+                .toList();
+
+        return ResponseEntity.ok(responses);
+    }
+
+    @GetMapping("/plans/months/profiles")
+    @Operation(summary = "사용자 ID로 한 달 동안의 계획(Plan) 식단 조회", description = "제공된 사용자 ID를 사용하여 해당 사용자의 한 달 동안의 계획(Plan) 식단을 조회합니다.")
+    public ResponseEntity<List<DietRecordProfileResponse>> getDietPlansMonths(
+            @Parameter(description = "조회할 사용자의 고유 ID", example = "1")
+            @RequestParam("userId") Long userId) {
+        
+        List<Diet> diets = dietService.getPlansByUserId(userId);
+
+        List<DietRecordProfileResponse> responses = diets.stream()
+                .map(DietRecordProfileResponse::monthFrom)
                 .toList();
 
         return ResponseEntity.ok(responses);
