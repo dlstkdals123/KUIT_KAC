@@ -20,7 +20,6 @@ import java.util.List;
 
 import org.example.kuit_kac.exception.CustomException;
 import org.example.kuit_kac.exception.ErrorCode;
-import org.example.kuit_kac.global.util.TimeRange;
 import org.example.kuit_kac.domain.diet_food.dto.DietFoodCreateRequest;
 import org.example.kuit_kac.domain.diet_food.dto.DietFoodSnackCreateRequest;
 
@@ -39,6 +38,13 @@ public class DietService {
     @Transactional(readOnly = true)
     public List<Diet> getDietsByUserId(Long userId, DietType dietType) {
         return dietRepository.findByUserIdAndDietType(userId, dietType);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Diet> getPlansByUserId(Long userId) {
+        List<Diet> plans = dietRepository.findByUserIdAndDietEntryType(userId, DietEntryType.PLAN);
+        plans.addAll(dietRepository.findByUserIdAndDietEntryType(userId, DietEntryType.AI_PLAN));
+        return plans;
     }
 
     @Transactional
