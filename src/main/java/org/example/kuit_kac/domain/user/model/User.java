@@ -31,17 +31,21 @@ public class User {
 //    private String email;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(nullable = true)
+    // TODO: 임시로 널 허용
     private GenderType gender;
 
-    @Column(nullable = false)
-    private int age;
+    // TODO: 임시로 널 허용
+    @Column(nullable = true)
+    private Integer age;
 
-    @Column(nullable = false)
-    private int height;
+    // TODO: 임시로 널 허용
+    @Column(nullable = true)
+    private Integer height;
 
-    @Column(nullable = false)
-    private double targetWeight;
+    // TODO: 임시로 널 허용
+    @Column(nullable = true)
+    private Double targetWeight;
 
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;

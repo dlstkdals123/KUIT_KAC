@@ -104,6 +104,13 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-validation")
 
     implementation("org.springframework.boot:spring-boot-starter-oauth2-client")
+
+    // Jwts 클래스 사용을 위한 의존성입니다.
+    // Jwts는 JWT 토큰 생성을 도와주는 유틸 클래스입니다.
+    implementation ("io.jsonwebtoken:jjwt-api:0.11.5")
+    runtimeOnly ("io.jsonwebtoken:jjwt-impl:0.11.5")
+    runtimeOnly ("io.jsonwebtoken:jjwt-jackson:0.11.5")
+
 }
 
 tasks.withType<Test> {
