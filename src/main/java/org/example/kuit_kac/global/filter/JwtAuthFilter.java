@@ -1,0 +1,76 @@
+package org.example.kuit_kac.global.filter;
+
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
+import org.example.kuit_kac.domain.user.model.User;
+import org.example.kuit_kac.domain.user.model.UserPrincipal;
+import org.example.kuit_kac.domain.user.service.UserService;
+import org.example.kuit_kac.global.security.JwtAuthorityUtils;
+import org.example.kuit_kac.global.util.JwtProvider;
+import org.springframework.context.annotation.Bean;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
+import org.springframework.stereotype.Component;
+import org.springframework.web.filter.OncePerRequestFilter;
+
+import java.io.IOException;
+import java.util.List;
+
+@Component
+@RequiredArgsConstructor
+public class JwtAuthFilter extends OncePerRequestFilter {
+
+    private final JwtProvider jwtProvider;
+    private final UserService userService; // 최신값 필요하면 조회해서 Principal 새로 만듦
+
+    @Override
+    protected void doFilterInternal(HttpServletRequest request,
+                                    HttpServletResponse response,
+                                    FilterChain filterChain) throws ServletException, IOException {
+
+        // 이미 인증된 상태면 다음 필터로
+        if (SecurityContextHolder.getContext().getAuthentication() != null) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        // 1. 요청 헤더에서 Authorization 추출
+        String authHeader = request.getHeader("Authorization");
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        String token = authHeader.substring(7);
+        if (!jwtProvider.validateToken(token) || !"access".equals(jwtProvider.getTokenType(token))) {
+            filterChain.doFilter(request, response);
+            return; // refresh 토큰이면 인증세팅 안하고 패스
+        }
+
+        try {
+            Long uid = jwtProvider.getUserIdFromToken(token);
+            User user = userService.getUserById(uid);
+            // terms/onboarding 계산해서 커스터 principal로
+            UserPrincipal principal = UserPrincipal.from(user, false);
+
+            UsernamePasswordAuthenticationToken authenticationToken =
+                    new UsernamePasswordAuthenticationToken(
+                            principal, null,
+                            List.of(new SimpleGrantedAuthority("ROLE_USER")));
+
+            authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+            // SecurityContext에 인증 정보 저장
+            SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+
+        } catch (Exception e) {
+            SecurityContextHolder.clearContext();
+        }
+        // 다음 필터로 넘김
+        filterChain.doFilter(request, response);
+    }
+}

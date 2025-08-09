@@ -18,7 +18,10 @@ public enum ErrorCode {
     FOOD_NOT_FOUND("FOOD_001", "존재하지 않는 음식입니다."),
 
     // 식단 음식(DietFood) 관련 에러 코드
-    DIET_FOOD_NOT_FOUND("DIET_FOOD_001", "존재하지 않는 식단 음식입니다.");
+    DIET_FOOD_NOT_FOUND("DIET_FOOD_001", "존재하지 않는 식단 음식입니다."),
+
+    AUTH_UNAUTHORIZED("AUTH_001", "인증이 필요합니다."),
+    AUTH_FORBIDDEN("AUTH_002", "권한이 없습니다.");
 
     private final String code;
     private final String message;
