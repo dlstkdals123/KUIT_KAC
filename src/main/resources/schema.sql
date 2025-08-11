@@ -1,16 +1,25 @@
+<<<<<<< HEAD
 -- 테이블 삭제 (외래 키 제약 조건 역순)
 DROP TABLE IF EXISTS `routine_set`;
 DROP TABLE IF EXISTS `routine_detail`;
 DROP TABLE IF EXISTS `routine_exercise`;
 DROP TABLE IF EXISTS `routine`;
+=======
+-- 테이블 삭제 (외래 키 제약 역순)
+>>>>>>> main
 DROP TABLE IF EXISTS `diet_aifood`;
 DROP TABLE IF EXISTS `diet_food`;
 DROP TABLE IF EXISTS `diet`;
 DROP TABLE IF EXISTS `weight`;
 DROP TABLE IF EXISTS `user_information`;
-DROP TABLE IF EXISTS `aifood`;
+DROP TABLE IF EXISTS `routine_set`;
+DROP TABLE IF EXISTS `routine_detail`;
+DROP TABLE IF EXISTS `routine_exercise`;
+DROP TABLE IF EXISTS `routine`;
+DROP TABLE IF EXISTS `aifood`;x
 DROP TABLE IF EXISTS `food`;
 DROP TABLE IF EXISTS `user`;
+DROP TABLE IF EXISTS `exercise`;
 
 
 -- 사용자 관련 테이블
@@ -126,6 +135,7 @@ CREATE TABLE `diet_aifood` (
     FOREIGN KEY (`aifood_id`) REFERENCES `aifood`(`id`) ON DELETE CASCADE
 );
 
+<<<<<<< HEAD
 ALTER TABLE user ADD COLUMN kakao_id VARCHAR(255) UNIQUE;
 
 # 임시 유저 허용
@@ -136,3 +146,59 @@ ALTER TABLE user MODIFY gender ENUM('MALE', 'FEMALE') NULL;
 ALTER TABLE user MODIFY height INT NULL;
 ALTER TABLE user MODIFY age INT NULL;
 ALTER TABLE user MODIFY target_weight DOUBLE NULL;
+=======
+
+-- 운동 관련 테이블
+CREATE TABLE `routine` (
+    `id`            bigint AUTO_INCREMENT NOT NULL PRIMARY KEY,
+    `user_id`       bigint                NOT NULL,
+    `name`          varchar(50)           NOT NULL,
+    `routine_type`  ENUM('RECORD', 'TEMPLATE') NOT NULL,
+    `created_at`    datetime              NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_at`    datetime              NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON DELETE CASCADE
+);
+
+CREATE TABLE `exercise` (
+    `id`                    bigint AUTO_INCREMENT NOT NULL PRIMARY KEY,
+    `name`                  varchar(40)           NULL,
+    `target_muscle_group`   ENUM('ABDOMINALS', 'ABDUCTORS', 'ADDUCTORS', 'BACK', 'BICEPS', 'CALVES', 'CHEST', 'FOREARMS', 'GLUTES', 'HAMSTRINGS', 'HIP_FLEXORS', 'QUADRICEPS', 'SHINS', 'SHOULDERS', 'TRAPEZIUS', 'TRICEPS') NOT NULL,
+    `met_value`            double                NULL,
+    `created_at`           datetime              NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_at`           datetime              NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE `routine_exercise` (
+    `id`           bigint AUTO_INCREMENT NOT NULL PRIMARY KEY,
+    `routine_id`   bigint                NOT NULL,
+    `exercise_id`  bigint                NOT NULL,
+    `created_at`   datetime              NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_at`   datetime              NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (`routine_id`) REFERENCES `routine`(`id`) ON DELETE CASCADE,
+    FOREIGN KEY (`exercise_id`) REFERENCES `exercise`(`id`) ON DELETE CASCADE
+);
+
+CREATE TABLE `routine_detail` (
+    `id`                    bigint AUTO_INCREMENT NOT NULL PRIMARY KEY,
+    `routine_exercise_id`   bigint                NOT NULL,
+    `time`                  int                   NULL,
+    `intensity`            ENUM('LOOSE', 'NORMAL', 'TIGHT') NULL,
+    `created_at`           datetime              NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_at`           datetime              NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (`routine_exercise_id`) REFERENCES `routine_exercise`(`id`) ON DELETE CASCADE
+);
+
+CREATE TABLE `routine_set` (
+    `id`                    bigint AUTO_INCREMENT NOT NULL PRIMARY KEY,
+    `routine_exercise_id`   bigint                NOT NULL,
+    `count`                 int                   NULL DEFAULT 0,
+    `weight_kg`            int                   NULL DEFAULT 0,
+    `weight_num`           int                   NULL DEFAULT 0,
+    `distance`             int                   NULL DEFAULT 0,
+    `time`                 double                NULL DEFAULT 0,
+    `set_order`            int                   NULL DEFAULT 0,
+    `created_at`           datetime              NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_at`           datetime              NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (`routine_exercise_id`) REFERENCES `routine_exercise`(`id`) ON DELETE CASCADE
+);
+>>>>>>> main

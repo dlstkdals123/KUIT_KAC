@@ -16,7 +16,10 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "diet_food")
 @NamedEntityGraphs({
-    @NamedEntityGraph(name = "DietFood.withFood", attributeNodes = @NamedAttributeNode("food"))
+    @NamedEntityGraph(
+        name = "DietFood.withFood", 
+        attributeNodes = @NamedAttributeNode("food")
+    )
 })
 public class DietFood {
 

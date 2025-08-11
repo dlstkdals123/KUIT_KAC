@@ -13,7 +13,7 @@ public record TimeRange(LocalDateTime start, LocalDateTime end) {
         return new TimeRange(start, end);
     }
 
-    public static TimeRange getPastWeekDietTimeRange() {
+    public static TimeRange getPastWeekTimeRange() {
         // 오늘 기준 하루 시작 시점(오전 3시)
         LocalDateTime todayStart = getTodayTimeRange().start();
         LocalDateTime start = todayStart.minusDays(6);

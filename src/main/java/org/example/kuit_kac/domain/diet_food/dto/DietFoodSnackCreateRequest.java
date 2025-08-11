@@ -6,7 +6,7 @@ import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Positive;
 
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Schema(description = "식단에 포함될 음식 생성 요청 DTO")
 public record DietFoodSnackCreateRequest(
@@ -21,7 +21,7 @@ public record DietFoodSnackCreateRequest(
     @DecimalMax(value = "100", message = "음식 섭취량은 100 이하이어야 합니다.")
     double quantity,
 
-    @Schema(description = "음식 섭취 시간", example = "2025-07-22T12:00:00")
+    @Schema(description = "음식 섭취 시간", example = "12:00:00")
     @NotNull(message = "음식 섭취 시간은 필수입니다.")
-    LocalDateTime dietTime
+    LocalTime dietTime
 ) {} 

@@ -1,0 +1,130 @@
+package org.example.kuit_kac.domain.routine.controller;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+import org.example.kuit_kac.domain.routine.dto.*;
+import org.example.kuit_kac.domain.routine.model.*;
+import org.example.kuit_kac.domain.routine.service.*;
+import org.example.kuit_kac.domain.user.model.User;
+import org.example.kuit_kac.domain.user.service.UserService;
+import org.example.kuit_kac.global.util.TimeRange;
+
+import java.util.Objects;
+
+@RestController
+@RequestMapping("/routines")
+@Tag(name = "루틴 관리", description = "루틴을 생성하고 관리하는 API입니다.")
+@RequiredArgsConstructor
+public class RoutineController {
+
+    private final RoutineService routineService;
+    private final UserService userService;
+
+    @GetMapping("/records/profiles")
+    @Operation(summary = "사용자 ID로 루틴 기록 조회", description = "제공된 사용자 ID를 사용하여 해당 사용자의 오늘의 루틴 기록을 조회합니다.")
+    public ResponseEntity<List<RoutineRecordProfileResponse>> getRoutineRecords(
+            @Parameter(description = "조회할 사용자의 고유 ID", example = "1")
+            @RequestParam("userId") Long userId) {
+
+        TimeRange timeRange = TimeRange.getTodayTimeRange();
+        List<Routine> routines = routineService.getRoutinesByUserIdBetween(userId, RoutineType.RECORD, timeRange.start(), timeRange.end());
+
+        List<RoutineRecordProfileResponse> responses = routines.stream()
+                .map(RoutineRecordProfileResponse::from)
+                .filter(Objects::nonNull)
+                .toList();
+
+        return ResponseEntity.ok(responses);
+    }
+
+    @GetMapping("/template/profiles")
+    @Operation(summary = "사용자 ID로 나만의 루틴 조회", description = "제공된 사용자 ID를 사용하여 해당 사용자의 나만의 루틴을 조회합니다.")
+    public ResponseEntity<List<RoutineRecordProfileResponse>> getTemplateRoutines(
+            @Parameter(description = "조회할 사용자의 고유 ID", example = "1")
+            @RequestParam("userId") Long userId) {
+
+        List<Routine> routines = routineService.getRoutinesByUserId(userId, RoutineType.TEMPLATE);
+
+        List<RoutineRecordProfileResponse> responses = routines.stream()
+                .map(RoutineRecordProfileResponse::from)
+                .filter(Objects::nonNull)
+                .toList();
+
+        return ResponseEntity.ok(responses);
+    }
+
+//     @PostMapping("/template")
+//     @Operation(summary = "나만의 식단 생성", description = "유저 ID와 식단 이름, 음식을 입력하여 나만의 식단을 생성합니다.")
+//     public ResponseEntity<DietRecordProfileResponse> createTemplateDiet(
+//             @RequestBody @Valid DietTemplateCreateRequest request
+//     ) {
+//         User user = userService.getUserById(request.userId());
+//         Diet diet = dietService.createTemplateDiet(user, request.name(), request.foods());
+//         DietRecordProfileResponse response = DietRecordProfileResponse.from(diet);
+//         return ResponseEntity.ok(response);
+//     }
+
+//     @PutMapping("/template/{dietId}")
+//     @Operation(summary = "나만의 식단 수정", description = "식단 ID와 식단 이름, 음식을 입력하여 나만의 식단을 수정합니다.")
+//     public ResponseEntity<DietRecordProfileResponse> updateTemplateDiet(
+//             @PathVariable("dietId") Long dietId,
+//             @RequestBody @Valid DietTemplateUpdateRequest request
+//     ) {
+//         Diet diet = dietService.getDietById(dietId);
+//         dietService.updateTemplateDiet(diet, request.name(), request.foods());
+//         DietRecordProfileResponse response = DietRecordProfileResponse.from(diet);
+//         return ResponseEntity.ok(response);
+//     }
+
+//     @DeleteMapping("/template/{dietId}")
+//     @Operation(summary = "나만의 식단 삭제", description = "식단 ID를 입력하여 나만의 식단을 삭제합니다.")
+//     public ResponseEntity<Void> deleteTemplateDiet(
+//             @PathVariable("dietId") Long dietId
+//     ) {
+//         Diet diet = dietService.getDietById(dietId);
+//         dietService.deleteDiet(diet);
+//         return ResponseEntity.noContent().build();
+//     }
+
+    @PostMapping
+    @Operation(summary = "루틴 생성", description = "유저 ID와 루틴 이름, 루틴 항목 종류, 루틴 운동을 입력하여 루틴을 생성합니다.")
+    public ResponseEntity<RoutineRecordProfileResponse> createGeneralRoutine(
+            @RequestBody @Valid RoutineGeneralCreateRequest request
+    ) {
+        User user = userService.getUserById(request.userId());
+        Routine routine = routineService.createGeneralRoutine(user, request.name(), request.routineType(), request.routineExercises());
+        RoutineRecordProfileResponse response = RoutineRecordProfileResponse.from(routine);
+        return ResponseEntity.ok(response);
+    }
+
+    @PutMapping("/{routineId}")
+    @Operation(summary = "루틴 수정", description = "루틴 ID와 루틴 이름, 루틴 항목 종류, 루틴 운동을 입력하여 루틴을 수정합니다.")
+    public ResponseEntity<RoutineRecordProfileResponse> updateGeneralRoutine(
+            @PathVariable("routineId") Long routineId,
+            @RequestBody @Valid RoutineGeneralUpdateRequest request
+    ) {
+        Routine routine = routineService.getRoutineById(routineId);
+        routineService.updateGeneralRoutine(routine, request.name(), request.routineExercises());
+        RoutineRecordProfileResponse response = RoutineRecordProfileResponse.from(routine);
+        return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping("/{routineId}")
+    @Operation(summary = "루틴 삭제", description = "루틴 ID를 입력하여 루틴을 삭제합니다.")
+    public ResponseEntity<Void> deleteRoutine(
+            @PathVariable("routineId") Long routineId
+    ) {
+        Routine routine = routineService.getRoutineById(routineId);
+        routineService.deleteRoutine(routine);
+        return ResponseEntity.noContent().build();
+    }
+}
