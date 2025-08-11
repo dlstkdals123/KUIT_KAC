@@ -40,36 +40,36 @@ public record DietRecordProfileResponse(
     List<DietFoodProfileResponse> dietFoods
 ) {
     public static DietRecordProfileResponse from(Diet diet, TimeRange timeRange) {
-        List<DietFoodProfileResponse> foodProfiles = diet.getDietFoods().stream()
-                .filter(dietFood -> dietFood.getDietTime().isAfter(timeRange.start()) && dietFood.getDietTime().isBefore(timeRange.end()))
+        List<DietFoodProfileResponse> dietFoodProfiles = diet.getDietFoods().stream()
+                .filter(dietFood -> !dietFood.getDietTime().isBefore(timeRange.start()) && dietFood.getDietTime().isBefore(timeRange.start().plusDays(1)))
                 .map(DietFoodProfileResponse::from)
                 .toList();
 
-        if (foodProfiles.isEmpty()) {
+        if (dietFoodProfiles.isEmpty()) {
             return null;
         }
 
-        return from(foodProfiles, diet);
+        return from(dietFoodProfiles, diet);
     }
 
     public static DietRecordProfileResponse from(Diet diet) {
-        List<DietFoodProfileResponse> foodProfiles = diet.getDietFoods().stream()
+        List<DietFoodProfileResponse> dietFoodProfiles = diet.getDietFoods().stream()
                 .map(DietFoodProfileResponse::from)
                 .toList();
 
-        return from(foodProfiles, diet);
+        return from(dietFoodProfiles, diet);
     }
 
-    private static DietRecordProfileResponse from(List<DietFoodProfileResponse> foodProfiles, Diet diet) {
-        double totalKcal = foodProfiles.stream()
+    private static DietRecordProfileResponse from(List<DietFoodProfileResponse> dietFoodProfiles, Diet diet) {
+        double totalKcal = dietFoodProfiles.stream()
                 .mapToDouble(dietFood -> dietFood.quantity() * dietFood.food().getCalorie())
                 .sum();
 
-        List<FoodProfileResponse> foodProfileResponses = foodProfiles.stream()
+        List<FoodProfileResponse> dietFoodProfileResponses = dietFoodProfiles.stream()
                 .map(DietFoodProfileResponse::food)
                 .toList();
 
-        FoodStatusType foodStatusType = FoodStatusType.getFoodStatusType(foodProfileResponses);
+        FoodStatusType foodStatusType = FoodStatusType.getFoodStatusType(dietFoodProfileResponses);
 
         return new DietRecordProfileResponse(
                 diet.getId(),
@@ -80,7 +80,7 @@ public record DietRecordProfileResponse(
                 diet.getCreatedAt(),
                 diet.getUpdatedAt(),
                 totalKcal,
-                foodProfiles
+                dietFoodProfiles
         );
     }
 }

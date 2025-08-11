@@ -61,7 +61,7 @@ public class DietController {
         return ResponseEntity.ok(responses);
     }
 
-    @GetMapping("/template/profiles")
+    @GetMapping("/templates/profiles")
     @Operation(summary = "사용자 ID로 나만의 식단 조회", description = "제공된 사용자 ID를 사용하여 해당 사용자의 나만의 식단을 조회합니다.")
     public ResponseEntity<List<DietRecordProfileResponse>> getTemplateDiets(
             @Parameter(description = "조회할 사용자의 고유 ID", example = "1")
@@ -76,7 +76,7 @@ public class DietController {
         return ResponseEntity.ok(responses);
     }
 
-    @PostMapping("/template")
+    @PostMapping("/templates")
     @Operation(summary = "나만의 식단 생성", description = "유저 ID와 식단 이름, 음식을 입력하여 나만의 식단을 생성합니다.")
     public ResponseEntity<DietRecordProfileResponse> createTemplateDiet(
             @RequestBody @Valid DietTemplateCreateRequest request
@@ -87,7 +87,7 @@ public class DietController {
         return ResponseEntity.ok(response);
     }
 
-    @PutMapping("/template/{dietId}")
+    @PutMapping("/templates/{dietId}")
     @Operation(summary = "나만의 식단 수정", description = "식단 ID와 식단 이름, 음식을 입력하여 나만의 식단을 수정합니다.")
     public ResponseEntity<DietRecordProfileResponse> updateTemplateDiet(
             @PathVariable("dietId") Long dietId,
@@ -97,16 +97,6 @@ public class DietController {
         dietService.updateTemplateDiet(diet, request.name(), request.foods());
         DietRecordProfileResponse response = DietRecordProfileResponse.from(diet);
         return ResponseEntity.ok(response);
-    }
-
-    @DeleteMapping("/template/{dietId}")
-    @Operation(summary = "나만의 식단 삭제", description = "식단 ID를 입력하여 나만의 식단을 삭제합니다.")
-    public ResponseEntity<Void> deleteTemplateDiet(
-            @PathVariable("dietId") Long dietId
-    ) {
-        Diet diet = dietService.getDietById(dietId);
-        dietService.deleteDiet(diet);
-        return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/simple")
@@ -120,40 +110,30 @@ public class DietController {
         return ResponseEntity.ok(response);
     }
 
-    @PostMapping("/general")
-    @Operation(summary = "식단, 계획, AI 계획 식단 생성", description = "유저 ID와 식단 이름, 식단 항목 종류, 식단 음식을 입력하여 음식을 포함하는 식단을 생성합니다.")
-    public ResponseEntity<DietRecordProfileResponse> createGeneralDiet(
-            @RequestBody @Valid DietGeneralCreateRequest request
+    @PostMapping("/records")
+    @Operation(summary = "식단 기록 생성", description = "유저 ID와 식단 이름, 식단 종류, 섭취 시간, 음식을 입력하여 음식을 포함하는 식단을 생성합니다.")
+    public ResponseEntity<DietRecordProfileResponse> createRecordDiet(
+            @RequestBody @Valid DietRecordCreateRequest request
     ) {
         User user = userService.getUserById(request.userId());
-        Diet diet = dietService.createGeneralDiet(user, request.name(), request.dietType(), request.dietEntryType(), request.dietTime(), request.foods());
+        Diet diet = dietService.createRecordDiet(user, request.name(), request.dietType(), DietEntryType.RECORD, request.dietTime(), request.foods());
         DietRecordProfileResponse response = DietRecordProfileResponse.from(diet);
         return ResponseEntity.ok(response);
     }
 
-    @PutMapping("/general/{dietId}")
-    @Operation(summary = "식단, 계획, AI 계획 식단 수정", description = "식단 ID와 식단 이름, 식단 항목 종류, 식단 음식을 입력하여 음식을 포함하는 식단을 수정합니다.")
-    public ResponseEntity<DietRecordProfileResponse> updateGeneralDiet(
+    @PutMapping("/records/{dietId}")
+    @Operation(summary = "식단 기록 수정", description = "식단 ID와 식단 이름, 섭취 시간, 음식을 입력하여 음식을 포함하는 식단을 수정합니다.")
+    public ResponseEntity<DietRecordProfileResponse> updateRecordDiet(
             @PathVariable("dietId") Long dietId,
-            @RequestBody @Valid DietGeneralUpdateRequest request
+            @RequestBody @Valid DietRecordUpdateRequest request
     ) {
         Diet diet = dietService.getDietById(dietId);
-        dietService.updateGeneralDiet(diet, request.name(), request.dietTime(), request.foods());
+        dietService.updateRecordDiet(diet, request.name(), request.dietTime(), request.foods());
         DietRecordProfileResponse response = DietRecordProfileResponse.from(diet);
         return ResponseEntity.ok(response);
     }
 
-    @DeleteMapping("/general/{dietId}")
-    @Operation(summary = "식단, 계획, AI 계획 식단 삭제", description = "식단 ID를 입력하여 식단, 계획, AI 계획 식단을 삭제합니다.")
-    public ResponseEntity<Void> deleteGeneralDiet(
-            @PathVariable("dietId") Long dietId
-    ) {
-        Diet diet = dietService.getDietById(dietId);
-        dietService.deleteDiet(diet);
-        return ResponseEntity.noContent().build();
-    }
-
-    @PostMapping("/snack")
+    @PostMapping("/snacks")
     @Operation(summary = "간식 식단 생성", description = "유저 ID와 식단 음식 섭취 시간을 입력하여 간식 식단을 생성합니다.")
     public ResponseEntity<DietRecordProfileResponse> createSnackDiet(
             @RequestBody @Valid DietSnackCreateRequest request
@@ -164,7 +144,7 @@ public class DietController {
         return ResponseEntity.ok(response);
     }
 
-    @PutMapping("/snack/{dietId}")
+    @PutMapping("/snacks/{dietId}")
     @Operation(summary = "간식 식단 수정", description = "식단 ID와 식단 음식 섭취 시간을 입력하여 간식 식단을 수정합니다.")
     public ResponseEntity<DietRecordProfileResponse> updateSnackDiet(
             @PathVariable("dietId") Long dietId,
@@ -176,9 +156,32 @@ public class DietController {
         return ResponseEntity.ok(response);
     }
 
-    @DeleteMapping("/snack/{dietId}")
-    @Operation(summary = "간식 식단 삭제", description = "식단 ID를 입력하여 간식 식단을 삭제합니다.")
-    public ResponseEntity<Void> deleteSnackDiet(
+    @PostMapping("/plans")
+    @Operation(summary = "계획 식단 생성", description = "유저 ID와 식단 종류, 계획 날짜, 음식을 입력하여 계획 식단을 생성합니다.")
+    public ResponseEntity<DietRecordProfileResponse> createPlanDiet(
+            @RequestBody @Valid DietPlanCreateRequest request
+    ) {
+        User user = userService.getUserById(request.userId());
+        Diet diet = dietService.createPlanDiet(user, request.dietType(), request.foods());
+        DietRecordProfileResponse response = DietRecordProfileResponse.from(diet);
+        return ResponseEntity.ok(response);
+    }
+
+    @PutMapping("/plans/{dietId}")
+    @Operation(summary = "계획 식단 수정", description = "식단 ID와 식단 종류, 계획 날짜, 음식을 입력하여 계획 식단을 수정합니다.")
+    public ResponseEntity<DietRecordProfileResponse> updatePlanDiet(
+            @PathVariable("dietId") Long dietId,
+            @RequestBody @Valid DietPlanUpdateRequest request
+    ) {
+        Diet diet = dietService.getDietById(dietId);
+        dietService.updatePlanDiet(diet, request.foods());
+        DietRecordProfileResponse response = DietRecordProfileResponse.from(diet);
+        return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping("/{dietId}")
+    @Operation(summary = "식단 삭제", description = "식단 ID를 입력하여 식단을 삭제합니다.")
+    public ResponseEntity<Void> deleteDiet(
             @PathVariable("dietId") Long dietId
     ) {
         Diet diet = dietService.getDietById(dietId);
