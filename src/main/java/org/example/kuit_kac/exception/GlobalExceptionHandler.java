@@ -52,10 +52,15 @@ public class GlobalExceptionHandler {
 
     private HttpStatus convertErrorCodeToHttpStatus(ErrorCode errorCode) {
         switch (errorCode) {
+            case AUTH_UNAUTHORIZED:
+                return HttpStatus.UNAUTHORIZED; //  401
+            case AUTH_FORBIDDEN:
+                return HttpStatus.FORBIDDEN; // 403
             case DIET_TYPE_INVALID:
                 return HttpStatus.BAD_REQUEST;
             default:
                 return HttpStatus.INTERNAL_SERVER_ERROR;
         }
+
     }
 }

@@ -24,5 +24,4 @@ public class UserInformation {
     @Enumerated(EnumType.STRING)
     @Column(name = "diet_velocity", nullable = false)
     private DietVelocity dietVelocity;
-
 }

@@ -1,6 +1,7 @@
 package org.example.kuit_kac.domain.user.model;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -16,27 +17,35 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true, length = 20)
-    private String nickname;
+    // 카카오 로그인 사용자 식별자
+    @Column(name = "kakao_id", nullable = false, unique = true)
+    private String kakaoId;
 
-    @Column(nullable = false, length = 100)
-    private String password;
-
-    @Column(nullable = false, unique = true, length = 50)
-    private String email;
+//    @Column(nullable = false, unique = true, length = 20)
+//    private String nickname;
+//
+//    @Column(nullable = false, length = 100)
+//    private String password;
+//
+//    @Column(nullable = false, unique = true, length = 50)
+//    private String email;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(nullable = true)
+    // TODO: 임시로 널 허용
     private GenderType gender;
 
-    @Column(nullable = false)
-    private int age;
+    // TODO: 임시로 널 허용
+    @Column(nullable = true)
+    private Integer age;
 
-    @Column(nullable = false)
-    private int height;
+    // TODO: 임시로 널 허용
+    @Column(nullable = true)
+    private Integer height;
 
-    @Column(nullable = false)
-    private double targetWeight;
+    // TODO: 임시로 널 허용
+    @Column(nullable = true)
+    private Double targetWeight;
 
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -54,5 +63,11 @@ public class User {
     protected void onUpdate() {
         this.updatedAt = LocalDateTime.now();
     }
+
+    @Builder
+    public User(String kakaoId) {
+        this.kakaoId = kakaoId;
+    }
 }
+
 

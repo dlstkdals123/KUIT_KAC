@@ -32,7 +32,13 @@ public enum ErrorCode {
 
     // 식단 음식(DietFood) 관련 에러 코드
     DIET_FOOD_NOT_FOUND("DIET_FOOD_001", "존재하지 않는 식단 음식입니다."),
-    
+
+    // 인증 에러코드
+    AUTH_UNAUTHORIZED("AUTH_001", "인증이 필요합니다."),
+
+    // 다른 사용자의 데이터 접근 에러코드
+    AUTH_FORBIDDEN("AUTH_002", "권한이 없습니다."),
+
     // 루틴(Routine) 관련 에러 코드
     ROUTINE_NOT_FOUND("ROUTINE_001", "존재하지 않는 루틴입니다."),
     
