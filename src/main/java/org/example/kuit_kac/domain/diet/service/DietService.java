@@ -10,6 +10,7 @@ import org.example.kuit_kac.domain.diet_food.service.DietFoodService;
 import org.example.kuit_kac.domain.user.model.User;
 import org.example.kuit_kac.domain.diet.model.DietType;
 import org.example.kuit_kac.global.util.TimeRange;
+import org.example.kuit_kac.global.util.TimeGenerator;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -83,7 +84,7 @@ public class DietService {
             throw new CustomException(ErrorCode.DIET_ENTRY_TYPE_INVALID);
         }
         DietType dietType = DietType.getDietType(dietTypeStr);
-        if (dietType == null) {
+        if (dietType == null || isTemplateDietType(dietType)) {
             throw new CustomException(ErrorCode.DIET_TYPE_INVALID);
         }
         Diet diet = new Diet(user, null, dietType, entryType);
@@ -92,7 +93,6 @@ public class DietService {
 
     @Transactional
     public Diet createRecordDiet(User user, String name, String dietTypeStr, DietEntryType dietEntryType, LocalTime dietTime, List<DietFoodCreateRequest> foods) {
-        // dietType가 동일한 것이 이미 있으면 안됩니다.
         DietType dietType = DietType.getDietType(dietTypeStr);
 
         // 1. 음식 유효성 먼저 체크
@@ -105,18 +105,13 @@ public class DietService {
             throw new CustomException(ErrorCode.DIET_TYPE_INVALID);
         }
 
-        // 3. 모든 검증 통과 후 저장
+        // 모든 검증 통과 후 저장
         LocalDateTime dietDateTime = dietTime.atDate(LocalDate.now());
         Diet diet = new Diet(user, name, dietType, dietEntryType);
         Diet saved = dietRepository.save(diet);
         List<DietFood> dietFoods = dietFoodService.createDietFoodsWithDietTime(foods, saved, dietDateTime);
         dietFoods.forEach(saved::addDietFood);
         return saved;
-    }
-
-    // 소수점 둘째자리까지 반올림
-    private double round(double value) {
-        return Math.round(value * 100.0) / 100.0;
     }
 
     @Transactional
@@ -148,8 +143,8 @@ public class DietService {
     }
 
     @Transactional
-    public Diet createPlanDiet(User user, String dietTypeStr, List<DietFoodCreateRequest> foods) {
-        LocalDateTime dietDateTime = TimeRange.getTodayTimeRange().start();
+    public Diet createPlanDiet(User user, String dietTypeStr, LocalDate date, List<DietFoodCreateRequest> foods) {
+        LocalDateTime dietDateTime = TimeGenerator.getDateStart(date);
         Diet diet = new Diet(user, null, DietType.getDietType(dietTypeStr), DietEntryType.PLAN);
         Diet saved = dietRepository.save(diet);
         List<DietFood> dietFoods = dietFoodService.createDietFoodsWithDietTime(foods, saved, dietDateTime);
@@ -158,8 +153,8 @@ public class DietService {
     }
 
     @Transactional
-    public Diet updatePlanDiet(Diet diet, List<DietFoodCreateRequest> foods) {
-        LocalDateTime dietDateTime = TimeRange.getTodayTimeRange().start();
+    public Diet updatePlanDiet(Diet diet, LocalDate date, List<DietFoodCreateRequest> foods) {
+        LocalDateTime dietDateTime = TimeGenerator.getDateStart(date);
         diet.getDietFoods().clear();
         List<DietFood> dietFoods = dietFoodService.createDietFoodsWithDietTime(foods, diet, dietDateTime);
         dietFoods.forEach(diet::addDietFood);
@@ -207,5 +202,4 @@ public class DietService {
                 .count();
 
     }
-
 }

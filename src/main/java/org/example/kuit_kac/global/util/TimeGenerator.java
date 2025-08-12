@@ -1,6 +1,7 @@
 package org.example.kuit_kac.global.util;
 
 import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 public class TimeGenerator {
     private static LocalDateTime getTodayStart() {
@@ -26,5 +27,10 @@ public class TimeGenerator {
     public static boolean isMonth(LocalDateTime dateTime) {
         LocalDateTime monthStart = getMonthStart();
         return !dateTime.isBefore(monthStart) && dateTime.isBefore(monthStart.plusMonths(1));
+    }
+
+    public static LocalDateTime getDateStart(LocalDate date) {
+        LocalDateTime start = date.atStartOfDay();
+        return start.withHour(3).withMinute(0).withSecond(0).withNano(0);
     }
 }

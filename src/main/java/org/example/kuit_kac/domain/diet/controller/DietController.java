@@ -172,7 +172,7 @@ public class DietController {
             @RequestBody @Valid DietPlanCreateRequest request
     ) {
         User user = userService.getUserById(request.userId());
-        Diet diet = dietService.createPlanDiet(user, request.dietType(), request.foods());
+        Diet diet = dietService.createPlanDiet(user, request.dietType(), request.date(), request.foods());
         DietRecordProfileResponse response = DietRecordProfileResponse.from(diet);
         return ResponseEntity.ok(response);
     }
@@ -184,7 +184,7 @@ public class DietController {
             @RequestBody @Valid DietPlanUpdateRequest request
     ) {
         Diet diet = dietService.getDietById(dietId);
-        dietService.updatePlanDiet(diet, request.foods());
+        dietService.updatePlanDiet(diet, request.date(), request.foods());
         DietRecordProfileResponse response = DietRecordProfileResponse.from(diet);
         return ResponseEntity.ok(response);
     }
