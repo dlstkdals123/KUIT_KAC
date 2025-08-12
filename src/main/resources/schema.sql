@@ -1,4 +1,12 @@
+<<<<<<< HEAD
+-- 테이블 삭제 (외래 키 제약 조건 역순)
+DROP TABLE IF EXISTS `routine_set`;
+DROP TABLE IF EXISTS `routine_detail`;
+DROP TABLE IF EXISTS `routine_exercise`;
+DROP TABLE IF EXISTS `routine`;
+=======
 -- 테이블 삭제 (외래 키 제약 역순)
+>>>>>>> main
 DROP TABLE IF EXISTS `diet_aifood`;
 DROP TABLE IF EXISTS `diet_food`;
 DROP TABLE IF EXISTS `diet`;
@@ -127,6 +135,18 @@ CREATE TABLE `diet_aifood` (
     FOREIGN KEY (`aifood_id`) REFERENCES `aifood`(`id`) ON DELETE CASCADE
 );
 
+<<<<<<< HEAD
+ALTER TABLE user ADD COLUMN kakao_id VARCHAR(255) UNIQUE;
+
+# 임시 유저 허용
+ALTER TABLE user MODIFY nickname varchar(20) NULL;
+ALTER TABLE user MODIFY password varchar(20) NULL;
+ALTER TABLE user MODIFY email varchar(50) NULL;
+ALTER TABLE user MODIFY gender ENUM('MALE', 'FEMALE') NULL;
+ALTER TABLE user MODIFY height INT NULL;
+ALTER TABLE user MODIFY age INT NULL;
+ALTER TABLE user MODIFY target_weight DOUBLE NULL;
+=======
 
 -- 운동 관련 테이블
 CREATE TABLE `routine` (
@@ -181,3 +201,4 @@ CREATE TABLE `routine_set` (
     `updated_at`           datetime              NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (`routine_exercise_id`) REFERENCES `routine_exercise`(`id`) ON DELETE CASCADE
 );
+>>>>>>> main

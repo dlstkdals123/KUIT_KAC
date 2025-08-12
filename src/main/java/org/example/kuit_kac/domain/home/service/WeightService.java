@@ -30,9 +30,12 @@ public class WeightService {
 
         LocalDate today = LocalDate.now();
 
+        // 가장 최근 체중 데이터 확인
         if (latestWeightOpt.isPresent()) {
             Weight latest = latestWeightOpt.get();
+            // 생성날짜 확인
             LocalDate latestDate = latest.getCreatedAt().toLocalDate();
+            // 오늘날짜와 같으면 새로운 데이터로 수정
             if (latestDate.isEqual(today)) {
                 latest.setWeight(weightValue);
                 return latest;
