@@ -1,7 +1,7 @@
 package org.example.kuit_kac.domain.diet.dto;
 
 import org.example.kuit_kac.domain.diet.model.Diet;
-import org.example.kuit_kac.global.util.TimeRange;
+import org.example.kuit_kac.global.util.TimeGenerator;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.time.LocalDateTime;
@@ -39,15 +39,24 @@ public record DietRecordProfileResponse(
     @Schema(description = "식단에 포함된 음식 목록", requiredMode = Schema.RequiredMode.REQUIRED)
     List<DietFoodProfileResponse> dietFoods
 ) {
-    public static DietRecordProfileResponse from(Diet diet, TimeRange timeRange) {
+    public static DietRecordProfileResponse todayFrom(Diet diet) {
         List<DietFoodProfileResponse> dietFoodProfiles = diet.getDietFoods().stream()
-                .filter(dietFood -> !dietFood.getDietTime().isBefore(timeRange.start()) && dietFood.getDietTime().isBefore(timeRange.start().plusDays(1)))
+                .filter(dietFood -> TimeGenerator.isToday(dietFood.getDietTime()))
                 .map(DietFoodProfileResponse::from)
                 .toList();
 
         if (dietFoodProfiles.isEmpty()) {
             return null;
         }
+
+        return from(dietFoodProfiles, diet);
+    }
+
+    public static DietRecordProfileResponse monthFrom(Diet diet) {
+        List<DietFoodProfileResponse> dietFoodProfiles = diet.getDietFoods().stream()
+                .filter(dietFood -> TimeGenerator.isMonth(dietFood.getDietTime()))
+                .map(DietFoodProfileResponse::from)
+                .toList();
 
         return from(dietFoodProfiles, diet);
     }

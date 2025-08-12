@@ -12,12 +12,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import org.example.kuit_kac.global.util.TimeRange;
 import org.example.kuit_kac.domain.user.model.User;
 import org.example.kuit_kac.domain.user.service.UserService;
 
 import jakarta.validation.Valid;
-import java.util.Objects;
+
 @RestController
 @RequestMapping("/diets")
 @Tag(name = "식단 관리", description = "식단을 생성하고 관리하는 API입니다.")
@@ -33,12 +32,10 @@ public class DietController {
             @Parameter(description = "조회할 사용자의 고유 ID", example = "1")
             @RequestParam("userId") Long userId) {
 
-        TimeRange timeRange = TimeRange.getTodayTimeRange();
         List<Diet> diets = dietService.getDietsByUserId(userId, DietEntryType.RECORD);
 
         List<DietRecordProfileResponse> responses = diets.stream()
-                .map(diet -> DietRecordProfileResponse.from(diet, timeRange))
-                .filter(Objects::nonNull)
+                .map(DietRecordProfileResponse::todayFrom)
                 .toList();
 
         return ResponseEntity.ok(responses);
@@ -50,12 +47,25 @@ public class DietController {
             @Parameter(description = "조회할 사용자의 고유 ID", example = "1")
             @RequestParam("userId") Long userId) {
 
-        TimeRange timeRange = TimeRange.getTodayTimeRange();
-        List<Diet> diets = dietService.getDietsByUserId(userId, DietEntryType.PLAN);
+        List<Diet> diets = dietService.getPlansByUserId(userId);
 
         List<DietRecordProfileResponse> responses = diets.stream()
-                .map(diet -> DietRecordProfileResponse.from(diet, timeRange))
-                .filter(Objects::nonNull)
+                .map(DietRecordProfileResponse::todayFrom)
+                .toList();
+
+        return ResponseEntity.ok(responses);
+    }
+
+    @GetMapping("/plans/months/profiles")
+    @Operation(summary = "사용자 ID로 한 달 동안의 계획(Plan) 식단 조회", description = "제공된 사용자 ID를 사용하여 해당 사용자의 한 달 동안의 계획(Plan) 식단을 조회합니다.")
+    public ResponseEntity<List<DietRecordProfileResponse>> getDietPlansMonths(
+            @Parameter(description = "조회할 사용자의 고유 ID", example = "1")
+            @RequestParam("userId") Long userId) {
+        
+        List<Diet> diets = dietService.getPlansByUserId(userId);
+
+        List<DietRecordProfileResponse> responses = diets.stream()
+                .map(DietRecordProfileResponse::monthFrom)
                 .toList();
 
         return ResponseEntity.ok(responses);
@@ -162,7 +172,7 @@ public class DietController {
             @RequestBody @Valid DietPlanCreateRequest request
     ) {
         User user = userService.getUserById(request.userId());
-        Diet diet = dietService.createPlanDiet(user, request.dietType(), request.foods());
+        Diet diet = dietService.createPlanDiet(user, request.dietType(), request.date(), request.foods());
         DietRecordProfileResponse response = DietRecordProfileResponse.from(diet);
         return ResponseEntity.ok(response);
     }
@@ -174,7 +184,7 @@ public class DietController {
             @RequestBody @Valid DietPlanUpdateRequest request
     ) {
         Diet diet = dietService.getDietById(dietId);
-        dietService.updatePlanDiet(diet, request.foods());
+        dietService.updatePlanDiet(diet, request.date(), request.foods());
         DietRecordProfileResponse response = DietRecordProfileResponse.from(diet);
         return ResponseEntity.ok(response);
     }
