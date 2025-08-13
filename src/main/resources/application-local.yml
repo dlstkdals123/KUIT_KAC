@@ -29,8 +29,8 @@ spring:
         registration:
           kakao:
             authorization-grant-type: authorization_code
-            client-id: "<REMOVED>"# 외부 노출 금지
-            client-secret: "<REMOVED>"
+            client-id: ${CLIENT_ID} # 외부 노출 금지
+            client-secret: ${CLIENT_SECRET}
             redirect-uri: "http://localhost:8080/login/oauth2/code/kakao" # 로컬 테스트용 URI
             # 프론트 테스트시
             # http://localhost:8080/oauth2/authorization/kakao
@@ -49,7 +49,7 @@ spring:
       enabled: false
 
 jwt:
-  secret-base64: "<REMOVED>"
+  secret-base64: ${JWT_SECRET_BASE64}'
   access-ttl-ms: 1800000 # 30분
   refresh-ttl-ms: 1209600000 #14일
 
@@ -57,7 +57,7 @@ auth:
   login:
     success:
       mode: DEEPLINK # JSON | DEEPLINK
-      deep-link: myapp://oauth/callbaek # 임시
+      deep-link: myapp://oauth/callback # 임시
       access-param: access
       refresh-param: refresh
 

@@ -28,8 +28,9 @@ spring:
         registration:
           kakao:
             authorization-grant-type: authorization_code
-client-id: "<REMOVED>"# 외부 노출 금지
-client-secret: "<REMOVED>"            #            redirect-uri: "http://localhost:8080/login/oauth2/code/{registrationId}"
+            client-id: ${CLIENT_ID} # 외부 노출 금지
+            client-secret: ${CLIENT_SECRET}
+            # redirect-uri: "http://localhost:8080/login/oauth2/code/{registrationId}"
             redirect-uri: "http://localhost:8080/login/oauth2/code/kakao" # 로컬 테스트용 URI
             # 프론트 테스트시 접속 경로
             # http://localhost:8080/oauth2/authorization/kakao
@@ -48,7 +49,8 @@ client-secret: "<REMOVED>"            #            redirect-uri: "http://localho
       enabled: false
 
 jwt:
-jwt.secret-base64: "<REMOVED>"  access-ttl-ms: 315360000000 # 10년 (3650일)
+  secret-base64: ${JWT_SECRET_BASE64}
+  access-ttl-ms: 315360000000 # 10년 (3650일)
   refresh-ttl-ms: 315360000000 # 10년 (3650일)
 
 auth:
