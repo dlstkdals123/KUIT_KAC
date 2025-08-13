@@ -127,7 +127,6 @@ CREATE TABLE `diet_aifood` (
     FOREIGN KEY (`aifood_id`) REFERENCES `aifood`(`id`) ON DELETE CASCADE
 );
 
-<<<<<<< HEAD
 ALTER TABLE user ADD COLUMN kakao_id VARCHAR(255) UNIQUE;
 
 # 임시 유저 허용
@@ -138,7 +137,6 @@ ALTER TABLE user MODIFY gender ENUM('MALE', 'FEMALE') NULL;
 ALTER TABLE user MODIFY height INT NULL;
 ALTER TABLE user MODIFY age INT NULL;
 ALTER TABLE user MODIFY target_weight DOUBLE NULL;
-=======
 
 -- 운동 관련 테이블
 CREATE TABLE `routine` (
@@ -193,4 +191,3 @@ CREATE TABLE `routine_set` (
     `updated_at`           datetime              NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (`routine_exercise_id`) REFERENCES `routine_exercise`(`id`) ON DELETE CASCADE
 );
->>>>>>> main
