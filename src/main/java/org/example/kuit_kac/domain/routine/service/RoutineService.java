@@ -69,8 +69,10 @@ public class RoutineService {
         // 4. 모든 검증 통과 후 저장
         Routine routine = new Routine(user, name, routineType);
         Routine saved = routineRepository.save(routine);
+        
         List<RoutineExercise> savedRoutineExercises = routineExerciseService.createRoutineExercises(routine, routineExercises);
         savedRoutineExercises.forEach(saved::addRoutineExercise);
+
         return saved;
     }
 

@@ -8,7 +8,7 @@ import org.example.kuit_kac.exception.ErrorCode;
 
 @Getter
 @RequiredArgsConstructor
-public enum TargetMuscleGroup {
+public enum TargetMuscleType {
     ABDOMINALS("Abdominals", "복근"),
     ABDUCTORS("Abductors", "외전근"),
     ADDUCTORS("Adductors", "내전근"),
@@ -29,13 +29,13 @@ public enum TargetMuscleGroup {
     private final String value;
     private final String koreanName;
 
-    public static TargetMuscleGroup getTargetMuscleGroup(String targetMuscleGroup) {
-        TargetMuscleGroup fromKorean = EnumConverter.fromKoreanTargetMuscleGroup(targetMuscleGroup);
+    public static TargetMuscleType getTargetMuscleType(String targetMuscleType) {
+        TargetMuscleType fromKorean = EnumConverter.fromKoreanTargetMuscleType(targetMuscleType);
         if (fromKorean != null) return fromKorean;
         try {
-            return TargetMuscleGroup.valueOf(targetMuscleGroup.toUpperCase());
+            return TargetMuscleType.valueOf(targetMuscleType.toUpperCase());
         } catch (IllegalArgumentException e) {
-            throw new CustomException(ErrorCode.TARGET_MUSCLE_GROUP_INVALID);
+            throw new CustomException(ErrorCode.TARGET_MUSCLE_TYPE_INVALID);
         }
     }
 }

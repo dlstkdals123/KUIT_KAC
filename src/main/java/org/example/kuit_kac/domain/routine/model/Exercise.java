@@ -21,8 +21,8 @@ public class Exercise {
     private String name;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "target_muscle_group", nullable = false)
-    private TargetMuscleGroup targetMuscleGroup;
+    @Column(name = "target_muscle_type", nullable = false)
+    private TargetMuscleType targetMuscleType;
 
     @Column(name = "met_value", nullable = true)
     private Double metValue = 0.0;

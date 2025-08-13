@@ -34,6 +34,12 @@ public class RoutineDetail {
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
+    public RoutineDetail(RoutineExercise routineExercise, Integer time, Intensity intensity) {
+        this.routineExercise = routineExercise;
+        this.time = time;
+        this.intensity = intensity;
+    }
+
     @PrePersist
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();

@@ -19,7 +19,7 @@ public class ExerciseProfileResponse {
     private String name;
 
     @Schema(description = "운동 대상 근육", example = "가슴", requiredMode = Schema.RequiredMode.REQUIRED)
-    private String targetMuscleGroup;
+    private String targetMuscleType;
 
     @Schema(description = "운동 MET 값", example = "5.0", requiredMode = Schema.RequiredMode.REQUIRED)
     private Double metValue;
@@ -34,7 +34,7 @@ public class ExerciseProfileResponse {
         return new ExerciseProfileResponse(
             exercise.getId(), 
             exercise.getName(), 
-            exercise.getTargetMuscleGroup().getKoreanName(), 
+            exercise.getTargetMuscleType().getKoreanName(), 
             exercise.getMetValue(), 
             exercise.getCreatedAt(), 
             exercise.getUpdatedAt());

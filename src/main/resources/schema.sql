@@ -152,7 +152,7 @@ CREATE TABLE `routine` (
 CREATE TABLE `exercise` (
     `id`                    bigint AUTO_INCREMENT NOT NULL PRIMARY KEY,
     `name`                  varchar(40)           NULL,
-    `target_muscle_group`   ENUM('ABDOMINALS', 'ABDUCTORS', 'ADDUCTORS', 'BACK', 'BICEPS', 'CALVES', 'CHEST', 'FOREARMS', 'GLUTES', 'HAMSTRINGS', 'HIP_FLEXORS', 'QUADRICEPS', 'SHINS', 'SHOULDERS', 'TRAPEZIUS', 'TRICEPS') NOT NULL,
+    `target_muscle_type`   ENUM('ABDOMINALS', 'ABDUCTORS', 'ADDUCTORS', 'BACK', 'BICEPS', 'CALVES', 'CHEST', 'FOREARMS', 'GLUTES', 'HAMSTRINGS', 'HIP_FLEXORS', 'QUADRICEPS', 'SHINS', 'SHOULDERS', 'TRAPEZIUS', 'TRICEPS') NOT NULL,
     `met_value`            double                NULL,
     `created_at`           datetime              NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `updated_at`           datetime              NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
