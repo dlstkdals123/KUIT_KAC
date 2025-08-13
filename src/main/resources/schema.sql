@@ -1,12 +1,4 @@
-<<<<<<< HEAD
--- 테이블 삭제 (외래 키 제약 조건 역순)
-DROP TABLE IF EXISTS `routine_set`;
-DROP TABLE IF EXISTS `routine_detail`;
-DROP TABLE IF EXISTS `routine_exercise`;
-DROP TABLE IF EXISTS `routine`;
-=======
 -- 테이블 삭제 (외래 키 제약 역순)
->>>>>>> main
 DROP TABLE IF EXISTS `diet_aifood`;
 DROP TABLE IF EXISTS `diet_food`;
 DROP TABLE IF EXISTS `diet`;
@@ -16,7 +8,7 @@ DROP TABLE IF EXISTS `routine_set`;
 DROP TABLE IF EXISTS `routine_detail`;
 DROP TABLE IF EXISTS `routine_exercise`;
 DROP TABLE IF EXISTS `routine`;
-DROP TABLE IF EXISTS `aifood`;x
+DROP TABLE IF EXISTS `aifood`;
 DROP TABLE IF EXISTS `food`;
 DROP TABLE IF EXISTS `user`;
 DROP TABLE IF EXISTS `exercise`;
