@@ -22,6 +22,43 @@ spring:
       hibernate:
         format_sql: true
 
+  security:
+    oauth2:
+      client:
+        registration:
+          kakao:
+            authorization-grant-type: authorization_code
+client-id: "<REMOVED>"# 외부 노출 금지
+client-secret: "<REMOVED>"            #            redirect-uri: "http://localhost:8080/login/oauth2/code/{registrationId}"
+            redirect-uri: "http://localhost:8080/login/oauth2/code/kakao" # 로컬 테스트용 URI
+            # 프론트 테스트시 접속 경로
+            # http://localhost:8080/oauth2/authorization/kakao
+            client-authentication-method: client_secret_post
+            client-name: Kakao
+
+        provider:
+          kakao:
+            authorization-uri: https://kauth.kakao.com/oauth/authorize
+            token-uri: https://kauth.kakao.com/oauth/token
+            user-info-uri: https://kapi.kakao.com/v2/user/me
+            user-name-attribute: id
+
+  docker:
+    compose:
+      enabled: false
+
+jwt:
+jwt.secret-base64: "<REMOVED>"  access-ttl-ms: 315360000000 # 10년 (3650일)
+  refresh-ttl-ms: 315360000000 # 10년 (3650일)
+
+auth:
+  login:
+    success:
+      mode: DEEPLINK # JSON | DEEPLINK
+      deep-link: myapp://oauth/callbaek # 임시
+      access-param: access
+      refresh-param: refresh
+
 logging:
   level:
     root: INFO
