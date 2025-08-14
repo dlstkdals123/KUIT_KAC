@@ -61,6 +61,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
                 onboardingProperties.isRequire() && userId != null && userInfoService.isOnboardingRequired(userId);
 
 //        // TODO: 서버토큰 JSON 활성화 코드. 지워야함!
+        // 테스트시
 //        writeJson(response, access, refresh, expiresIn, state, onboardingRequired);
 
         if (!props.isDeepLink()) {
