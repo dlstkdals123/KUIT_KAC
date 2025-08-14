@@ -30,11 +30,11 @@ CREATE TABLE `user` (
 
 CREATE TABLE `user_information` (
     `user_id`                 bigint          NOT NULL PRIMARY KEY,
-#     `has_diet_experience`     boolean         NOT NULL DEFAULT FALSE,
-#     `diet_fail_reason`        varchar(50)     NULL,
-#     `appetite_type`           ENUM('SMALL', 'BIG') NULL,
-#     `weekly_eating_out_count` varchar(10)     NULL,
-#     `eating_out_type`         ENUM('FASTFOOD', 'KOREAN', 'CHINESE', 'WESTERN', 'FRIED') NOT NULL,
+    `has_diet_experience`     boolean         NOT NULL DEFAULT FALSE,
+    `diet_fail_reason`        varchar(50)     NULL,
+    `appetite_type`           ENUM('SMALL', 'BIG') NULL,
+    `weekly_eating_out_count` varchar(10)     NULL,
+    `eating_out_type`         ENUM('FASTFOOD', 'KOREAN', 'CHINESE', 'WESTERN', 'FRIED') NOT NULL,
     `diet_velocity`           ENUM('YUMYUM', 'COACH', 'ALL_IN') NOT NULL,
     FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON DELETE CASCADE
 );

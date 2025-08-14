@@ -10,7 +10,7 @@ import org.example.kuit_kac.domain.user.model.GenderType;
 import org.example.kuit_kac.domain.user.model.User;
 import org.example.kuit_kac.domain.user.service.UserService;
 import org.example.kuit_kac.domain.user_information.model.UserInformation;
-import org.example.kuit_kac.domain.user_information.service.UserInformationService;
+import org.example.kuit_kac.domain.user_information.service.UserInfoService;
 import org.example.kuit_kac.global.util.TimeRange;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,7 +25,7 @@ public class HomeSummaryService {
     private final DietRepository dietRepository;
     private final DietFoodRepository dietFoodRepository;
     private final UserService userService;
-    private final UserInformationService userInformationService;
+    private final UserInfoService userInformationService;
     private final WeightService weightService;
 
     // 하루 섭취 영양소 요약

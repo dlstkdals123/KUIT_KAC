@@ -29,6 +29,16 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     private final UserService userService; // 최신값 필요하면 조회해서 Principal 새로 만듦
 
     @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        String p = request.getServletPath();
+        return p.startsWith("/oauth2/") // 로그인 시작
+                || p.startsWith("/login/oauth2/") // 콜백
+                || p.startsWith("/swagger-ui/")
+                || p.startsWith("/v3/api-docs/")
+                || p.equals("/") || p.startsWith("/health") || p.startsWith("/actuator");
+    }
+
+    @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {

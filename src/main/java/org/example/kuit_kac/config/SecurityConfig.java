@@ -71,6 +71,8 @@ public class SecurityConfig {
 
                 // 카카오 OAuth2 로그인: 사용자정보 서비스 + 성공 핸들러
                 .oauth2Login(oauth2 -> oauth2
+                        .authorizationEndpoint(ae -> ae.baseUri("/oauth2/authorization"))
+                        .redirectionEndpoint(re -> re.baseUri("/login/oauth2/code/*"))
                         .userInfoEndpoint(userInfo -> userInfo
                                 .userService(kakaoOAuth2UserService) // 사용자 정보 조회 시 사용자 정의 서비스 사용
                         )

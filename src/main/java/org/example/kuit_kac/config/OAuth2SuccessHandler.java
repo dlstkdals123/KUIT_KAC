@@ -4,14 +4,12 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.example.kuit_kac.domain.user.model.User;
-import org.example.kuit_kac.domain.user.model.UserPrincipal;
-import org.example.kuit_kac.domain.user.service.UserService;
+import lombok.extern.java.Log;
+import lombok.extern.slf4j.Slf4j;
+import org.example.kuit_kac.domain.user_information.service.UserInfoService;
 import org.example.kuit_kac.global.util.JwtProvider;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.jdbc.core.PreparedStatementSetter;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
@@ -20,50 +18,95 @@ import org.springframework.web.util.UriComponentsBuilder;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import java.util.Map;
+import java.util.Objects;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
     private final JwtProvider jwtProvider;
-    private final AuthLoginSuccessProperties props; // @ConfigurationProperties 바인딩
+    private final AuthLoginSuccessProperties props;
+    private final AuthOnboardingProperties onboardingProperties;
+    private final UserInfoService userInfoService;
 
     // 빈 페이지에 토큰 출력하는 메서드
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
                                         Authentication authentication) throws IOException, ServletException {
-        // OAuth2User 객체에서 사용자 정보 추출
+        log.info("[OAuth2Success] mode={}, deepLink='{}', isDeepLinkBranch={}",
+                props.getMode(), props.getDeepLink(), props.isDeepLink());
+
+        // 1) 사용자 정보
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
-        Long userId = (Long) oAuth2User.getAttributes().get("userId");
+        Map<String, Object> attrs = oAuth2User.getAttributes();
+
+        Long userId = null;
+        Object uidAttr = attrs.get("userId");
+        if (uidAttr instanceof Number n) userId = n.longValue();
+
         String kakaoId = oAuth2User.getName();
 
+        // 2) 토큰 생성
         String access = jwtProvider.generateAccessToken(userId, kakaoId);
         String refresh = jwtProvider.generateRefreshToken(userId);
 
-        if (props.isDeepLink()) {
-            String a = URLEncoder.encode(access, StandardCharsets.UTF_8);
-            String r = URLEncoder.encode(refresh, StandardCharsets.UTF_8);
+        // 만료(초) / state
+        long expiresIn = props.getAccessTtlSeconds();
+        String state = request.getParameter("state"); // 있으면 전달
 
-            // fragment 사용 권장(서버/프록시 로그에 덜 남도록)
-            String target = props.getDeepLink();
-            if (target == null || target.isBlank()) {
-                // 설정 누락 시 안전하게 JSON으로 폴백
-                writeJson(response, access, refresh);
-                return;
-            }
-            String deep = target + "#" + props.getAccessParam() + "=" + a + "&" + props.getRefreshParam() + "=" + r;
-            response.sendRedirect(deep);
+        // 3) 온보딩 필요 여부(TODO: 미구현이면 yml 기본값 true, 구현후 실제 DB검사)
+        boolean onboardingRequired =
+                onboardingProperties.isRequire() && userId != null && userInfoService.isOnboardingRequired(userId);
+
+//        // TODO: 서버토큰 JSON 활성화 코드. 지워야함!
+//        writeJson(response, access, refresh, expiresIn, state, onboardingRequired);
+
+        if (!props.isDeepLink()) {
+            writeJson(response, access, refresh, expiresIn, state, onboardingRequired);
             return;
         }
 
-        // 개발용: JSON 응답
-        writeJson(response, access, refresh);
+
+        // === DEEPLINK 모드: 무조건 리다이렉트 (JSON 폴백 금지) ===
+        String target = props.getDeepLink();
+        if (target == null || target.isBlank()) {
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Missing deep-link config");
+            return;
+        }
+
+        UriComponentsBuilder b = UriComponentsBuilder.fromUriString(target)
+                .queryParam(props.getAccessParam(), access)
+                .queryParam(props.getRefreshParam(), refresh)
+                .queryParam(props.getExpiresParam(), expiresIn)
+                .queryParam(props.getOnboardingParam(), onboardingRequired);
+        if (state != null && !state.isBlank()) {
+            b.queryParam(props.getStateParam(), state);
+        }
+
+        String deep = b.build().encode().toUriString();
+
+        // 302 Location
+        response.setStatus(HttpServletResponse.SC_FOUND);
+        response.setHeader("Location", deep);
+        response.setContentLength(0); // 바디 금지
     }
 
-    private static void writeJson(HttpServletResponse response, String access, String refresh) throws IOException {
+    private static void writeJson(HttpServletResponse response,
+                                  String access, String refresh, long expiresIn,
+                                  String state, boolean onboardingRequired) throws IOException {
         response.setStatus(HttpServletResponse.SC_OK);
         response.setContentType("application/json;charset=UTF-8");
-        response.getWriter().write("{\"accessToken\":\"" + access + "\"\n,\"refreshToken\":\"" + refresh + "\"}");
-        response.getWriter().flush();
+        StringBuilder sb = new StringBuilder()
+                .append("{\"accessToken\":\"").append(access).append("\",")
+                .append("\"refreshToken\":\"").append(refresh).append("\",")
+                .append("\"expiresIn\":").append(expiresIn).append(",")
+                .append("\"onboardingRequired\":")
+                .append(onboardingRequired);
+        if (state != null) sb.append(",\"state\":\"").append(state).append("\"");
+        sb.append("}");
+        response.getWriter().write(sb.toString());
     }
+
 }
