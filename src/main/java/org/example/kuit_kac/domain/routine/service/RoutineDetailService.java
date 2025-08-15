@@ -18,7 +18,9 @@ public class RoutineDetailService {
     public RoutineDetail createRoutineDetail(RoutineExercise routineExercise, RoutineDetailCreateRequest routineDetailRequest) {
         Intensity intensity = Intensity.getIntensity(routineDetailRequest.intensity());
         RoutineDetail routineDetail = new RoutineDetail(routineExercise, routineDetailRequest.time(), intensity);
-        return routineDetailRepository.save(routineDetail);
+        RoutineDetail saved = routineDetailRepository.save(routineDetail);
+        routineExercise.setRoutineDetail(saved);
+        return saved;
     }
 
     public void deleteRoutineDetail(RoutineDetail routineDetail) {

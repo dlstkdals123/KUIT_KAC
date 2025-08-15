@@ -29,7 +29,9 @@ public class RoutineSetService {
                     request.setOrder()
                 ))
                 .collect(Collectors.toList());
-        return routineSetRepository.saveAll(routineSets);
+        List<RoutineSet> savedRoutineSets = routineSetRepository.saveAll(routineSets);
+        routineExercise.setRoutineSets(savedRoutineSets);
+        return savedRoutineSets;
     }
 
     public void deleteRoutineSets(List<RoutineSet> routineSets) {

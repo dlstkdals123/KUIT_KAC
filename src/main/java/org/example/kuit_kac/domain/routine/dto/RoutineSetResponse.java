@@ -10,8 +10,8 @@ public record RoutineSetResponse(
     @Schema(description = "루틴 세트의 고유 식별자 (ID)", example = "1", requiredMode = Schema.RequiredMode.REQUIRED)
     Long id,
 
-    @Schema(description = "루틴 운동 정보")
-    RoutineExerciseProfileResponse routineExercise,
+    @Schema(description = "루틴 운동 ID", example = "1")
+    Long routineExerciseId,
 
     @Schema(description = "반복 횟수", example = "10")
     Integer count,
@@ -40,7 +40,7 @@ public record RoutineSetResponse(
     public static RoutineSetResponse from(RoutineSet routineSet) {
         return new RoutineSetResponse(
                 routineSet.getId(),
-                RoutineExerciseProfileResponse.from(routineSet.getRoutineExercise()),
+                routineSet.getRoutineExercise().getId(),
                 routineSet.getCount(),
                 routineSet.getWeightKg(),
                 routineSet.getWeightNum(),

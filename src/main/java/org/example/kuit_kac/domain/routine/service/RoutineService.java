@@ -61,12 +61,12 @@ public class RoutineService {
         // dietType과 dietEntryType이 모두 같은 값이 있으면 안됩니다.
         RoutineType routineType = RoutineType.getRoutineType(routineTypeStr);
 
-        // 2. entryType 검증
+        // entryType 검증
         if (routineType == null || isTemplateType(routineType)) {
             throw new CustomException(ErrorCode.ROUTINE_TYPE_INVALID);
         }
 
-        // 4. 모든 검증 통과 후 저장
+        // 모든 검증 통과 후 저장
         Routine routine = new Routine(user, name, routineType);
         Routine saved = routineRepository.save(routine);
         

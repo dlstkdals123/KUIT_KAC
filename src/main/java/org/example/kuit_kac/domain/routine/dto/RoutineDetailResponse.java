@@ -10,8 +10,8 @@ public record RoutineDetailResponse(
     @Schema(description = "루틴 상세의 고유 식별자 (ID)", example = "1", requiredMode = Schema.RequiredMode.REQUIRED)
     Long id,
 
-    @Schema(description = "루틴 운동 정보")
-    RoutineExerciseProfileResponse routineExercise,
+    @Schema(description = "루틴 운동 ID", example = "1")
+    Long routineExerciseId,
 
     @Schema(description = "운동 시간 (분)", example = "30")
     Integer time,
@@ -28,7 +28,7 @@ public record RoutineDetailResponse(
     public static RoutineDetailResponse from(RoutineDetail routineDetail) {
         return new RoutineDetailResponse(
                 routineDetail.getId(),
-                RoutineExerciseProfileResponse.from(routineDetail.getRoutineExercise()),
+                routineDetail.getRoutineExercise().getId(),
                 routineDetail.getTime(),
                 routineDetail.getIntensity() != null ? routineDetail.getIntensity().getKoreanName() : null,
                 routineDetail.getCreatedAt(),
