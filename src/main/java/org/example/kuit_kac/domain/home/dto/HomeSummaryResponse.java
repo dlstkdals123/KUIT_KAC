@@ -3,9 +3,6 @@ package org.example.kuit_kac.domain.home.dto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.example.kuit_kac.domain.food.model.Food;
-
-import java.util.List;
 
 @Getter
 @AllArgsConstructor

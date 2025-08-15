@@ -1,16 +1,9 @@
 package org.example.kuit_kac.config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
 import org.example.kuit_kac.domain.oauth.service.KakaoOAuth2UserService;
-import org.example.kuit_kac.domain.user.service.UserService;
 import org.example.kuit_kac.exception.CustomAccessDenialHandler;
 import org.example.kuit_kac.exception.CustomAuthenticationEntryPoint;
-import org.example.kuit_kac.exception.CustomException;
-import org.example.kuit_kac.exception.ErrorCode;
 import org.example.kuit_kac.global.filter.JwtAuthFilter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -19,9 +12,6 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.cors.CorsConfigurationSource;
-
-import java.util.Map;
 
 @Configuration
 @EnableWebSecurity

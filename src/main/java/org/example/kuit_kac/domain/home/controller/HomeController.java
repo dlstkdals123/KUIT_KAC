@@ -6,9 +6,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
-import org.example.kuit_kac.domain.diet.dto.*;
-import org.example.kuit_kac.domain.diet.model.*;
-import org.example.kuit_kac.domain.diet.service.*;
 import org.example.kuit_kac.domain.home.dto.*;
 import org.example.kuit_kac.domain.home.model.Weight;
 import org.example.kuit_kac.domain.home.service.CoachReportService;
@@ -18,9 +15,6 @@ import org.example.kuit_kac.domain.home.service.WeightService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.time.LocalDate;
-import java.util.List;
 
 @RestController
 @RequestMapping("/home")

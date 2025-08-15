@@ -1,12 +1,9 @@
 package org.example.kuit_kac.domain.home.service;
 
 import lombok.RequiredArgsConstructor;
-import org.example.kuit_kac.domain.diet.model.Diet;
 import org.example.kuit_kac.domain.diet.model.DietEntryType;
-import org.example.kuit_kac.domain.diet.model.DietType;
 import org.example.kuit_kac.domain.diet.service.DietService;
 import org.example.kuit_kac.domain.diet_food.model.DietFood;
-import org.example.kuit_kac.domain.diet_food.repository.DietFoodRepository;
 import org.example.kuit_kac.domain.diet_food.service.DietFoodService;
 import org.example.kuit_kac.domain.home.dto.HomeCoachReportResponse;
 import org.example.kuit_kac.domain.home.model.Level;
@@ -15,10 +12,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor

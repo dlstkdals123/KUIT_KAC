@@ -18,9 +18,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Map;
-import java.util.StringTokenizer;
-
 @RestController
 @RequiredArgsConstructor
 @Schema(name = "인증", description = "로그인/토큰 관련 API")
