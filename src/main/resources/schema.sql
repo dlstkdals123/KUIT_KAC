@@ -67,16 +67,16 @@ CREATE TABLE `weight`
 
 
 -- 음식 관련 테이블
-CREATE TABLE `diet`
-(
-    `id`              bigint AUTO_INCREMENT                                                   NOT NULL PRIMARY KEY,
-    `user_id`         bigint                                                                  NOT NULL,
-    `name`            varchar(30)                                                             NULL,
-    `diet_type`       ENUM ('BREAKFAST', 'LUNCH', 'DINNER', 'SNACK', 'TEMPLATE')              NOT NULL,
-    `diet_entry_type` ENUM ('RECORD', 'FASTING', 'PLAN', 'AI_PLAN', 'DINING_OUT', 'DRINKING') NULL,
-    `created_at`      datetime                                                                NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    `updated_at`      datetime                                                                NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE
+CREATE TABLE `diet` (
+    `id`           bigint AUTO_INCREMENT NOT NULL PRIMARY KEY,
+    `user_id`      bigint                NOT NULL,
+    `name`         varchar(30)           NULL,
+    `diet_date`    date                  NULL,
+    `diet_type`    ENUM('BREAKFAST', 'LUNCH', 'DINNER', 'SNACK', 'TEMPLATE') NOT NULL,
+    `diet_entry_type` ENUM('RECORD', 'FASTING', 'PLAN', 'AI_PLAN', 'DINING_OUT', 'DRINKING') NULL,
+    `created_at`   datetime              NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_at`   datetime              NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON DELETE CASCADE
 );
 
 CREATE TABLE `food`

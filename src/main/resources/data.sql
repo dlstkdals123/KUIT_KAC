@@ -31,17 +31,17 @@ VALUES (1, 85.0),
 
 
 -- 음식 관련 테이블
-INSERT INTO `diet` (`user_id`, `name`, `diet_type`, `diet_entry_type`)
-VALUES (1, '오늘의 아침 기록', 'BREAKFAST', 'RECORD'),
-       (1, '오늘의 점심 기록', 'LUNCH', 'RECORD'),
-       (1, '오늘의 저녁 기록', 'DINNER', 'RECORD'),
-       (1, '나만의 아침', 'TEMPLATE', NULL),
-       (1, '나만의 점심', 'TEMPLATE', NULL),
-       (1, '나만의 저녁', 'TEMPLATE', NULL),
-       (2, NULL, 'BREAKFAST', 'PLAN'),
-       (2, NULL, 'LUNCH', 'PLAN'),
-       (2, NULL, 'DINNER', 'PLAN'),
-       (2, NULL, 'BREAKFAST', 'FASTING');
+INSERT INTO `diet` (`user_id`, `name`, `diet_date`, `diet_type`, `diet_entry_type`) VALUES
+(1, '오늘의 아침 기록', NULL, 'BREAKFAST', 'RECORD'),
+(1, '오늘의 점심 기록', NULL, 'LUNCH', 'RECORD'),
+(1, '오늘의 저녁 기록', NULL, 'DINNER', 'RECORD'),
+(1, '나만의 아침', NULL, 'TEMPLATE', NULL),
+(1, '나만의 점심', NULL, 'TEMPLATE', NULL),
+(1, '나만의 저녁', NULL, 'TEMPLATE', NULL),
+(2, NULL, 'BREAKFAST', 'PLAN'),
+(2, NULL, 'LUNCH', 'PLAN'),
+(2, NULL, 'DINNER', 'PLAN'),
+(2, NULL, 'BREAKFAST', 'FASTING');
 
 
 INSERT INTO `food` (`name`, `unit_type`, `unit_num`, `food_type`, `is_processed_food`, `calorie`, `carbohydrate`,
