@@ -5,7 +5,7 @@ import org.example.kuit_kac.domain.diet.model.DietType;
 import org.example.kuit_kac.domain.food.model.FoodType;
 import org.example.kuit_kac.domain.routine.model.Intensity;
 import org.example.kuit_kac.domain.routine.model.RoutineType;
-import org.example.kuit_kac.domain.routine.model.TargetMuscleGroup;
+import org.example.kuit_kac.domain.routine.model.TargetMuscleType;
 import org.example.kuit_kac.domain.user.model.GenderType;
 
 import java.util.Arrays;
@@ -54,12 +54,12 @@ public class EnumConverter {
         return INTENSITY_MAP.get(koreanName);
     }
 
-    // TargetMuscleGroup 변환
-    private static final Map<String, TargetMuscleGroup> TARGET_MUSCLE_GROUP_MAP = Arrays.stream(TargetMuscleGroup.values())
-            .collect(Collectors.toMap(TargetMuscleGroup::getKoreanName, targetMuscleGroup -> targetMuscleGroup));
+    // TargetMuscleType 변환
+    private static final Map<String, TargetMuscleType> TARGET_MUSCLE_TYPE_MAP = Arrays.stream(TargetMuscleType.values())
+            .collect(Collectors.toMap(TargetMuscleType::getKoreanName, targetMuscleType -> targetMuscleType));
 
-    public static TargetMuscleGroup fromKoreanTargetMuscleGroup(String koreanName) {
-        return TARGET_MUSCLE_GROUP_MAP.get(koreanName);
+    public static TargetMuscleType fromKoreanTargetMuscleType(String koreanName) {
+        return TARGET_MUSCLE_TYPE_MAP.get(koreanName);
     }
 
     // RoutineType 변환

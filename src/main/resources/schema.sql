@@ -127,7 +127,6 @@ CREATE TABLE `diet_aifood` (
     FOREIGN KEY (`aifood_id`) REFERENCES `aifood`(`id`) ON DELETE CASCADE
 );
 
-<<<<<<< HEAD
 ALTER TABLE user ADD COLUMN kakao_id VARCHAR(255) UNIQUE;
 
 # 임시 유저 허용
@@ -138,7 +137,6 @@ ALTER TABLE user MODIFY gender ENUM('MALE', 'FEMALE') NULL;
 ALTER TABLE user MODIFY height INT NULL;
 ALTER TABLE user MODIFY age INT NULL;
 ALTER TABLE user MODIFY target_weight DOUBLE NULL;
-=======
 
 -- 운동 관련 테이블
 CREATE TABLE `routine` (
@@ -154,7 +152,7 @@ CREATE TABLE `routine` (
 CREATE TABLE `exercise` (
     `id`                    bigint AUTO_INCREMENT NOT NULL PRIMARY KEY,
     `name`                  varchar(40)           NULL,
-    `target_muscle_group`   ENUM('ABDOMINALS', 'ABDUCTORS', 'ADDUCTORS', 'BACK', 'BICEPS', 'CALVES', 'CHEST', 'FOREARMS', 'GLUTES', 'HAMSTRINGS', 'HIP_FLEXORS', 'QUADRICEPS', 'SHINS', 'SHOULDERS', 'TRAPEZIUS', 'TRICEPS') NOT NULL,
+    `target_muscle_type`   ENUM('ABDOMINALS', 'ABDUCTORS', 'ADDUCTORS', 'BACK', 'BICEPS', 'CALVES', 'CHEST', 'FOREARMS', 'GLUTES', 'HAMSTRINGS', 'HIP_FLEXORS', 'QUADRICEPS', 'SHINS', 'SHOULDERS', 'TRAPEZIUS', 'TRICEPS') NOT NULL,
     `met_value`            double                NULL,
     `created_at`           datetime              NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `updated_at`           datetime              NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
@@ -193,4 +191,3 @@ CREATE TABLE `routine_set` (
     `updated_at`           datetime              NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (`routine_exercise_id`) REFERENCES `routine_exercise`(`id`) ON DELETE CASCADE
 );
->>>>>>> main

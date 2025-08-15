@@ -17,7 +17,7 @@ public enum ErrorCode {
     
     INTENSITY_INVALID("INTENSITY_001", "유효하지 않은 강도 타입입니다."),
 
-    TARGET_MUSCLE_GROUP_INVALID("TARGET_MUSCLE_GROUP_001", "유효하지 않은 근육 그룹 타입입니다."),
+    TARGET_MUSCLE_TYPE_INVALID("TARGET_MUSCLE_TYPE_001", "유효하지 않은 근육 타입입니다."),
 
     ROUTINE_TYPE_INVALID("ROUTINE_TYPE_001", "유효하지 않은 루틴 타입입니다."),
 

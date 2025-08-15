@@ -1,9 +1,9 @@
 package org.example.kuit_kac.domain.routine.repository;
 
-import org.example.kuit_kac.domain.routine.model.RoutineSet;
+import org.example.kuit_kac.domain.routine.model.RoutineDetail;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface ExerciseSetRepository extends JpaRepository<RoutineSet, Long> {
+public interface RoutineDetailRepository extends JpaRepository<RoutineDetail, Long> {
 }
