@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.kuit_kac.domain.user.model.UserPrincipal;
@@ -24,6 +25,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 @RequestMapping("/onboarding")
 @Schema(name = "온보딩", description = "회원 온보딩 관련 API")
+@Tag(name = "온보딩", description = "회원 온보딩 관련 API")
 public class OnboardingController {
     private final OnboardingService onboardingService;
     private final JwtProvider jwtProvider;
