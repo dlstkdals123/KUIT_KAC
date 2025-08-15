@@ -211,19 +211,20 @@ VALUES (1, 1, 1.2, CONCAT(CURDATE(), ' 08:00:00')),
 
 -- 운동 관련 샘플 데이터
 
-INSERT INTO `exercise` (`name`, `target_muscle_group`, `met_value`)
-VALUES ('벤치프레스', 'CHEST', 5.0),
-       ('스쿼트', 'QUADRICEPS', 7.0),
-       ('데드리프트', 'BACK', 6.5),
-       ('삼두 푸시다운', 'TRICEPS', 4.5),
-       ('바이셉 컬', 'BICEPS', 4.0),
-       ('숄더 프레스', 'SHOULDERS', 5.5),
-       ('레그 프레스', 'QUADRICEPS', 6.0),
-       ('랫풀다운', 'BACK', 5.0),
-       ('레그 익스텐션', 'QUADRICEPS', 4.0),
-       ('레그 컬', 'HAMSTRINGS', 4.0),
-       ('카프 레이즈', 'CALVES', 3.5),
-       ('크런치', 'ABDOMINALS', 3.0);
+INSERT INTO `exercise` (`name`, `target_muscle_type`, `met_value`) VALUES
+('벤치프레스', 'CHEST', 5.0),
+('스쿼트', 'QUADRICEPS', 7.0),
+('데드리프트', 'BACK', 6.5),
+('삼두 푸시다운', 'TRICEPS', 4.5),
+('바이셉 컬', 'BICEPS', 4.0),
+('숄더 프레스', 'SHOULDERS', 5.5),
+('레그 프레스', 'QUADRICEPS', 6.0),
+('랫풀다운', 'BACK', 5.0),
+('레그 익스텐션', 'QUADRICEPS', 4.0),
+('레그 컬', 'HAMSTRINGS', 4.0),
+('카프 레이즈', 'CALVES', 3.5),
+('크런치', 'ABDOMINALS', 3.0);
+
 
 INSERT INTO `routine` (`user_id`, `name`, `routine_type`)
 VALUES (1, '상체 기록', 'RECORD'),

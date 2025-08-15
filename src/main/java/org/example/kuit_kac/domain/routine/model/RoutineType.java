@@ -17,7 +17,6 @@ public enum RoutineType {
     private final String koreanName;
 
     public static RoutineType getRoutineType(String routineType) {
-        // EnumConverter에 맞는 메서드가 있다면 사용, 없다면 직접 구현 필요
         RoutineType fromKorean = EnumConverter.fromKoreanRoutineType(routineType);
         if (fromKorean != null) return fromKorean;
         try {

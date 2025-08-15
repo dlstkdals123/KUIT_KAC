@@ -1,9 +1,5 @@
 package org.example.kuit_kac.domain.home.model;
 
-
-import jakarta.persistence.Column;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 

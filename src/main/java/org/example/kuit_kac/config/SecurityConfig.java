@@ -1,26 +1,19 @@
 package org.example.kuit_kac.config;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.servlet.http.HttpServletResponse;
-import lombok.RequiredArgsConstructor;
 import org.example.kuit_kac.domain.oauth.service.KakaoOAuth2UserService;
-import org.example.kuit_kac.domain.user.service.UserService;
 import org.example.kuit_kac.exception.CustomAccessDenialHandler;
 import org.example.kuit_kac.exception.CustomAuthenticationEntryPoint;
-import org.example.kuit_kac.exception.CustomException;
-import org.example.kuit_kac.exception.ErrorCode;
 import org.example.kuit_kac.global.filter.JwtAuthFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
+import org.springframework.context.annotation.Profile;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-
-import java.util.Map;
 
 @Configuration
 @EnableWebSecurity
@@ -41,6 +34,7 @@ public class SecurityConfig {
     }
 
     @Bean
+    @Profile("dev")
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 // H2 콘솔은 CRSF 예외, 전반적으로는 비활성화
@@ -89,6 +83,27 @@ public class SecurityConfig {
                         .authenticationEntryPoint(authenticationEntryPoint)
                         .accessDeniedHandler(denialHandler)
                 )
+                // H2 콘솔용 프레임 허용
+                .headers(h -> h
+                        .frameOptions(f -> f.sameOrigin()));
+
+        return http.build();
+    }
+
+    @Bean
+    @Profile("local")
+    public SecurityFilterChain localSecurityFilterChain(HttpSecurity http) throws Exception {
+        http
+                // H2 콘솔은 CRSF 예외, 전반적으로는 비활성화
+                .csrf(csrf -> csrf
+                        .ignoringRequestMatchers("/h2-console/**")
+                        .disable())
+                // JWT 쓰므로 세션은 무상태
+                .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                // 엔드포인트 권한 - 모든 요청 허용
+                .authorizeHttpRequests(authorize -> authorize
+                        .anyRequest()
+                        .permitAll())
                 // H2 콘솔용 프레임 허용
                 .headers(h -> h
                         .frameOptions(f -> f.sameOrigin()));

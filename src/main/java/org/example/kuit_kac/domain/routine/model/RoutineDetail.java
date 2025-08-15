@@ -17,7 +17,7 @@ public class RoutineDetail {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "routine_exercise_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private RoutineExercise routineExercise;
 
@@ -33,6 +33,12 @@ public class RoutineDetail {
 
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
+
+    public RoutineDetail(RoutineExercise routineExercise, Integer time, Intensity intensity) {
+        this.routineExercise = routineExercise;
+        this.time = time;
+        this.intensity = intensity;
+    }
 
     @PrePersist
     protected void onCreate() {

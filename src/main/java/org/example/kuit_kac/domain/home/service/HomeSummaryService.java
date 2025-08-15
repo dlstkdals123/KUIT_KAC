@@ -1,7 +1,6 @@
 package org.example.kuit_kac.domain.home.service;
 
 import lombok.RequiredArgsConstructor;
-import org.example.kuit_kac.domain.diet.repository.DietRepository;
 import org.example.kuit_kac.domain.diet_food.model.DietFood;
 import org.example.kuit_kac.domain.diet_food.repository.DietFoodRepository;
 import org.example.kuit_kac.domain.food.model.Food;
@@ -22,7 +21,6 @@ import java.util.List;
 @RequiredArgsConstructor
 // TODO: 컨트롤러로 로직분리
 public class HomeSummaryService {
-    private final DietRepository dietRepository;
     private final DietFoodRepository dietFoodRepository;
     private final UserService userService;
     private final OnboardingService onboardingService;
