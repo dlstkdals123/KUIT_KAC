@@ -6,13 +6,13 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.kuit_kac.domain.user_information.service.OnboardingService;
-import org.example.kuit_kac.domain.user_information.service.UserInfoService;
 import org.example.kuit_kac.global.util.JwtProvider;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -60,7 +60,10 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         if (uidAttr instanceof Number n) {
             userId = n.longValue();
         } else if (uidAttr instanceof String s && !s.isBlank()) {
-            try { userId = Long.parseLong(s); } catch (NumberFormatException ignored) { }
+            try {
+                userId = Long.parseLong(s);
+            } catch (NumberFormatException ignored) {
+            }
         }
 
         // 2) 토큰 생성 (클레임 Map으로 유연하게)
@@ -74,16 +77,13 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         refreshClaims.put("kid", kakaoId);
         if (userId != null) refreshClaims.put("uid", userId);
 
-        String access  = jwtProvider.generateAccessToken(userId, kakaoId); // kakaoId를 access에만 실어줌
+        String access = jwtProvider.generateAccessToken(userId, kakaoId); // kakaoId를 access에만 실어줌
         String refresh = jwtProvider.generateRefreshToken(userId);
         long expiresIn = props.getAccessTtlSeconds();
         String state = request.getParameter("state"); // 있으면 전달
 
 
         // 3) 온보딩 필요 여부
-        // - 설정상 require=true이고
-        // - userId가 있으면 실제 DB 기준으로 판정
-        // - userId가 없으면 아직 가입 전이므로 보수적으로 true
         boolean onboardingRequired;
         if (!onboardingProperties.isRequire()) {
             onboardingRequired = false;
@@ -94,6 +94,8 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         }
 
 //        // TODO: 서버토큰 JSON 활성화 코드 넣는 자리
+
+        String target = props.getDeepLink();
 
         String deep = UriComponentsBuilder.fromUriString(target)
                 .queryParam(props.getAccessParam(), access)
@@ -106,51 +108,6 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         response.setStatus(HttpServletResponse.SC_FOUND);
         response.setHeader("Location", deep);
         response.setContentLength(0);
-//=======
-//
-//        Long userId = null;
-//        Object uidAttr = attrs.get("userId");
-//        if (uidAttr instanceof Number n) userId = n.longValue();
-//
-//        String kakaoId = oAuth2User.getName();
-//
-//        // 2) 토큰 생성
-//        String access = jwtProvider.generateAccessToken(userId, kakaoId);
-//        String refresh = jwtProvider.generateRefreshToken(userId);
-//
-//        // 만료(초) / state
-//        long expiresIn = props.getAccessTtlSeconds();
-//        String state = request.getParameter("state"); // 있으면 전달
-//
-//        // 3) 온보딩 필요 여부(TODO: 미구현이면 yml 기본값 true, 구현후 실제 DB검사)
-//        boolean onboardingRequired =
-//                onboardingProperties.isRequire() && userId != null && onboardingService.isOnboardingRequired(userId);
-//
-////        // TODO: 서버토큰 JSON 활성화 코드 넣는자리
-//
-//        // === DEEPLINK 모드: 무조건 리다이렉트 (JSON 폴백 금지) ===
-//        String target = props.getDeepLink();
-//        if (target == null || target.isBlank()) {
-//            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Missing deep-link config");
-//            return;
-//        }
-//
-//        UriComponentsBuilder b = UriComponentsBuilder.fromUriString(target)
-//                .queryParam(props.getAccessParam(), access)
-//                .queryParam(props.getRefreshParam(), refresh)
-//                .queryParam(props.getExpiresParam(), expiresIn)
-//                .queryParam(props.getOnboardingParam(), onboardingRequired);
-//        if (state != null && !state.isBlank()) {
-//            b.queryParam(props.getStateParam(), state);
-//        }
-//
-//        String deep = b.build().encode().toUriString();
-//
-//        // 302 Location
-//        response.setStatus(HttpServletResponse.SC_FOUND);
-//        response.setHeader("Location", deep);
-//        response.setContentLength(0); // 바디 금지
-//>>>>>>> Stashed changes
     }
 
     private static void writeJson(HttpServletResponse response,

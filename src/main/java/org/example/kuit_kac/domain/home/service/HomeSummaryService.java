@@ -10,11 +10,7 @@ import org.example.kuit_kac.domain.user.model.GenderType;
 import org.example.kuit_kac.domain.user.model.User;
 import org.example.kuit_kac.domain.user.service.UserService;
 import org.example.kuit_kac.domain.user_information.model.UserInformation;
-<<<<<<< Updated upstream
 import org.example.kuit_kac.domain.user_information.service.OnboardingService;
-=======
-import org.example.kuit_kac.domain.user_information.service.UserInfoService;
->>>>>>> Stashed changes
 import org.example.kuit_kac.global.util.TimeRange;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
