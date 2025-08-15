@@ -1,6 +1,7 @@
 package org.example.kuit_kac.domain.user_information.model;
 
 import jakarta.persistence.*;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.example.kuit_kac.domain.home.model.DietVelocity;
@@ -36,6 +37,10 @@ public class UserInformation {
     @Column(name = "eating_out_type", nullable = false)
     private EatingOutType eatingOutType;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "diet_velocity", nullable = false)
+    private DietVelocity dietVelocity;
+
     public UserInformation(User user,
                            boolean hasDietExperience,
                            String dietFailReason,
@@ -52,7 +57,4 @@ public class UserInformation {
         this.dietVelocity = dietVelocity;
     }
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "diet_velocity", nullable = false)
-    private DietVelocity dietVelocity;
 }

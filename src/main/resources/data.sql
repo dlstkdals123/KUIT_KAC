@@ -1,12 +1,12 @@
 -- 사용자 관련 테이블
-INSERT INTO user (`nickname`, `kakao_id`, `gender`, `age`, `height`, `target_weight`)
-VALUES ('user1', '0000000001', 'MALE', 30, 175, 70.5),
-       ('user2', '0000000002', 'FEMALE', 25, 163, 55.0),
+INSERT IGNORE INTO user (`nickname`, `kakao_id`, `gender`, `age`, `height`, `target_weight`)
+VALUES ('user4', '0000000001', 'MALE', 30, 175, 70.5),
+       ('user5', '0000000002', 'FEMALE', 25, 163, 55.0),
        ('admin@test', '9999999999', 'MALE', 29, 180, 70.0);;
 
 SET @admin_id = LAST_INSERT_ID();
 
-INSERT INTO user_information
+INSERT ignore INTO user_information
 (`user_id`, `has_diet_experience`, `diet_fail_reason`, `appetite_type`,
  `weekly_eating_out_count`, `eating_out_type`, `diet_velocity`)
 VALUES (1, FALSE, NULL, 'SMALL', '4번 이상', 'KOREAN', 'COACH'),
@@ -14,7 +14,7 @@ VALUES (1, FALSE, NULL, 'SMALL', '4번 이상', 'KOREAN', 'COACH'),
        (@admin_id, TRUE, NULL, 'BIG', '0', 'KOREAN', 'ALL_IN');
 
 
-INSERT INTO user_term_agreement (user_id, code, version, agreed, agreed_at)
+INSERT ignore INTO user_term_agreement (user_id, code, version, agreed, agreed_at)
 VALUES (1, 'SERVICE_TOS', 'v1.0.0', TRUE, NOW()),
        (1, 'PRIVACY', 'v1.0.0', TRUE, NOW()),
        (1, 'MARKETING', 'v1.0.0', FALSE, NULL),
@@ -296,8 +296,3 @@ VALUES (3, 100, 1),
        (9, 160, 2);
 
 
--- 온보딩 정보 먼저 삭제
-DELETE FROM user_information WHERE user_id = 3;
-
--- 유저 정보 삭제
-DELETE FROM user WHERE id = 3;

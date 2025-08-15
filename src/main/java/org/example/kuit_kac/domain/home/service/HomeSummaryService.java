@@ -10,7 +10,11 @@ import org.example.kuit_kac.domain.user.model.GenderType;
 import org.example.kuit_kac.domain.user.model.User;
 import org.example.kuit_kac.domain.user.service.UserService;
 import org.example.kuit_kac.domain.user_information.model.UserInformation;
+<<<<<<< Updated upstream
 import org.example.kuit_kac.domain.user_information.service.OnboardingService;
+=======
+import org.example.kuit_kac.domain.user_information.service.UserInfoService;
+>>>>>>> Stashed changes
 import org.example.kuit_kac.global.util.TimeRange;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,7 +29,7 @@ public class HomeSummaryService {
     private final DietRepository dietRepository;
     private final DietFoodRepository dietFoodRepository;
     private final UserService userService;
-    private final OnboardingService userInformationService;
+    private final OnboardingService onboardingService;
     private final WeightService weightService;
 
     // 하루 섭취 영양소 요약
@@ -66,7 +70,7 @@ public class HomeSummaryService {
         // 일일섭취목표 : BMR - 일일감량목표칼로리
 
         User user = userService.getUserById(userId);
-        UserInformation userInfo = userInformationService.getUserInformationByUserId(userId);
+        UserInformation userInfo = onboardingService.getUserInformationByUserId(userId);
         double weightValue = weightService.getLatestWeightByUserId(userId).getWeight();
 
         int age = user.getAge();

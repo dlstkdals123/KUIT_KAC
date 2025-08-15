@@ -42,6 +42,16 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     }
 
     @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        String p = request.getServletPath();
+        return p.startsWith("/oauth2/") // 로그인 시작
+                || p.startsWith("/login/oauth2/") // 콜백
+                || p.startsWith("/swagger-ui/")
+                || p.startsWith("/v3/api-docs/")
+                || p.equals("/") || p.startsWith("/health") || p.startsWith("/actuator");
+    }
+
+    @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
