@@ -1,7 +1,1 @@
-VFl5zQkYsU
-HPMvRw6Xx4ZUru8A=
-
-regex:(?i)^\s*(jwt[\.\-_ ]?)?secret[\.\-_ ]?base64\s*:\s*['"][^'"]+['"]\s*(#.*)?$==>jwt.secret-base64: "<REMOVED>"
-regex:(?i)^\s*(jwt[\.\-_ ]?)?secret[\.\-_ ]?base64\s*[:=]\s*\S+\s*(#.*)?$==>jwt.secret-base64: "<REMOVED>"
-
-regex:VFl5zQkYsU\*{3}REMOVED\*{3}HPMvRw6Xx4ZUru8A==> <REMOVED>
+writeJson(response, access, refresh, expiresIn, state, onboardingRequired);
