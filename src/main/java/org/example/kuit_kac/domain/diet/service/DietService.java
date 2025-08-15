@@ -77,17 +77,12 @@ public class DietService {
     }
 
     @Transactional
-    public Diet createSimpleDiet(User user, String dietTypeStr, String dietEntryTypeStr) {
-        // diet_entry_type = FASTING, DINING_OUT, DRINKING, name=null, foods=null
-        DietEntryType entryType = DietEntryType.getDietEntryType(dietEntryTypeStr);
-        if (entryType == null || !isSimpleDietEntryType(entryType)) {
-            throw new CustomException(ErrorCode.DIET_ENTRY_TYPE_INVALID);
-        }
+    public Diet createFastingDiet(User user, LocalDate dietDate, String dietTypeStr) {
         DietType dietType = DietType.getDietType(dietTypeStr);
         if (dietType == null || isTemplateDietType(dietType)) {
             throw new CustomException(ErrorCode.DIET_TYPE_INVALID);
         }
-        Diet diet = new Diet(user, null, dietType, entryType);
+        Diet diet = new Diet(user, null, dietDate, dietType, DietEntryType.FASTING);
         return dietRepository.save(diet);
     }
 
@@ -165,10 +160,6 @@ public class DietService {
     public void deleteDiet(Diet diet) {
         dietFoodService.deleteDietFoods(diet.getDietFoods());
         dietRepository.delete(diet);
-    }
-
-    private boolean isSimpleDietEntryType(DietEntryType entryType) {
-        return entryType == DietEntryType.FASTING || entryType == DietEntryType.DINING_OUT || entryType == DietEntryType.DRINKING;
     }
 
     private boolean isTemplateDietType(DietType dietType) {

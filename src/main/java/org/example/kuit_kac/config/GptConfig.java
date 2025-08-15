@@ -29,7 +29,7 @@ public class GptConfig {
     public final static double TOP_P = 1.0;
     public final static int MAX_TOKENS = 1000;
     public final static Duration TIMEOUT = Duration.ofSeconds(30);
-    public final static String SYSTEM_PROMPT = "You are a helpful diet assistant that provides personalized and healthy diet schedules.";
+
 
     @Value("${openai.api-key}")
     private String apiKey;
@@ -39,7 +39,7 @@ public class GptConfig {
         return new OpenAiService(apiKey, TIMEOUT);
     }
 
-    public ResponseEntity<String> getResponse(String prompt) {
+    public ResponseEntity<String> getResponse(String systemPrompt, String userPrompt) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("Authorization", "Bearer " + apiKey);
@@ -50,13 +50,13 @@ public class GptConfig {
         // system 메시지 추가
         Map<String, Object> systemMsg = new HashMap<>();
         systemMsg.put("role", "system");
-        systemMsg.put("content", SYSTEM_PROMPT);
+        systemMsg.put("content", systemPrompt);
         messages.add(systemMsg);
 
         // user 메시지 추가
         Map<String, Object> userMsg = new HashMap<>();
         userMsg.put("role", "user");
-        userMsg.put("content", prompt);
+        userMsg.put("content", userPrompt);
         messages.add(userMsg);
 
         JSONArray messagesArray = new JSONArray(messages);

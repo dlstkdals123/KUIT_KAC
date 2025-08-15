@@ -109,6 +109,14 @@ public class Diet {
         this.dietEntryType = dietEntryType;
     }
 
+    public Diet(User user, String name, LocalDate dietDate, DietType dietType, DietEntryType dietEntryType) {
+        this.user = user;
+        this.name = name;
+        this.dietDate = dietDate;
+        this.dietType = dietType;
+        this.dietEntryType = dietEntryType;
+    }
+
     public void addDietFood(DietFood dietFood) {
         this.dietFoods.add(dietFood);
         dietFood.setDiet(this);

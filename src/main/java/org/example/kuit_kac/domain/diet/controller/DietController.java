@@ -110,12 +110,12 @@ public class DietController {
     }
 
     @PostMapping("/simple")
-    @Operation(summary = "단식, 외식, 술자리 식단 생성", description = "유저 ID와 식단 항목 종류를 입력하여 음식을 포함하지 않는 식단을 생성합니다.")
-    public ResponseEntity<DietRecordProfileResponse> createSimpleDiet(
-            @RequestBody @Valid DietSimpleCreateRequest request
+    @Operation(summary = "단식 식단 생성", description = "유저 ID와 식단 종류를 입력하여 단식을 생성합니다.")
+    public ResponseEntity<DietRecordProfileResponse> createFastingDiet(
+            @RequestBody @Valid DietFastingCreateRequest request
     ) {
         User user = userService.getUserById(request.userId());
-        Diet diet = dietService.createSimpleDiet(user, request.dietType(), request.dietEntryType());
+        Diet diet = dietService.createFastingDiet(user, request.dietDate(), request.dietType());
         DietRecordProfileResponse response = DietRecordProfileResponse.from(diet);
         return ResponseEntity.ok(response);
     }
