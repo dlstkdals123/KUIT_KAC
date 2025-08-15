@@ -7,12 +7,12 @@ import org.example.kuit_kac.domain.user_information.model.UserInformation;
 
 @Getter
 @AllArgsConstructor
-public class UserInformationResponse {
+public class OnboardingResponse {
     private long userId;
     private DietVelocity dietVelocity;
 
-    public static UserInformationResponse from(UserInformation info) {
-        return new UserInformationResponse(
+    public static OnboardingResponse from(UserInformation info) {
+        return new OnboardingResponse(
                 info.getUserId(),
                 info.getDietVelocity()
         );

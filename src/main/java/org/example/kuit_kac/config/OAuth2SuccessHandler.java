@@ -4,22 +4,17 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.java.Log;
 import lombok.extern.slf4j.Slf4j;
-import org.example.kuit_kac.domain.user_information.service.UserInfoService;
+import org.example.kuit_kac.domain.user_information.service.OnboardingService;
 import org.example.kuit_kac.global.util.JwtProvider;
-import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 @Component
 @RequiredArgsConstructor
@@ -29,11 +24,12 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
     private final JwtProvider jwtProvider;
     private final AuthLoginSuccessProperties props;
     private final AuthOnboardingProperties onboardingProperties;
-    private final UserInfoService userInfoService;
+    private final OnboardingService userInfoService;
 
     // 빈 페이지에 토큰 출력하는 메서드
     @Override
-    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
+    public void onAuthenticationSuccess(HttpServletRequest request,
+                                        HttpServletResponse response,
                                         Authentication authentication) throws IOException, ServletException {
         log.info("[OAuth2Success] mode={}, deepLink='{}', isDeepLinkBranch={}",
                 props.getMode(), props.getDeepLink(), props.isDeepLink());
@@ -42,56 +38,89 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
         Map<String, Object> attrs = oAuth2User.getAttributes();
 
+
+        // kakaoId: attributes에 "kakaoId"가 있으면 사용, 없으면 카카오 원본 "id", 둘 다 없으면 getName()
+        String kakaoId = null;
+        Object kidAttr = attrs.get("kakaoId");
+        if (kidAttr == null) kidAttr = attrs.get("id");   // 카카오 원본
+        if (kidAttr != null) kakaoId = String.valueOf(kidAttr);
+        if (kakaoId == null || kakaoId.isBlank()) {
+            // nameAttributeKey를 "kakaoId"로 설정했다면 getName()이 kakaoId일 수 있음
+            String fallback = oAuth2User.getName();
+            if (fallback != null && !fallback.isBlank()) {
+                kakaoId = fallback;
+            } else {
+                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "kakaoId not found");
+                return;
+            }
+        }
+
         Long userId = null;
         Object uidAttr = attrs.get("userId");
-        if (uidAttr instanceof Number n) userId = n.longValue();
+        if (uidAttr instanceof Number n) {
+            userId = n.longValue();
+        } else if (uidAttr instanceof String s && !s.isBlank()) {
+            try { userId = Long.parseLong(s); } catch (NumberFormatException ignored) { }
+        }
 
-        String kakaoId = oAuth2User.getName();
+        // 2) 토큰 생성 (클레임 Map으로 유연하게)
+        Map<String, Object> accessClaims = new HashMap<>();
+        accessClaims.put("sub", "access");
+        accessClaims.put("kid", kakaoId); // 프론트가 디코딩해서 온보딩 요청에 실어보내면 됨
+        if (userId != null) accessClaims.put("uid", userId);
 
-        // 2) 토큰 생성
-        String access = jwtProvider.generateAccessToken(userId, kakaoId);
+        Map<String, Object> refreshClaims = new HashMap<>();
+        refreshClaims.put("sub", "refresh");
+        refreshClaims.put("kid", kakaoId);
+        if (userId != null) refreshClaims.put("uid", userId);
+
+        String access  = jwtProvider.generateAccessToken(userId, kakaoId); // kakaoId를 access에만 실어줌
         String refresh = jwtProvider.generateRefreshToken(userId);
-
-        // 만료(초) / state
         long expiresIn = props.getAccessTtlSeconds();
         String state = request.getParameter("state"); // 있으면 전달
 
-        // 3) 온보딩 필요 여부(TODO: 미구현이면 yml 기본값 true, 구현후 실제 DB검사)
-        boolean onboardingRequired =
-                onboardingProperties.isRequire() && userId != null && userInfoService.isOnboardingRequired(userId);
+
+        // 3) 온보딩 필요 여부
+        // - 설정상 require=true이고
+        // - userId가 있으면 실제 DB 기준으로 판정
+        // - userId가 없으면 아직 가입 전이므로 보수적으로 true
+        boolean onboardingRequired;
+        if (!onboardingProperties.isRequire()) {
+            onboardingRequired = false;
+        } else if (userId != null) {
+            onboardingRequired = userInfoService.isOnboardingRequired(userId);
+        } else {
+            onboardingRequired = true;
+        }
 
 //        // TODO: 서버토큰 JSON 활성화 코드. 지워야함!
         // 테스트시
-//        writeJson(response, access, refresh, expiresIn, state, onboardingRequired);
+        writeJson(response, access, refresh, expiresIn, state, onboardingRequired);
 
-        if (!props.isDeepLink()) {
-            writeJson(response, access, refresh, expiresIn, state, onboardingRequired);
-            return;
-        }
-
-
-        // === DEEPLINK 모드: 무조건 리다이렉트 (JSON 폴백 금지) ===
-        String target = props.getDeepLink();
-        if (target == null || target.isBlank()) {
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Missing deep-link config");
-            return;
-        }
-
-        UriComponentsBuilder b = UriComponentsBuilder.fromUriString(target)
-                .queryParam(props.getAccessParam(), access)
-                .queryParam(props.getRefreshParam(), refresh)
-                .queryParam(props.getExpiresParam(), expiresIn)
-                .queryParam(props.getOnboardingParam(), onboardingRequired);
-        if (state != null && !state.isBlank()) {
-            b.queryParam(props.getStateParam(), state);
-        }
-
-        String deep = b.build().encode().toUriString();
-
-        // 302 Location
-        response.setStatus(HttpServletResponse.SC_FOUND);
-        response.setHeader("Location", deep);
-        response.setContentLength(0); // 바디 금지
+//        // 4) 응답 분기: JSON vs DeepLink
+//        if (!props.isDeepLink()) {
+//            writeJson(response, access, refresh, expiresIn, state, onboardingRequired);
+//            return;
+//        }
+//
+//        // === DEEPLINK 모드 ===
+//        String target = props.getDeepLink();
+//        if (target == null || target.isBlank()) {
+//            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Missing deep-link config");
+//            return;
+//        }
+//
+//        String deep = UriComponentsBuilder.fromUriString(target)
+//                .queryParam(props.getAccessParam(), access)
+//                .queryParam(props.getRefreshParam(), refresh)
+//                .queryParam(props.getExpiresParam(), expiresIn)
+//                .queryParam(props.getOnboardingParam(), onboardingRequired)
+//                .queryParam(props.getStateParam(), (state == null ? "" : state))
+//                .build().encode().toUriString();
+//
+//        response.setStatus(HttpServletResponse.SC_FOUND);
+//        response.setHeader("Location", deep);
+//        response.setContentLength(0);
     }
 
     private static void writeJson(HttpServletResponse response,

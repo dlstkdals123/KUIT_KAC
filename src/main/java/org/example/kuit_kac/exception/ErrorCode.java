@@ -39,10 +39,15 @@ public enum ErrorCode {
     // 다른 사용자의 데이터 접근 에러코드
     AUTH_FORBIDDEN("AUTH_002", "권한이 없습니다."),
 
+    // 이미 존재하는 유저
+    USER_ALREADY_EXISTS("AUTH_003", "이미 존재하는 유저입니다."),
+
+    REQUIRED_TERMS_NOT_AGREED("TERM_001", "약관에 동의하지 않았습니다."),
+
     // 루틴(Routine) 관련 에러 코드
     ROUTINE_NOT_FOUND("ROUTINE_001", "존재하지 않는 루틴입니다."),
-    
-    // 운동(Exercise) 관련 에러 코드
+
+    // 운동(Exercise) 관련 에러 코드,
     EXERCISE_NOT_FOUND("EXERCISE_001", "존재하지 않는 운동입니다.");
 
     private final String code;

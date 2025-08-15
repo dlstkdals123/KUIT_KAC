@@ -1,10 +1,19 @@
 -- 사용자 관련 테이블
-INSERT INTO `user` (`nickname`, `password`, `email`, `gender`, `age`, `height`, `target_weight`) VALUES
-('user1', 'hashed_password_1', 'user1@example.com', 'MALE', 30, 175, 70.5),
-('user2', 'hashed_password_2', 'user2@example.com', 'FEMALE', 25, 163, 55.0);
+INSERT INTO `user` (`nickname`, `kakao_id`, `gender`, `age`, `height`, `target_weight`) VALUES
+('user1', '0000000001', 'MALE', 30, 175, 70.5),
+('user2', '0000000002', 'FEMALE', 25, 163, 55.0);
 
 INSERT INTO `user_information` (`user_id`, `diet_velocity`) VALUES
 (1, 'COACH');
+
+INSERT INTO user_term_agreement (user_id, code, version, agreed, agreed_at)
+VALUES
+(1, 'SERVICE_TOS', 'v1.0.0', TRUE, NOW()),
+(1, 'PRIVACY',     'v1.0.0', TRUE, NOW()),
+(1, 'MARKETING',   'v1.0.0', FALSE, NULL),
+(2, 'SERVICE_TOS', 'v1.0.0', TRUE, NOW()),
+(2, 'PRIVACY',     'v1.0.0', TRUE, NOW()),
+(2, 'MARKETING',   'v1.0.0', TRUE, NOW());
 
 INSERT INTO `weight` (`user_id`, `weight`) VALUES
 (1, 85.0),

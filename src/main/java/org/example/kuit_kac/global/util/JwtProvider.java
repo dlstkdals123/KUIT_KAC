@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Date;
+import java.util.Map;
 import java.util.Objects;
 
 // 토큰생성, 파싱, 유효성 검사 담당
@@ -96,4 +97,21 @@ public class JwtProvider {
     public String getTokenType(String token) {
         return parse(token).getBody().getSubject(); // "access" or "refresh"
     }
+
+    public String getKakaoIdFromToken(String token) {
+        Claims c = parseClaims(token);
+        Object kid = c.get("kid");
+        return (kid == null) ? null : String.valueOf(kid);
+    }
+
+    public Claims parseClaims(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+    }
+
+
 }
+

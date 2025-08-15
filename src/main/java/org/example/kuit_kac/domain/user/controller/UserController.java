@@ -24,6 +24,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Map;
+
 @RestController
 @RequestMapping("/users")
 @RequiredArgsConstructor
@@ -51,16 +53,51 @@ public class UserController {
             ))
     @GetMapping("/me")
     public ResponseEntity<UserResponse> getMyInfo(@AuthenticationPrincipal UserPrincipal p) {
-        return ResponseEntity.ok(
-                UserResponse.builder()
-                        .userId(p.getUserId())
-                        .termsAgreed(p.isTermsAgreed()) // 약관여부 노출 여부 원하면 선택
-                        .build()
-        );
+        if (p == null) {
+            // 인증 안 된 경우
+            return ResponseEntity.status(401)
+                    .body(UserResponse.builder()
+                            .termsAgreed(false)
+                            .onboardingNeeded(true)
+                            .build());
+        }
+
+        Long userId = p.getUserId();
+
+        // 1) uid가 있는 경우 (온보딩 완료 사용자)
+        if (userId != null) {
+            User u = userService.getUserById(userId);
+            return ResponseEntity.ok(
+                    UserResponse.from(u, p.isTermsAgreed(), p.isOnboardingNeeded())
+            );
+        }
+
+        // 2) uid가 없으면 kid(kakaoId) 폴백
+        String kakaoId = p.getKakaoId();
+        if (kakaoId == null || kakaoId.isBlank()) {
+            // 토큰에 kakaoId도 없으면 잘못된 토큰
+            return ResponseEntity.status(401)
+                    .body(UserResponse.builder()
+                            .termsAgreed(false)
+                            .onboardingNeeded(true)
+                            .build());
+        }
+
+        // kid로 조회 시 DB에 있으면 UserResponse 반환
+        return userService.findByKakaoId(kakaoId)
+                .map(u -> ResponseEntity.ok(
+                        UserResponse.from(u, p.isTermsAgreed(), p.isOnboardingNeeded())
+                ))
+                .orElseGet(() -> ResponseEntity.status(409) // 온보딩 필요
+                        .body(UserResponse.builder()
+                                .termsAgreed(p.isTermsAgreed())
+                                .onboardingNeeded(true)
+                                .build()));
     }
 
+
     @Hidden // 프론트에서 안 쓰므로 숨김
-    // 다른 user 정보 접근 못하는지 확인하는 API
+// 다른 user 정보 접근 못하는지 확인하는 API
     @GetMapping("/{id}")
     public ResponseEntity<UserResponse> getUser(@PathVariable Long id,
                                                 @AuthenticationPrincipal UserPrincipal principal) {

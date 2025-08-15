@@ -29,24 +29,24 @@ public class KakaoOAuth2UserService extends DefaultOAuth2UserService {
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
         OAuth2User oAuth2User = super.loadUser(userRequest);
-        // 카카오 유저 정보 JSON 데이터
-        String kakaoId = String.valueOf(oAuth2User.getAttributes().get("id"));
-        if (kakaoId == null) {
+        Map<String, Object> origin = oAuth2User.getAttributes();
+
+        // 1) kakao id 안전 추출
+        Object idObj = origin.get("id");
+        if (idObj == null) {
             throw new OAuth2AuthenticationException("Kakao 'id' not found in attributes");
         }
+        String kakaoId = String.valueOf(idObj);
 
-        // DB upsert: 없으면 생성, 있으면 조회
-        User user = userService.findOrCreateByKakaoId(kakaoId);
-
-        // 성공 핸들러에서 토큰 발급에 쓰도록 userId/kakaoId를 attributes에 넣어줌
-        Map<String, Object> attrs = new HashMap<>();
+        // 2) 원본 attrs 보존 + 우리가 쓸 필드 보강
+        Map<String, Object> attrs = new HashMap<>(origin);
         attrs.put("kakaoId", kakaoId);
-        attrs.put("userId", user.getId());
 
+        // 3) nameAttributeKey는 실제 존재하는 키로(여기선 kakaoId)
         return new DefaultOAuth2User(
                 Collections.singleton(new SimpleGrantedAuthority("ROLE_USER")),
-                attrs, // attributes에 넣고
-                "userId" // getName() 호출 시 나옴
+                attrs,
+                "kakaoId"
         );
     }
 

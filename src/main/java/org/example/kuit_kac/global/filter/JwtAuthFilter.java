@@ -5,12 +5,12 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.example.kuit_kac.domain.terms.service.UserTermService;
 import org.example.kuit_kac.domain.user.model.User;
 import org.example.kuit_kac.domain.user.model.UserPrincipal;
 import org.example.kuit_kac.domain.user.service.UserService;
-import org.example.kuit_kac.global.security.JwtAuthorityUtils;
 import org.example.kuit_kac.global.util.JwtProvider;
-import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -23,10 +23,12 @@ import java.util.List;
 
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class JwtAuthFilter extends OncePerRequestFilter {
 
     private final JwtProvider jwtProvider;
     private final UserService userService; // 최신값 필요하면 조회해서 Principal 새로 만듦
+    private final UserTermService userTermsService;
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
@@ -42,6 +44,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
+
 
         // 이미 인증된 상태면 다음 필터로
         if (SecurityContextHolder.getContext().getAuthentication() != null) {
@@ -63,19 +66,32 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         }
 
         try {
-            Long uid = jwtProvider.getUserIdFromToken(token);
-            User user = userService.getUserById(uid);
-            // terms/onboarding 계산해서 커스터 principal로
-            UserPrincipal principal = UserPrincipal.from(user, false);
+            Long userId = jwtProvider.getUserIdFromToken(token);
+            String kakaoId = jwtProvider.getKakaoIdFromToken(token);
+
+            User user = (userId != null) ? userService.getUserById(userId) : null;
+            // TODO: 약관 동의 여부 계산 로직 연결
+            boolean termsAgreed = (user != null) && userTermsService.hasAgreedRequired(userId);
+
+            // 5) Principal 구성: uid 없을 때도 kakaoId로 폴백 가능하도록
+            UserPrincipal principal = UserPrincipal.from(user, termsAgreed, kakaoId);
 
             UsernamePasswordAuthenticationToken authenticationToken =
                     new UsernamePasswordAuthenticationToken(
-                            principal, null,
-                            List.of(new SimpleGrantedAuthority("ROLE_USER")));
-
+                            principal,
+                            null,
+                            List.of(new SimpleGrantedAuthority("ROLE_USER"))
+                    );
             authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-            // SecurityContext에 인증 정보 저장
+
+            // 6) SecurityContext에 인증 정보 저장
             SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+
+            // 토큰 확인
+            log.info("[JwtAuth] raw Authorization='{}'", authHeader);
+            log.info("[JwtAuth] token(prefix10)={}, len={}",
+                    token != null ? token.substring(0, Math.min(10, token.length())) : null,
+                    token != null ? token.length() : -1);
 
         } catch (Exception e) {
             SecurityContextHolder.clearContext();
