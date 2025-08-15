@@ -1,4 +1,3 @@
-// src/main/java/org/example/kuit_kac/domain/terms/repository/UserTermAgreementRepository.java
 package org.example.kuit_kac.domain.terms.repository;
 
 import org.example.kuit_kac.domain.terms.dto.TermCode;
@@ -15,8 +14,13 @@ public interface UserTermAgreementRepository extends JpaRepository<UserTermAgree
     Optional<UserTermAgreement> findByIdUserIdAndIdCode(Long userId, TermCode code);
 
     @Query("""
-      select count(a) > 0 from UserTermAgreement a
-      where a.id.userId = :userId and a.id.code = :code and a.agreed = true
-    """)
+              select count(a) > 0 from UserTermAgreement a
+              where a.id.userId = :userId and a.id.code = :code and a.agreed = true
+            """)
     boolean isAgreed(Long userId, TermCode code);
+
+    boolean existsByIdUserIdAndIdCodeAndAgreedTrue(Long userId, TermCode code);
+
+    void deleteByIdUserId(Long userId);
+
 }

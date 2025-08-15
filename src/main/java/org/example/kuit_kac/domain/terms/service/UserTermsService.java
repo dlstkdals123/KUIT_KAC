@@ -12,9 +12,9 @@ import java.util.*;
 
 @Service
 @RequiredArgsConstructor
-public class UserTermService {
+public class UserTermsService {
 
-    private final UserTermAgreementRepository repo;
+    private final UserTermAgreementRepository termAgreementRepository;
 
     @Transactional
     public List<TermAgreementResponse> upsertAgreements(Long userId, TermAgreementUpsertRequest request) {
@@ -23,7 +23,7 @@ public class UserTermService {
 
         for (TermAgreementItem item : request.getAgreements()) {
             UserTermAgreementId id = new UserTermAgreementId(userId, item.getCode());
-            UserTermAgreement entity = repo.findById(id).orElse(
+            UserTermAgreement entity = termAgreementRepository.findById(id).orElse(
                     UserTermAgreement.builder()
                             .id(id)
                             .version(item.getVersion())
@@ -37,7 +37,7 @@ public class UserTermService {
                 // 철회 처리
                 entity.withdraw(now);
             }
-            repo.save(entity);
+            termAgreementRepository.save(entity);
 
             result.add(TermAgreementResponse.builder()
                     .userId(userId)
@@ -53,7 +53,7 @@ public class UserTermService {
 
     @Transactional(readOnly = true)
     public List<TermAgreementResponse> getAgreements(Long userId) {
-        List<UserTermAgreement> list = repo.findByIdUserId(userId);
+        List<UserTermAgreement> list = termAgreementRepository.findByIdUserId(userId);
         List<TermAgreementResponse> result = new ArrayList<>();
         for (UserTermAgreement e : list) {
             result.add(TermAgreementResponse.builder()
@@ -70,9 +70,9 @@ public class UserTermService {
 
     @Transactional(readOnly = true)
     public TermSummaryResponse getSummary(Long userId) {
-        boolean s = repo.isAgreed(userId, TermCode.SERVICE_TOS);
-        boolean p = repo.isAgreed(userId, TermCode.PRIVACY);
-        boolean m = repo.isAgreed(userId, TermCode.MARKETING);
+        boolean s = termAgreementRepository.isAgreed(userId, TermCode.SERVICE_TOS);
+        boolean p = termAgreementRepository.isAgreed(userId, TermCode.PRIVACY);
+        boolean m = termAgreementRepository.isAgreed(userId, TermCode.MARKETING);
 
         return TermSummaryResponse.builder()
                 .userId(userId)
@@ -86,7 +86,17 @@ public class UserTermService {
     /** 로그인/필터에서 쓸: 필수 약관 동의 여부 */
     @Transactional(readOnly = true)
     public boolean hasAgreedRequired(Long userId) {
-        return repo.isAgreed(userId, TermCode.SERVICE_TOS)
-                && repo.isAgreed(userId, TermCode.PRIVACY);
+        return termAgreementRepository.isAgreed(userId, TermCode.SERVICE_TOS)
+                && termAgreementRepository.isAgreed(userId, TermCode.PRIVACY);
+    }
+
+    public boolean hasRequiredTerms(Long userId) {
+        // 필수 약관 코드
+        List<TermCode> requiredCodes = List.of(TermCode.SERVICE_TOS, TermCode.PRIVACY);
+
+        // 모든 필수 약관이 true로 동의되어 있어야 함
+        return requiredCodes.stream()
+                .allMatch(code -> termAgreementRepository.existsByIdUserIdAndIdCodeAndAgreedTrue(userId, code));
+
     }
 }

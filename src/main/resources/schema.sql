@@ -14,7 +14,6 @@ DROP TABLE IF EXISTS `food`;
 DROP TABLE IF EXISTS `user`;
 DROP TABLE IF EXISTS `exercise`;
 
-
 -- 사용자 관련 테이블
 CREATE TABLE `user`
 (
@@ -41,17 +40,18 @@ CREATE TABLE `user_information`
     FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE
 );
 
-CREATE TABLE `user_term_agreement` (
-  user_id      BIGINT                             NOT NULL,
-  code         ENUM('SERVICE_TOS','PRIVACY','MARKETING') NOT NULL,
-  version      VARCHAR(32)                        NOT NULL,
-  agreed       BOOLEAN                            NOT NULL DEFAULT FALSE,
-  agreed_at    DATETIME                           NULL,
-  withdrawn_at DATETIME                           NULL,
-  created_at   DATETIME                           NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  updated_at   DATETIME                           NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  CONSTRAINT pk_user_term_agreement PRIMARY KEY (user_id, code),
-  CONSTRAINT fk_uta_user FOREIGN KEY (user_id) REFERENCES user(id)
+CREATE TABLE `user_term_agreement`
+(
+    user_id      BIGINT                                     NOT NULL,
+    code         ENUM ('SERVICE_TOS','PRIVACY','MARKETING') NOT NULL,
+    version      VARCHAR(32)                                NOT NULL,
+    agreed       BOOLEAN                                    NOT NULL DEFAULT FALSE,
+    agreed_at    DATETIME                                   NULL,
+    withdrawn_at DATETIME                                   NULL,
+    created_at   DATETIME                                   NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at   DATETIME                                   NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    CONSTRAINT pk_user_term_agreement PRIMARY KEY (user_id, code),
+    CONSTRAINT fk_uta_user FOREIGN KEY (user_id) REFERENCES user (id)
 );
 
 

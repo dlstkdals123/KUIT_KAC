@@ -11,6 +11,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -93,34 +94,32 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
             onboardingRequired = true;
         }
 
-//        // TODO: 서버토큰 JSON 활성화 코드. 지워야함!
-        // 테스트시
-        writeJson(response, access, refresh, expiresIn, state, onboardingRequired);
+//        // TODO: 서버토큰 JSON 활성화 코드 넣는 자리
 
-//        // 4) 응답 분기: JSON vs DeepLink
-//        if (!props.isDeepLink()) {
-//            writeJson(response, access, refresh, expiresIn, state, onboardingRequired);
-//            return;
-//        }
-//
-//        // === DEEPLINK 모드 ===
-//        String target = props.getDeepLink();
-//        if (target == null || target.isBlank()) {
-//            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Missing deep-link config");
-//            return;
-//        }
-//
-//        String deep = UriComponentsBuilder.fromUriString(target)
-//                .queryParam(props.getAccessParam(), access)
-//                .queryParam(props.getRefreshParam(), refresh)
-//                .queryParam(props.getExpiresParam(), expiresIn)
-//                .queryParam(props.getOnboardingParam(), onboardingRequired)
-//                .queryParam(props.getStateParam(), (state == null ? "" : state))
-//                .build().encode().toUriString();
-//
-//        response.setStatus(HttpServletResponse.SC_FOUND);
-//        response.setHeader("Location", deep);
-//        response.setContentLength(0);
+        // 4) 응답 분기: JSON vs DeepLink
+        if (!props.isDeepLink()) {
+            writeJson(response, access, refresh, expiresIn, state, onboardingRequired);
+            return;
+        }
+
+        // === DEEPLINK 모드 ===
+        String target = props.getDeepLink();
+        if (target == null || target.isBlank()) {
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, "Missing deep-link config");
+            return;
+        }
+
+        String deep = UriComponentsBuilder.fromUriString(target)
+                .queryParam(props.getAccessParam(), access)
+                .queryParam(props.getRefreshParam(), refresh)
+                .queryParam(props.getExpiresParam(), expiresIn)
+                .queryParam(props.getOnboardingParam(), onboardingRequired)
+                .queryParam(props.getStateParam(), (state == null ? "" : state))
+                .build().encode().toUriString();
+
+        response.setStatus(HttpServletResponse.SC_FOUND);
+        response.setHeader("Location", deep);
+        response.setContentLength(0);
     }
 
     private static void writeJson(HttpServletResponse response,

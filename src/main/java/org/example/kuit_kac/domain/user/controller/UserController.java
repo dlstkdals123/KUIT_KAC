@@ -6,13 +6,17 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import kotlin.text.UStringsKt;
 import lombok.RequiredArgsConstructor;
+import org.example.kuit_kac.domain.terms.service.UserTermsService;
 import org.example.kuit_kac.domain.user.dto.UserResponse;
 import org.example.kuit_kac.domain.user.model.User;
 import org.example.kuit_kac.domain.user.model.UserPrincipal;
 import org.example.kuit_kac.domain.user.service.UserService;
+import org.example.kuit_kac.domain.user_information.repository.UserInfoRepository;
 import org.example.kuit_kac.exception.CustomException;
 import org.example.kuit_kac.exception.ErrorCode;
 import org.springframework.http.ResponseEntity;
@@ -33,6 +37,8 @@ import java.util.Map;
 public class UserController {
 
     private final UserService userService;
+    private final UserTermsService userTermsService;
+    private final UserInfoRepository userInfoRepository;
 
     // 내 정보 조회 전용 엔드포인트
     @Operation(
@@ -93,6 +99,40 @@ public class UserController {
                                 .termsAgreed(p.isTermsAgreed())
                                 .onboardingNeeded(true)
                                 .build()));
+    }
+
+
+    @Operation(
+            summary = "가입 상태 조회",
+            description = "현재 로그인한 사용자의 필수 약관 동의 여부와 온보딩 완료 여부를 반환합니다.",
+            security = @SecurityRequirement(name = "bearerAuth")
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "성공",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(example = """
+                    {
+                      "termsCompleted": true,
+                      "onboardingCompleted": false
+                    }
+                    """)
+                    )
+            ),
+            @ApiResponse(responseCode = "401", description = "인증 필요",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+            )
+    })
+    @GetMapping("/status")    public ResponseEntity<Map<String, Boolean>> getUserStatus(@AuthenticationPrincipal UserPrincipal p) {
+        Long userId = p.getUserId();
+
+        boolean termsCompleted = userTermsService.hasRequiredTerms(userId);
+        boolean onboardingCompleted = userInfoRepository.existsById(userId);
+
+        return ResponseEntity.ok(Map.of(
+                "termsCompleted", termsCompleted,
+                "onboardingCompleted", onboardingCompleted
+        ));
     }
 
 

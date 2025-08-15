@@ -12,6 +12,7 @@ import org.example.kuit_kac.exception.ErrorCode;
 import org.example.kuit_kac.global.filter.JwtAuthFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -60,12 +61,17 @@ public class SecurityConfig {
                                 "/oauth2/**",
                                 "/login/oauth2/**",
 
-                                // 토큰 재발급
-                                "/auth/refresh",
-
                                 // 개발용
                                 "/h2-console/**"
                         ).permitAll()
+                        .requestMatchers(
+                                HttpMethod.POST,
+                                // 토큰 재발급
+                                "/auth/refresh"
+                        ).permitAll()
+                        .requestMatchers("/users/me").authenticated()
+//                        // TODO 개발 테스트 유저 삭제용 코드. 운영시 삭제!!
+//                        .requestMatchers(HttpMethod.DELETE, "/reset-user/**").permitAll() // ★ 추가
                         .anyRequest()
                         .authenticated()) // 나머지 요청은 인증 필요
 
