@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -35,13 +36,12 @@ public class RoutineExercise {
     private Exercise exercise;
 
     @Setter
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "routine_detail_id", foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
+    @OneToOne(mappedBy = "routineExercise", fetch = FetchType.LAZY)
     private RoutineDetail routineDetail;
 
     @Setter
     @OneToMany(mappedBy = "routineExercise", fetch = FetchType.LAZY)
-    private List<RoutineSet> routineSets;
+    private List<RoutineSet> routineSets = new ArrayList<>();
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -67,7 +67,7 @@ public class RoutineExercise {
 
     public void setRoutineSets(List<RoutineSet> routineSets) {
         this.routineSets.clear();
-        this.routineSets = routineSets;
+        this.routineSets.addAll(routineSets);
         routineSets.forEach(routineSet -> routineSet.setRoutineExercise(this));
     }
 }
