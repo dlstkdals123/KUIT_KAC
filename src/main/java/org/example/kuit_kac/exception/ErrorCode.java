@@ -14,7 +14,7 @@ public enum ErrorCode {
     DIET_ENTRY_TYPE_NOT_ALLOWED("DIET_005", "해당 항목 종류는 허용되지 않습니다."),
 
     FOOD_TYPE_INVALID("FOOD_TYPE_001", "유효하지 않은 음식 타입입니다."),
-    
+
     INTENSITY_INVALID("INTENSITY_001", "유효하지 않은 강도 타입입니다."),
 
     TARGET_MUSCLE_TYPE_INVALID("TARGET_MUSCLE_TYPE_001", "유효하지 않은 근육 타입입니다."),
@@ -39,10 +39,28 @@ public enum ErrorCode {
     // 다른 사용자의 데이터 접근 에러코드
     AUTH_FORBIDDEN("AUTH_002", "권한이 없습니다."),
 
+    // 이미 존재하는 유저,
+    USER_ALREADY_EXISTS("AUTH_003", "이미 존재하는 유저입니다."),
+
+    // 만료/유효하지 않은 토큰
+    AUTH_INVALID("AUTH_004", "토큰이 유효하지 않습니다."),
+
+    // 파싱오류(Bearer 없음)
+    AUTH_MISSING_BEARER("AUTH_005", "Bearer 키워드를 확인하세요."),
+
+    // 파싱오류(Bearer 없음)
+    AUTH_WRONG_TOKEN_TYPE("AUTH_006", "토큰 타입이 올바르지 않습니다."),
+
+    // 약관 미동의
+    REQUIRED_TERMS_NOT_AGREED("TERM_001", "약관에 동의하지 않았습니다."),
+
+    // 잘못된 요청 본문(JSON 파싱 실패 등)
+    BAD_REQUEST("REQ_400", "잘못된 요청입니다."),
+
     // 루틴(Routine) 관련 에러 코드
     ROUTINE_NOT_FOUND("ROUTINE_001", "존재하지 않는 루틴입니다."),
-    
-    // 운동(Exercise) 관련 에러 코드
+
+    // 운동(Exercise) 관련 에러 코드,
     EXERCISE_NOT_FOUND("EXERCISE_001", "존재하지 않는 운동입니다.");
 
     private final String code;

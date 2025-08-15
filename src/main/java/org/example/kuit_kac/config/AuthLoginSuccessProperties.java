@@ -8,15 +8,24 @@ import org.springframework.stereotype.Service;
 
 @Component
 @Getter
-@Service
 @ConfigurationProperties(prefix = "auth.login-success")
 public class AuthLoginSuccessProperties {
-    private String mode; // JSON or DEEPLINK
-    private String deepLink; // myapp://login
-    private String accessParam; // accessToken
-    private String refreshParam; // refreshToken
+    public enum Mode {JSON, DEEPLINK}
 
-    public boolean isDeepLink() { // 딥링크 상태 체크
-        return "DEEPLINK".equalsIgnoreCase(mode);
+    private Mode mode = Mode.DEEPLINK; // JSON or DEEPLINK
+    private String deepLink; // myapp://login
+    private String accessParam = "access_token"; // accessToken
+    private String refreshParam = "refresh_token"; // refreshToken
+    private String expiresParam = "expires_in";
+    private String stateParam = "state";
+    private String onboardingParam = "onboarding_required";
+    private long accessTtlSeconds = 1800;
+
+
+    public boolean isDeepLink() {
+        return mode == Mode.DEEPLINK;
     }
+
+    public boolean requireOnboarding = true;
+
 }

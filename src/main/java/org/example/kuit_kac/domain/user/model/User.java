@@ -4,10 +4,12 @@ import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 
 @Getter
+@Setter
 @NoArgsConstructor
 @Entity
 @Table(name = "user")
@@ -21,8 +23,8 @@ public class User {
     @Column(name = "kakao_id", nullable = false, unique = true)
     private String kakaoId;
 
-//    @Column(nullable = false, unique = true, length = 20)
-//    private String nickname;
+    @Column(nullable = false, unique = true, length = 20)
+    private String nickname;
 //
 //    @Column(nullable = false, length = 100)
 //    private String password;
@@ -31,20 +33,16 @@ public class User {
 //    private String email;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = true)
-    // TODO: 임시로 널 허용
+    @Column(nullable = false)
     private GenderType gender;
 
-    // TODO: 임시로 널 허용
-    @Column(nullable = true)
+    @Column(nullable = false)
     private Integer age;
 
-    // TODO: 임시로 널 허용
-    @Column(nullable = true)
+    @Column(nullable = false)
     private Integer height;
 
-    // TODO: 임시로 널 허용
-    @Column(nullable = true)
+    @Column(nullable = false)
     private Double targetWeight;
 
     @Column(nullable = false, updatable = false)
@@ -52,6 +50,16 @@ public class User {
 
     @Column(nullable = false)
     private LocalDateTime updatedAt;
+
+    public User(String kakaoId, String nickname, GenderType gender, Integer age,
+                Integer height, Double targetWeight) {
+        this.kakaoId = kakaoId;
+        this.nickname = nickname;
+        this.gender = gender;
+        this.age = age;
+        this.height = height;
+        this.targetWeight = targetWeight;
+    }
 
     @PrePersist
     protected void onCreate() {
@@ -62,11 +70,6 @@ public class User {
     @PreUpdate
     protected void onUpdate() {
         this.updatedAt = LocalDateTime.now();
-    }
-
-    @Builder
-    public User(String kakaoId) {
-        this.kakaoId = kakaoId;
     }
 }
 
