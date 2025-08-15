@@ -11,8 +11,8 @@ public record DietFastingCreateRequest(
     @NotNull(message = "유저 ID는 필수입니다.")
     Long userId,
 
-    @Schema(description = "식단 날짜", example = "2025-08-09", requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotNull(message = "식단 날짜는 필수입니다.")
+    @Schema(description = "단식 날짜", example = "2025-08-09", requiredMode = Schema.RequiredMode.REQUIRED)
+    @NotNull(message = "단식 날짜는 필수입니다.")
     LocalDate dietDate,
 
     @Schema(description = "식단 종류", example = "아침", requiredMode = Schema.RequiredMode.REQUIRED)
