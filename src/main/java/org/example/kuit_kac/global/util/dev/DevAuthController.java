@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 package org.example.kuit_kac.global.util.dev;
 
 import lombok.RequiredArgsConstructor;
@@ -33,4 +34,9 @@ public class DevAuthController {
     }
 
 
+=======
+package org.example.kuit_kac.domain.oauth.controller;
+
+public class DevAuthController {
+>>>>>>> d7022c6b7d391ae1ec2e97ba37990da81a456a4a
 }

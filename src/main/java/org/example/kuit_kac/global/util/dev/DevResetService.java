@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 package org.example.kuit_kac.global.util.dev;
 
 import lombok.RequiredArgsConstructor;
@@ -41,3 +42,7 @@ public class DevResetService {
 
 }
 
+=======
+package org.example.kuit_kac.global.util.dev;public class DevResetService {
+}
+>>>>>>> d7022c6b7d391ae1ec2e97ba37990da81a456a4a
