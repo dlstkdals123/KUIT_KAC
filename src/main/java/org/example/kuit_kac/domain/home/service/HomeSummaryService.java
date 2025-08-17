@@ -67,11 +67,8 @@ public class HomeSummaryService {
         UserInformation userInfo = onboardingService.getUserInformationByUserId(userId);
         double weightValue = weightService.getLatestWeightByUserId(userId).getWeight();
 
-        int age = user.getAge();
         //기초대사량 계산
-        double bmr = (user.getGender() == GenderType.MALE)
-                ? 10 * user.getTargetWeight() + 6.25 * user.getHeight() - 5 * age + 5
-                : 10 * user.getTargetWeight() + 6.25 * user.getHeight() - 5 * age - 161;
+        double bmr = user.getBMR(weightValue);
         // 목표까지 감량해야 할 몸무게
         double TargetWeightLoss = weightValue - user.getTargetWeight();
         int dietDays = userInfo.getDietVelocity().getPeriodInDays(); // 다이어트기간 '일'단위로 계산
