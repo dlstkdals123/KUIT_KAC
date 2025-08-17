@@ -95,9 +95,9 @@ public class RoutineController {
 //         return ResponseEntity.noContent().build();
 //     }
 
-    @PostMapping
-    @Operation(summary = "루틴 생성", description = "유저 ID와 루틴 이름, 루틴 항목 종류, 루틴 운동을 입력하여 루틴을 생성합니다.")
-    public ResponseEntity<RoutineRecordProfileResponse> createGeneralRoutine(
+    @PostMapping("/records")
+    @Operation(summary = "운동 기록 생성", description = "유저 ID와 루틴 이름, 루틴 항목 종류, 루틴 운동을 입력하여 운동 기록을 생성합니다.")
+    public ResponseEntity<RoutineRecordProfileResponse> createRecordRoutine(
             @RequestBody @Valid RoutineGeneralCreateRequest request
     ) {
         User user = userService.getUserById(request.userId());
@@ -106,9 +106,9 @@ public class RoutineController {
         return ResponseEntity.ok(response);
     }
 
-    @PutMapping("/{routineId}")
-    @Operation(summary = "루틴 수정", description = "루틴 ID와 루틴 이름, 루틴 항목 종류, 루틴 운동을 입력하여 루틴을 수정합니다.")
-    public ResponseEntity<RoutineRecordProfileResponse> updateGeneralRoutine(
+    @PutMapping("/records/{routineId}")
+    @Operation(summary = "운동 기록 수정", description = "루틴 ID와 루틴 이름, 루틴 항목 종류, 루틴 운동을 입력하여 운동 기록을 수정합니다.")
+    public ResponseEntity<RoutineRecordProfileResponse> updateRecordRoutine(
             @PathVariable("routineId") Long routineId,
             @RequestBody @Valid RoutineGeneralUpdateRequest request
     ) {
@@ -118,9 +118,20 @@ public class RoutineController {
         return ResponseEntity.ok(response);
     }
 
+    @PostMapping("/records/simples")
+    @Operation(summary = "운동 기록 생성", description = "유저 ID와 루틴 이름, 루틴 항목 종류, 루틴 운동을 입력하여 운동 기록을 생성합니다.")
+    public ResponseEntity<RoutineRecordProfileResponse> createSimpleRecordRoutine(
+            @RequestBody @Valid RoutineSimpleCreateRequest request
+    ) {
+        User user = userService.getUserById(request.userId());
+        Routine routine = routineService.createSimpleRoutine(user, request.aerobicDetail(), request.anaerobicDetail());
+        RoutineRecordProfileResponse response = RoutineRecordProfileResponse.from(routine);
+        return ResponseEntity.ok(response);
+    }
+
     @DeleteMapping("/{routineId}")
-    @Operation(summary = "루틴 삭제", description = "루틴 ID를 입력하여 루틴을 삭제합니다.")
-    public ResponseEntity<Void> deleteRoutine(
+    @Operation(summary = "운동 기록 삭제", description = "루틴 ID를 입력하여 운동 기록을 삭제합니다.")
+    public ResponseEntity<Void> deleteRecordRoutine(
             @PathVariable("routineId") Long routineId
     ) {
         Routine routine = routineService.getRoutineById(routineId);
