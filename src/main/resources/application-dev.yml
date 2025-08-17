@@ -27,7 +27,8 @@ spring:
       enabled: false
 
 jwt:
-  secret-base64: ${JWT_SECRET_BASE64}
+  access-secret-base64: ${JWT_ACCESS_SECRET_BASE64}
+  refresh-secret-base64: ${JWT_REFRESH_SECRET_BASE64}
   access-ttl-ms: 315360000000 # 10년 (3650일)
   refresh-ttl-ms: 315360000000 # 10년 (3650일)
 
