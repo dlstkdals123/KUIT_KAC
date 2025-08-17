@@ -1,0 +1,18 @@
+{
+  "nickname": "",
+  "gender": "FEMALE",
+  "age": 22,
+  "height": 162,
+  "targetWeight": 50.0,
+  "hasDietExperience": false,
+  "dietFailReason": null,
+  "appetiteType": "BIG",
+  "weeklyEatingOutCount": "1-2",
+  "eatingOutType": "KOREAN",
+  "dietVelocity": "YUMYUM",
+  "agreements": [
+    {"code":"SERVICE_TOS","version":"v1.0.0","agreed":true},
+    {"code":"PRIVACY","version":"v1.0.0","agreed":true},
+    {"code":"MARKETING","version":"v1.0.0","agreed":false}
+  ]
+}

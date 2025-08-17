@@ -6,6 +6,8 @@ import org.example.kuit_kac.exception.CustomAuthenticationEntryPoint;
 import org.example.kuit_kac.global.filter.JwtAuthFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
+import org.springframework.security.config.Customizer;
 import org.springframework.context.annotation.Profile;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -53,17 +55,26 @@ public class SecurityConfig {
                                 "/oauth2/**",
                                 "/login/oauth2/**",
 
-                                // 토큰 재발급
-                                "/auth/refresh",
-
                                 // 개발용
-                                "/h2-console/**"
+                                "/h2-console/**",
+                                "/dev-tools/**",
+                                "/dev-auth/**"
                         ).permitAll()
+                        .requestMatchers(
+                                HttpMethod.POST,
+                                // 토큰 재발급
+                                "/auth/refresh"
+                        ).permitAll()
+                        .requestMatchers("/users/me").authenticated()
+//                        // TODO 개발 테스트 유저 삭제용 코드. 운영시 삭제!!
+//                        .requestMatchers(HttpMethod.DELETE, "/reset-user/**").permitAll() // ★ 추가
                         .anyRequest()
                         .authenticated()) // 나머지 요청은 인증 필요
 
                 // 카카오 OAuth2 로그인: 사용자정보 서비스 + 성공 핸들러
                 .oauth2Login(oauth2 -> oauth2
+                        .authorizationEndpoint(ae -> ae.baseUri("/oauth2/authorization"))
+                        .redirectionEndpoint(re -> re.baseUri("/login/oauth2/code/*"))
                         .userInfoEndpoint(userInfo -> userInfo
                                 .userService(kakaoOAuth2UserService) // 사용자 정보 조회 시 사용자 정의 서비스 사용
                         )
@@ -85,19 +96,32 @@ public class SecurityConfig {
     @Profile("local")
     public SecurityFilterChain localSecurityFilterChain(HttpSecurity http) throws Exception {
         http
-                // H2 콘솔은 CRSF 예외, 전반적으로는 비활성화
-                .csrf(csrf -> csrf
-                        .ignoringRequestMatchers("/h2-console/**")
-                        .disable())
-                // JWT 쓰므로 세션은 무상태
+                .csrf(csrf -> csrf.ignoringRequestMatchers("/h2-console/**").disable())
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                // 엔드포인트 권한 - 모든 요청 허용
-                .authorizeHttpRequests(authorize -> authorize
-                        .anyRequest()
-                        .permitAll())
-                // H2 콘솔용 프레임 허용
-                .headers(h -> h
-                        .frameOptions(f -> f.sameOrigin()));
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(
+                                "/",
+                                "/error",
+                                "/actuator/**",
+                                "/swagger-ui/**",
+                                "/swagger-ui.html",
+                                "/v3/api-docs/**",
+                                "/oauth2/**",
+                                "/login/oauth2/**",
+                                "/h2-console/**",
+                                "/dev-tools/**",
+                                "/dev-auth/**"
+                        ).permitAll()
+                        .anyRequest().permitAll()
+                )
+                // local에서도 oauth2Login 켜주기
+                .oauth2Login(oauth2 -> oauth2
+                        .authorizationEndpoint(ae -> ae.baseUri("/oauth2/authorization"))
+                        .redirectionEndpoint(re -> re.baseUri("/login/oauth2/code/*"))
+                        .userInfoEndpoint(u -> u.userService(kakaoOAuth2UserService))
+                        .successHandler(oAuth2SuccessHandler)
+                )
+                .headers(h -> h.frameOptions(f -> f.sameOrigin()));
 
         return http.build();
     }

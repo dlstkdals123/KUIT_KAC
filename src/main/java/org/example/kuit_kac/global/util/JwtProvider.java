@@ -2,29 +2,28 @@ package org.example.kuit_kac.global.util;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.io.DecodingException;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
-import lombok.extern.java.Log;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.nio.charset.StandardCharsets;
 import java.security.Key;
+import java.util.Base64;
 import java.util.Date;
-import java.util.Objects;
 
 // 토큰생성, 파싱, 유효성 검사 담당
 @Component
+@Slf4j
 public class JwtProvider {
     private final Key key;
     //    private final String secretKey;
-//    private final byte[] keyBytes;
-    private long accessTtlMs;
-    private long refreshTtlMs;
-    private static final Logger LOG = LoggerFactory.getLogger(JwtProvider.class);
-
+    //    private final byte[] keyBytes;
+    private final long accessTtlMs;
+    private final long refreshTtlMs;
 
     public JwtProvider(
             @Value("${jwt.secret-base64}") String base64Secret,
@@ -41,7 +40,6 @@ public class JwtProvider {
         Date now = new Date();
         JwtBuilder b = Jwts.builder()
                 .setSubject(type) // 토큰 주제 "access" | "refresh"
-                .claim("uid", userId) // 서비스 식별자
                 .setIssuedAt(now) // 발급 시각
                 .setExpiration(new Date(now.getTime() + ttlMs)) // 만료 시각
                 .signWith(key, SignatureAlgorithm.HS256); // 서명: 비밀키와 알고리즘
@@ -54,46 +52,73 @@ public class JwtProvider {
     }
 
     public String generateRefreshToken(Long userId) {
-        // 필요하면 jti(토큰 ID) 넣어서 블랙리스트/로테이션 관리
         return buildToken(userId, null, "refresh", refreshTtlMs);
     }
 
     public boolean validateToken(String token) {
         try {
-            parse(token);
-            return true; // 예외 안 났으면 유효함
-        } catch (SecurityException | MalformedJwtException e) {
-            // 서명 위조 등 잘못된 토큰
-            LOG.warn("JWT invalid signature or malformed: {}", e.getMessage());
+            parseClaims(token);
+            return true;
         } catch (ExpiredJwtException e) {
-            // 유효기간이 지난 토큰
-            LOG.info("JWT expired at {}", e.getClaims().getExpiration());
+            log.info("[JWT] expired at {}", e.getClaims().getExpiration());
+        } catch (io.jsonwebtoken.security.SignatureException | SecurityException | MalformedJwtException e) {
+            log.warn("[JWT] signature invalid / malformed: {}", e.getMessage());
         } catch (UnsupportedJwtException e) {
-            // 지원하지 않는 형식의 토큰
-            LOG.info("JWT unspported: {}", e.getMessage());
+            log.info("[JWT] unsupported: {}", e.getMessage());
         } catch (IllegalArgumentException e) {
-            // 비어 있는 토큰 등
-            LOG.info("JWT empty or illeral: {}", e.getMessage());
+            log.info("[JWT] empty/illegal: {}", e.getMessage());
+        } catch (DecodingException e) {
+            log.warn("[JWT] invalid base64url: {}", e.getMessage());} catch (JwtException e) {
+                log.warn("[JWT] parse error: {}", e.getMessage());
+                return false;
+            } catch (Exception e) {
+            log.warn("[JWT] invalid token: {}", e.getClass().getSimpleName());
         }
         return false;
     }
 
     private Jws<Claims> parse(String token) {
         return Jwts.parserBuilder()
-                .setSigningKey(key) // key는 이미 JwtProvider에 있는 비밀 키
+                .setSigningKey(key)
+                .setAllowedClockSkewSeconds(30) // ← 30초 오차 허용
                 .build()
-                .parseClaimsJws(token); // 토큰을 파싱하면서 검증도 같이 함
+                .parseClaimsJws(token);
     }
 
-    public Long getUserIdFromToken(String token) {
-        Object uid = parse(token).getBody().get("uid");
-        if (uid instanceof Integer i) return i.longValue();
-        if (uid instanceof Long l) return l;
-        if (uid instanceof String s) return Long.parseLong(s);
-        throw new IllegalStateException("uid claim missing or invalid");
+    public Claims parseClaims(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(key)
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+    }
+
+    public Long getUserIdOrNullFromToken(String token) {
+        Claims c = parseClaims(token);
+        Object uid = c.get("uid");
+        if (uid instanceof Number n) return n.longValue();
+        if (uid instanceof String s && !s.isBlank()) try {
+            return Long.parseLong(s);
+        } catch (NumberFormatException ignore) {
+        }
+        return null;
+    }
+
+    public String getKakaoIdOrNullFromToken(String token) {
+        Object kid = parseClaims(token).get("kid");
+        return kid == null ? null : String.valueOf(kid);
     }
 
     public String getTokenType(String token) {
         return parse(token).getBody().getSubject(); // "access" or "refresh"
     }
+
+    @PostConstruct
+    void logKey() {
+        String prefix = Base64.getEncoder().encodeToString(key.getEncoded());
+        log.info("[JWT] secret.prefix={}", prefix.substring(0, 12));
+    }
+
+
 }
+
