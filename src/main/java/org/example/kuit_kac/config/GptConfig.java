@@ -27,7 +27,7 @@ public class GptConfig {
     public final static String MODEL = "gpt-4o-mini";
     public final static double TEMPERATURE = 1.0;
     public final static double TOP_P = 1.0;
-    public final static int MAX_TOKENS = 1000;
+    public final static int MAX_TOKENS = 10000;
     public final static Duration TIMEOUT = Duration.ofSeconds(30);
 
 
@@ -39,7 +39,7 @@ public class GptConfig {
         return new OpenAiService(apiKey, TIMEOUT);
     }
 
-    public ResponseEntity<String> getResponse(String systemPrompt, String userPrompt) {
+    public String getResponse(String systemPrompt, String userPrompt) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.set("Authorization", "Bearer " + apiKey);
@@ -74,6 +74,11 @@ public class GptConfig {
         HttpEntity<String> requestEntity = new HttpEntity<>(requestBody.toString(), headers);
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<String> response = restTemplate.postForEntity(BASE_URL, requestEntity, String.class);
-        return response;
+        JSONObject jsonResponse = new JSONObject(response.getBody());
+        String content = jsonResponse.getJSONArray("choices")
+                .getJSONObject(0)
+                .getJSONObject("message")
+                .getString("content");
+        return content;
     }
 }
