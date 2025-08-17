@@ -39,20 +39,11 @@ public class Food {
     @Column(name = "carbohydrate", nullable = false)
     private Double carbohydrate = 0.0;
 
-    @Column(name = "is_high_carbonhydrate", nullable = false)
-    private Boolean isHighCarbohydrate = false;
-
     @Column(name = "protein", nullable = false)
     private Double protein = 0.0;
 
-    @Column(name = "is_high_protein", nullable = false)
-    private Boolean isHighProtein = false;
-
     @Column(name = "fat", nullable = false)
     private Double fat = 0.0;
-
-    @Column(name = "is_high_fat", nullable = false)
-    private Boolean isHighFat = false;
 
     @Column(name = "sugar", nullable = false)
     private Double sugar = 0.0;
