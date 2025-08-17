@@ -12,6 +12,8 @@ public enum TargetMuscleType {
     ABDOMINALS("Abdominals", "복근"),
     ABDUCTORS("Abductors", "외전근"),
     ADDUCTORS("Adductors", "내전근"),
+    AEROBIC("Aerobic", "유산소"),
+    ANAEROBIC("Anaerobic", "무산소"),
     BACK("Back", "등"),
     BICEPS("Biceps", "이두근"),
     CALVES("Calves", "종아리"),
@@ -24,7 +26,8 @@ public enum TargetMuscleType {
     SHINS("Shins", "정강이"),
     SHOULDERS("Shoulders", "어깨"),
     TRAPEZIUS("Trapezius", "승모근"),
-    TRICEPS("Triceps", "삼두근");
+    TRICEPS("Triceps", "삼두근"),
+    ;
 
     private final String value;
     private final String koreanName;

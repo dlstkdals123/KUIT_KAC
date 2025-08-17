@@ -175,6 +175,8 @@ INSERT INTO `diet_aifood` (`diet_id`, `aifood_id`, `quantity`, `diet_time`) VALU
 -- 운동 관련 샘플 데이터
 
 INSERT INTO `exercise` (`name`, `target_muscle_type`, `met_value`) VALUES
+('무산소 운동', 'ANAEROBIC', 5.0),
+('유산소 운동', 'AEROBIC', 5.0),
 ('벤치프레스', 'CHEST', 5.0),
 ('스쿼트', 'QUADRICEPS', 7.0),
 ('데드리프트', 'BACK', 6.5),
