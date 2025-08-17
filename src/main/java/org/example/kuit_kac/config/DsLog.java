@@ -1,3 +1,5 @@
+package org.example.kuit_kac.config;
+
 import javax.sql.DataSource;
 
 import com.zaxxer.hikari.HikariDataSource;
