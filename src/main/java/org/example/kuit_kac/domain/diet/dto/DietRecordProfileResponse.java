@@ -4,6 +4,7 @@ import org.example.kuit_kac.domain.diet.model.Diet;
 import org.example.kuit_kac.global.util.TimeGenerator;
 import io.swagger.v3.oas.annotations.media.Schema;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import org.example.kuit_kac.domain.diet_food.dto.DietFoodProfileResponse;
@@ -17,6 +18,9 @@ public record DietRecordProfileResponse(
 
     @Schema(description = "식단의 이름", example = "점심1", requiredMode = Schema.RequiredMode.REQUIRED)
     String name,
+
+    @Schema(description = "식단의 날짜", example = "2025-08-09", requiredMode = Schema.RequiredMode.REQUIRED)
+    LocalDate dietDate,
 
     @Schema(description = "식단의 유형", example = "점심", requiredMode = Schema.RequiredMode.REQUIRED)
     String dietType,
@@ -52,15 +56,6 @@ public record DietRecordProfileResponse(
         return from(dietFoodProfiles, diet);
     }
 
-    public static DietRecordProfileResponse monthFrom(Diet diet) {
-        List<DietFoodProfileResponse> dietFoodProfiles = diet.getDietFoods().stream()
-                .filter(dietFood -> TimeGenerator.isMonth(dietFood.getDietTime()))
-                .map(DietFoodProfileResponse::from)
-                .toList();
-
-        return from(dietFoodProfiles, diet);
-    }
-
     public static DietRecordProfileResponse from(Diet diet) {
         List<DietFoodProfileResponse> dietFoodProfiles = diet.getDietFoods().stream()
                 .map(DietFoodProfileResponse::from)
@@ -83,6 +78,7 @@ public record DietRecordProfileResponse(
         return new DietRecordProfileResponse(
                 diet.getId(),
                 diet.getName(),
+                diet.getDietDate(),
                 diet.getDietType() != null ? diet.getDietType().getKoreanName() : null,
                 diet.getDietEntryType() != null ? diet.getDietEntryType().getKoreanName() : null,
                 foodStatusType.getKoreanName(),

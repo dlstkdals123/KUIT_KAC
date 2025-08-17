@@ -71,6 +71,14 @@ public class User {
     protected void onUpdate() {
         this.updatedAt = LocalDateTime.now();
     }
+
+    public double getBMR(double weight) {
+        if (gender == GenderType.MALE) {
+            return (10 * weight + 6.25 * height - 5 * age + 5);
+        } else {
+            return (10 * weight + 6.25 * height - 5 * age - 161);
+        }
+    }
 }
 
 

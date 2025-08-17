@@ -67,16 +67,16 @@ CREATE TABLE `weight`
 
 
 -- 음식 관련 테이블
-CREATE TABLE `diet`
-(
-    `id`              bigint AUTO_INCREMENT                                                   NOT NULL PRIMARY KEY,
-    `user_id`         bigint                                                                  NOT NULL,
-    `name`            varchar(30)                                                             NULL,
-    `diet_type`       ENUM ('BREAKFAST', 'LUNCH', 'DINNER', 'SNACK', 'TEMPLATE')              NOT NULL,
-    `diet_entry_type` ENUM ('RECORD', 'FASTING', 'PLAN', 'AI_PLAN', 'DINING_OUT', 'DRINKING') NULL,
-    `created_at`      datetime                                                                NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    `updated_at`      datetime                                                                NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE
+CREATE TABLE `diet` (
+    `id`           bigint AUTO_INCREMENT NOT NULL PRIMARY KEY,
+    `user_id`      bigint                NOT NULL,
+    `name`         varchar(30)           NULL,
+    `diet_date`    date                  NULL,
+    `diet_type`    ENUM('BREAKFAST', 'LUNCH', 'DINNER', 'SNACK', 'TEMPLATE') NOT NULL,
+    `diet_entry_type` ENUM('RECORD', 'FASTING', 'PLAN', 'AI_PLAN', 'DINING_OUT', 'DRINKING') NULL,
+    `created_at`   datetime              NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_at`   datetime              NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON DELETE CASCADE
 );
 
 CREATE TABLE `food`
@@ -89,11 +89,8 @@ CREATE TABLE `food`
     `is_processed_food`     boolean NOT NULL  DEFAULT FALSE,
     `calorie`               double NOT NULL   DEFAULT 0.0,
     `carbohydrate`          double NOT NULL   DEFAULT 0.0,
-    `is_high_carbonhydrate` boolean NOT NULL  DEFAULT FALSE,
     `protein`               double NOT NULL   DEFAULT 0.0,
-    `is_high_protein`       boolean NOT NULL  DEFAULT FALSE,
     `fat`                   double NOT NULL   DEFAULT 0.0,
-    `is_high_fat`           boolean NOT NULL  DEFAULT FALSE,
     `sugar`                 double NOT NULL   DEFAULT 0.0,
     `score`                 int NOT NULL,
     `created_at`            datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -111,11 +108,8 @@ CREATE TABLE `aifood`
     `is_processed_food`     boolean NOT NULL  DEFAULT FALSE,
     `calorie`               double NOT NULL   DEFAULT 0.0,
     `carbohydrate`          double NOT NULL   DEFAULT 0.0,
-    `is_high_carbonhydrate` boolean NOT NULL  DEFAULT FALSE,
     `protein`               double NOT NULL   DEFAULT 0.0,
-    `is_high_protein`       boolean NOT NULL  DEFAULT FALSE,
     `fat`                   double NOT NULL   DEFAULT 0.0,
-    `is_high_fat`           boolean NOT NULL  DEFAULT FALSE,
     `sugar`                 double NOT NULL   DEFAULT 0.0,
     `score`                 int NOT NULL,
     `created_at`            datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
