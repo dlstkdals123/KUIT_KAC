@@ -1,5 +1,6 @@
 package org.example.kuit_kac.domain.oauth.controller;
 
+import io.jsonwebtoken.Claims;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
@@ -86,8 +87,18 @@ public class AuthController {
         }
 
         String token = bearer.substring(7);
-        String type = jwtProvider.getTokenType(token);
-        if (!jwtProvider.validateToken(token) || !"refresh".equals(type)) {
+
+        final Claims claims;
+        try {
+            // refreshKey로만 검증 (access 토큰은 절대 통과 X)
+            claims = jwtProvider.parseRefresh(token);
+        } catch (io.jsonwebtoken.JwtException e) {
+            // 서명/형식/만료 등 어떤 오류도 모두 인증 실패로 처리
+            throw new CustomException(ErrorCode.AUTH_UNAUTHORIZED);
+        }
+
+        // 추가 안전장치: subject가 "refresh"인지 확인
+        if (!"refresh".equals(claims.getSubject())) {
             throw new CustomException(ErrorCode.AUTH_UNAUTHORIZED);
         }
 

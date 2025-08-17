@@ -51,13 +51,15 @@ public enum ErrorCode {
     // 파싱오류(Bearer 없음)
     AUTH_WRONG_TOKEN_TYPE("AUTH_006", "토큰 타입이 올바르지 않습니다."),
 
+    AUTH_ACCESS_NEEDED("AUTH_ACCESS_NEEDED", "액세스가 필요합니다."),
+
     // 약관 미동의
     REQUIRED_TERMS_NOT_AGREED("TERM_001", "약관에 동의하지 않았습니다."),
 
     // 잘못된 요청 본문(JSON 파싱 실패 등)
     BAD_REQUEST("REQ_400", "잘못된 요청입니다."),
 
-    // 루틴(Routine) 관련 에러 코드
+    // 루틴(Routine) 관련 에러 코드,
     ROUTINE_NOT_FOUND("ROUTINE_001", "존재하지 않는 루틴입니다."),
 
     // 운동(Exercise) 관련 에러 코드,

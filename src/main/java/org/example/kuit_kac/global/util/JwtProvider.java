@@ -6,8 +6,6 @@ import io.jsonwebtoken.io.DecodingException;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -19,45 +17,47 @@ import java.util.Date;
 @Component
 @Slf4j
 public class JwtProvider {
-    private final Key key;
-    //    private final String secretKey;
-    //    private final byte[] keyBytes;
+    private final Key accessKey;
+    private final Key refreshKey;
     private final long accessTtlMs;
     private final long refreshTtlMs;
 
     public JwtProvider(
-            @Value("${jwt.secret-base64}") String base64Secret,
+            @Value("${jwt.access-secret-base64}") String accessB64,
+            @Value("${jwt.refresh-secret-base64}") String refreshB64,
             @Value("${jwt.access-ttl-ms}") long accessTtlMs,
             @Value("${jwt.refresh-ttl-ms}") long refreshTtlMs
     ) {
-        this.key = Keys.hmacShaKeyFor(Decoders.BASE64.decode(base64Secret));
+        this.accessKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(accessB64));
+        this.refreshKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(refreshB64));
         this.accessTtlMs = accessTtlMs;
         this.refreshTtlMs = refreshTtlMs;
     }
 
     // type : "access" || "refresh"
-    private String buildToken(Long userId, String kakaoIdOptional, String type, long ttlMs) {
+    private String buildToken(Long userId, String kakaoIdOptional, String type, long ttlMs, Key signingKey) {
         Date now = new Date();
         JwtBuilder b = Jwts.builder()
                 .setSubject(type) // 토큰 주제 "access" | "refresh"
                 .setIssuedAt(now) // 발급 시각
                 .setExpiration(new Date(now.getTime() + ttlMs)) // 만료 시각
-                .signWith(key, SignatureAlgorithm.HS256); // 서명: 비밀키와 알고리즘
+                .signWith(signingKey, SignatureAlgorithm.HS256); // 서명: 비밀키와 알고리즘
+        if (userId != null) b.claim("uid", userId);
         if (kakaoIdOptional != null) b.claim("kid", kakaoIdOptional);
         return b.compact(); // 문자열 토큰으로 변환
     }
 
     public String generateAccessToken(Long userId, String kakaoIdOptional) {
-        return buildToken(userId, kakaoIdOptional, "access", accessTtlMs);
+        return buildToken(userId, kakaoIdOptional, "access", accessTtlMs, accessKey);
     }
 
     public String generateRefreshToken(Long userId) {
-        return buildToken(userId, null, "refresh", refreshTtlMs);
+        return buildToken(userId, null, "refresh", refreshTtlMs, refreshKey);
     }
 
     public boolean validateToken(String token) {
         try {
-            parseClaims(token);
+            parseClaimsEither(token);
             return true;
         } catch (ExpiredJwtException e) {
             log.info("[JWT] expired at {}", e.getClaims().getExpiration());
@@ -77,24 +77,22 @@ public class JwtProvider {
         return false;
     }
 
-    private Jws<Claims> parse(String token) {
-        return Jwts.parserBuilder()
-                .setSigningKey(key)
-                .setAllowedClockSkewSeconds(30) // ← 30초 오차 허용
-                .build()
-                .parseClaimsJws(token);
+    public Claims parseAccess(String token) {
+        return parseWithKey(token, accessKey).getBody();
+    }
+    public Claims parseRefresh(String token) {
+        return parseWithKey(token, refreshKey).getBody();
     }
 
-    public Claims parseClaims(String token) {
-        return Jwts.parserBuilder()
-                .setSigningKey(key)
-                .build()
-                .parseClaimsJws(token)
-                .getBody();
-    }
+    public Claims parseClaimsEither(String token) {
+        try {
+            return parseWithKey(token, accessKey).getBody();
+        } catch (JwtException ignore) {
+            return parseWithKey(token, refreshKey).getBody();
+        }    }
 
     public Long getUserIdOrNullFromToken(String token) {
-        Claims c = parseClaims(token);
+        Claims c = parseClaimsEither(token);
         Object uid = c.get("uid");
         if (uid instanceof Number n) return n.longValue();
         if (uid instanceof String s && !s.isBlank()) try {
@@ -105,18 +103,31 @@ public class JwtProvider {
     }
 
     public String getKakaoIdOrNullFromToken(String token) {
-        Object kid = parseClaims(token).get("kid");
+        Object kid = parseClaimsEither(token).get("kid");
         return kid == null ? null : String.valueOf(kid);
     }
 
     public String getTokenType(String token) {
-        return parse(token).getBody().getSubject(); // "access" or "refresh"
+        return parseClaimsEither(token).getSubject();
     }
 
     @PostConstruct
     void logKey() {
-        String prefix = Base64.getEncoder().encodeToString(key.getEncoded());
-        log.info("[JWT] secret.prefix={}", prefix.substring(0, 12));
+        String aPrefix = java.util.Base64.getEncoder()
+                .encodeToString(((javax.crypto.SecretKey) accessKey).getEncoded());
+        String rPrefix = java.util.Base64.getEncoder()
+                .encodeToString(((javax.crypto.SecretKey) refreshKey).getEncoded());
+        aPrefix = aPrefix.substring(0, Math.min(12, aPrefix.length()));
+        rPrefix = rPrefix.substring(0, Math.min(12, rPrefix.length()));
+        log.info("[JWT] access.prefix={} refresh.prefix={}", aPrefix, rPrefix);
+    }
+
+    private Jws<Claims> parseWithKey(String token, Key k) {
+        return Jwts.parserBuilder()
+                .setSigningKey(k)
+                .setAllowedClockSkewSeconds(30) // 30초 시계 오차 허용
+                .build()
+                .parseClaimsJws(token);
     }
 
 

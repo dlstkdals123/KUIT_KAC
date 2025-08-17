@@ -1,4 +1,4 @@
-package org.example.kuit_kac.global.util.dev;
+package org.example.kuit_kac.config;
 
 import javax.sql.DataSource;
 

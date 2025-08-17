@@ -1,5 +1,7 @@
 package org.example.kuit_kac.global.filter;
 
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -37,8 +39,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 || p.startsWith("/login/oauth2/") // 콜백
                 || p.startsWith("/swagger-ui/")
                 || p.startsWith("/v3/api-docs/")
-                || p.equals("/") || p.startsWith("/health") || p.startsWith("/actuator");
-//                || p.startsWith("/reset-user/");
+                || p.equals("/") || p.startsWith("/health") || p.startsWith("/actuator")
+                // TODO: 배포 전 막아야 함
+                || p.startsWith("/dev-tools/") || p.startsWith("/dev-auth");
     }
 
     @Override
@@ -74,28 +77,43 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
 
         try {
+            Claims c;
+            c = jwtProvider.parseAccess(token); // accessKey로만 검증
+            if (!"access".equals(c.getSubject())) { // 더블체크
+                filterChain.doFilter(request, response);
+                return;
+            }
+
             Long userId = jwtProvider.getUserIdOrNullFromToken(token);
             String kakaoId = jwtProvider.getKakaoIdOrNullFromToken(token);
 
-            User user = (userId != null) ? userService.getUserById(userId) : null;
-            // TODO: 약관 동의 여부 계산 로직 연결
-            boolean termsAgreed = (user != null) && userTermsService.hasAgreedRequired(userId);
-
+            User user = null;
+            boolean termsAgreed = false;
+            try {
+                if (userId != null) {
+                    user = userService.getUserById(userId);
+                    termsAgreed = (user != null) && userTermsService.hasAgreedRequired(userId);
+                }
+            } catch (Exception svcEx) {
+                // 서비스 오류는 인증을 깨지 않고, 로그만 남기고 계속 진행
+                log.warn("[JwtAuth] user/terms lookup failed: {}", svcEx.toString());
+            }
             // 5) Principal 구성: uid 없을 때도 kakaoId로 폴백 가능하도록
             UserPrincipal principal = UserPrincipal.from(user, termsAgreed, kakaoId);
 
-            UsernamePasswordAuthenticationToken authenticationToken =
+            var auth =
                     new UsernamePasswordAuthenticationToken(
                             principal,
                             null,
                             List.of(new SimpleGrantedAuthority("ROLE_USER"))
                     );
-            authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+            auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
             // 6) SecurityContext에 인증 정보 저장
-            SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+            SecurityContextHolder.getContext().setAuthentication(auth);
 
-        } catch (Exception e) {
+        } catch (io.jsonwebtoken.JwtException jwtEx) {
+            // JWT 문제일 때만 인증 제거 → 401로 떨어지게 함
             SecurityContextHolder.clearContext();
         }
         // 다음 필터로 넘김
