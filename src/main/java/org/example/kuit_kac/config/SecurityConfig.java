@@ -56,7 +56,9 @@ public class SecurityConfig {
                                 "/login/oauth2/**",
 
                                 // 개발용
-                                "/h2-console/**"
+                                "/h2-console/**",
+                                "/dev-tools/**",
+                                "/dev-auth/**"
                         ).permitAll()
                         .requestMatchers(
                                 HttpMethod.POST,
@@ -94,19 +96,32 @@ public class SecurityConfig {
     @Profile("local")
     public SecurityFilterChain localSecurityFilterChain(HttpSecurity http) throws Exception {
         http
-                // H2 콘솔은 CRSF 예외, 전반적으로는 비활성화
-                .csrf(csrf -> csrf
-                        .ignoringRequestMatchers("/h2-console/**")
-                        .disable())
-                // JWT 쓰므로 세션은 무상태
+                .csrf(csrf -> csrf.ignoringRequestMatchers("/h2-console/**").disable())
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                // 엔드포인트 권한 - 모든 요청 허용
-                .authorizeHttpRequests(authorize -> authorize
-                        .anyRequest()
-                        .permitAll())
-                // H2 콘솔용 프레임 허용
-                .headers(h -> h
-                        .frameOptions(f -> f.sameOrigin()));
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(
+                                "/",
+                                "/error",
+                                "/actuator/**",
+                                "/swagger-ui/**",
+                                "/swagger-ui.html",
+                                "/v3/api-docs/**",
+                                "/oauth2/**",
+                                "/login/oauth2/**",
+                                "/h2-console/**",
+                                "/dev-tools/**",
+                                "/dev-auth/**"
+                        ).permitAll()
+                        .anyRequest().permitAll()
+                )
+                // local에서도 oauth2Login 켜주기
+                .oauth2Login(oauth2 -> oauth2
+                        .authorizationEndpoint(ae -> ae.baseUri("/oauth2/authorization"))
+                        .redirectionEndpoint(re -> re.baseUri("/login/oauth2/code/*"))
+                        .userInfoEndpoint(u -> u.userService(kakaoOAuth2UserService))
+                        .successHandler(oAuth2SuccessHandler)
+                )
+                .headers(h -> h.frameOptions(f -> f.sameOrigin()));
 
         return http.build();
     }
