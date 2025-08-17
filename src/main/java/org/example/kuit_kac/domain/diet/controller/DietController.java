@@ -11,6 +11,7 @@ import org.example.kuit_kac.domain.diet.service.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 import org.example.kuit_kac.domain.user.model.User;
 import org.example.kuit_kac.domain.user.service.UserService;
@@ -47,10 +48,10 @@ public class DietController {
             @Parameter(description = "조회할 사용자의 고유 ID", example = "1")
             @RequestParam("userId") Long userId) {
 
-        List<Diet> diets = dietService.getPlansByUserId(userId);
+        List<Diet> diets = dietService.getPlansByUserIdAndDietDate(userId, LocalDate.now());
 
         List<DietRecordProfileResponse> responses = diets.stream()
-                .map(DietRecordProfileResponse::todayFrom)
+                .map(DietRecordProfileResponse::from)
                 .toList();
 
         return ResponseEntity.ok(responses);
@@ -62,10 +63,10 @@ public class DietController {
             @Parameter(description = "조회할 사용자의 고유 ID", example = "1")
             @RequestParam("userId") Long userId) {
         
-        List<Diet> diets = dietService.getPlansByUserId(userId);
+        List<Diet> diets = dietService.getPlansByUserIdBetweenDietDate(userId, LocalDate.now(), LocalDate.now().plusMonths(1));
 
         List<DietRecordProfileResponse> responses = diets.stream()
-                .map(DietRecordProfileResponse::monthFrom)
+                .map(DietRecordProfileResponse::from)
                 .toList();
 
         return ResponseEntity.ok(responses);

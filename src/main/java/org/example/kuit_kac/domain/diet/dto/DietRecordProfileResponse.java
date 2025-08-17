@@ -56,15 +56,6 @@ public record DietRecordProfileResponse(
         return from(dietFoodProfiles, diet);
     }
 
-    public static DietRecordProfileResponse monthFrom(Diet diet) {
-        List<DietFoodProfileResponse> dietFoodProfiles = diet.getDietFoods().stream()
-                .filter(dietFood -> TimeGenerator.isMonth(dietFood.getDietTime()))
-                .map(DietFoodProfileResponse::from)
-                .toList();
-
-        return from(dietFoodProfiles, diet);
-    }
-
     public static DietRecordProfileResponse from(Diet diet) {
         List<DietFoodProfileResponse> dietFoodProfiles = diet.getDietFoods().stream()
                 .map(DietFoodProfileResponse::from)

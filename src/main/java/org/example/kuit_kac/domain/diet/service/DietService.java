@@ -42,9 +42,16 @@ public class DietService {
     }
 
     @Transactional(readOnly = true)
-    public List<Diet> getPlansByUserId(Long userId) {
-        List<Diet> plans = dietRepository.findByUserIdAndDietEntryType(userId, DietEntryType.PLAN);
-        plans.addAll(dietRepository.findByUserIdAndDietEntryType(userId, DietEntryType.AI_PLAN));
+    public List<Diet> getPlansByUserIdAndDietDate(Long userId, LocalDate dietDate) {
+        List<Diet> plans = dietRepository.findByUserIdAndDietEntryTypeAndDietDate(userId, DietEntryType.PLAN, dietDate);
+        plans.addAll(dietRepository.findByUserIdAndDietEntryTypeAndDietDate(userId, DietEntryType.AI_PLAN, dietDate));
+        return plans;
+    }
+
+    @Transactional(readOnly = true)
+    public List<Diet> getPlansByUserIdBetweenDietDate(Long userId, LocalDate startDate, LocalDate endDate) {
+        List<Diet> plans = dietRepository.findByUserIdAndDietEntryTypeAndDietDateBetween(userId, DietEntryType.PLAN, startDate, endDate);
+        plans.addAll(dietRepository.findByUserIdAndDietEntryTypeAndDietDateBetween(userId, DietEntryType.AI_PLAN, startDate, endDate));
         return plans;
     }
 
@@ -140,7 +147,7 @@ public class DietService {
     @Transactional
     public Diet createPlanDiet(User user, String dietTypeStr, LocalDate date, List<DietFoodCreateRequest> foods) {
         LocalDateTime dietDateTime = TimeGenerator.getDateStart(date);
-        Diet diet = new Diet(user, null, DietType.getDietType(dietTypeStr), DietEntryType.PLAN);
+        Diet diet = new Diet(user, null, date, DietType.getDietType(dietTypeStr), DietEntryType.PLAN);
         Diet saved = dietRepository.save(diet);
         List<DietFood> dietFoods = dietFoodService.createDietFoodsWithDietTime(foods, saved, dietDateTime);
         dietFoods.forEach(saved::addDietFood);
@@ -151,6 +158,7 @@ public class DietService {
     public Diet updatePlanDiet(Diet diet, LocalDate date, List<DietFoodCreateRequest> foods) {
         LocalDateTime dietDateTime = TimeGenerator.getDateStart(date);
         diet.getDietFoods().clear();
+        diet.setDietDate(date);
         List<DietFood> dietFoods = dietFoodService.createDietFoodsWithDietTime(foods, diet, dietDateTime);
         dietFoods.forEach(diet::addDietFood);
         return dietRepository.save(diet);

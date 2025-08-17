@@ -68,6 +68,7 @@ public class Diet {
     @Column(nullable = false, length = 30)
     private String name;
 
+    @Setter
     @Column(name = "diet_date")
     private LocalDate dietDate;
 
