@@ -2,6 +2,7 @@ package org.example.kuit_kac.domain.routine.service;
 
 import lombok.RequiredArgsConstructor;
 
+import org.example.kuit_kac.domain.routine.dto.RoutineDetailCreateRequest;
 import org.example.kuit_kac.domain.routine.dto.RoutineExerciseCreateRequest;
 import org.example.kuit_kac.domain.routine.model.Routine;
 import org.example.kuit_kac.domain.routine.model.RoutineExercise;
@@ -83,6 +84,15 @@ public class RoutineService {
         List<RoutineExercise> savedRoutineExercises = routineExerciseService.createRoutineExercises(routine, routineExercises);
         savedRoutineExercises.forEach(routine::addRoutineExercise);
         return routineRepository.save(routine);
+    }
+
+    @Transactional
+    public Routine createSimpleRoutine(User user, RoutineDetailCreateRequest aerobicDetail, RoutineDetailCreateRequest anaerobicDetail) {
+        Routine routine = new Routine(user, null, RoutineType.RECORD);
+        Routine saved = routineRepository.save(routine);
+        List<RoutineExercise> savedRoutineExercises = routineExerciseService.createSimpleRoutineExercises(routine, aerobicDetail, anaerobicDetail);
+        savedRoutineExercises.forEach(saved::addRoutineExercise);
+        return saved;
     }
 
     @Transactional
