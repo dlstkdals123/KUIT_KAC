@@ -64,10 +64,4 @@ public class RoutineExercise {
         this.routine = routine;
         this.exercise = exercise;
     }
-
-    public void setRoutineSets(List<RoutineSet> routineSets) {
-        this.routineSets.clear();
-        this.routineSets.addAll(routineSets);
-        routineSets.forEach(routineSet -> routineSet.setRoutineExercise(this));
-    }
 }
