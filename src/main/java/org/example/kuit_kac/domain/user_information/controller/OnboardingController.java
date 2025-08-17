@@ -13,6 +13,8 @@ import org.example.kuit_kac.domain.user.model.UserPrincipal;
 import org.example.kuit_kac.domain.user.service.UserService;
 import org.example.kuit_kac.domain.user_information.dto.OnboardingRequest;
 import org.example.kuit_kac.domain.user_information.service.OnboardingService;
+import org.example.kuit_kac.exception.CustomException;
+import org.example.kuit_kac.exception.ErrorCode;
 import org.example.kuit_kac.global.util.JwtProvider;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -67,6 +69,16 @@ public class OnboardingController {
             @AuthenticationPrincipal UserPrincipal principal,
             @RequestHeader(value = "Authorization", required = false) String bearer,
             @RequestBody @Valid OnboardingRequest req) {
+
+        // refresh 토큰으로 온보딩 차단
+        String token = null;
+        if (bearer != null && bearer.startsWith("Bearer ")) {
+            token = bearer.substring(7);
+            if ("refresh".equals(jwtProvider.getTokenType(token))) {
+                // refresh로는 온보딩/쓰기 불가
+                throw new CustomException(ErrorCode.AUTH_ACCESS_NEEDED); // 401
+            }
+        }
 
         String kid = null;
 

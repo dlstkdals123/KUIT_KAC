@@ -5,15 +5,9 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
-import org.example.kuit_kac.domain.terms.repository.UserTermAgreementRepository;
-import org.example.kuit_kac.domain.user.repository.UserRepository;
-import org.example.kuit_kac.domain.user_information.repository.UserInfoRepository;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
@@ -23,9 +17,7 @@ import java.util.Map;
 @Profile("local") // 로컬 환경에서만 동작
 public class DevToolsController {
 
-    private final UserTermAgreementRepository userTermRepository;
-    private final UserInfoRepository userInfoRepository;
-    private final UserRepository userRepository;
+    private final DevResetService devResetService;
 
     @Operation(
             summary = "테스트용: 특정 유저 데이터 초기화",
@@ -39,17 +31,36 @@ public class DevToolsController {
             }
     )
     @DeleteMapping("/reset-user/{userId}")
-    public ResponseEntity<?> resetUser(@PathVariable Long userId) {
-        if (!userRepository.existsById(userId)) {
-            return ResponseEntity.status(404).body(Map.of("error", "User not found"));
+    public ResponseEntity<Void> deleteByUserId(@PathVariable long userId) {
+        devResetService.softResetUser(userId);
+        return ResponseEntity.noContent().build();
+    }
+
+    // Authorization 헤더 raw/분리 확인용
+    @GetMapping("/echo-auth")
+    public Map<String, Object> echoAuth(@RequestHeader(value = "Authorization", required = false) String auth) {
+        String token = (auth != null && auth.startsWith("Bearer ")) ? auth.substring(7) : null;
+        return Map.of("raw", auth, "hasBearer", auth != null && auth.startsWith("Bearer "), "tokenPrefix10",
+                token == null ? null : token.substring(0, Math.min(10, token.length())));
+    }
+
+    // JWT header/payload 디코드 (서명 검증 X, 개발용)
+    @GetMapping("/decode-token")
+    public Map<String, Object> decodeToken(@RequestHeader("Authorization") String authHeader) {
+        String token = authHeader.replace("Bearer ", "");
+
+        String[] parts = token.split("\\.");
+        if (parts.length != 3) {
+            return Map.of("error", "Invalid JWT format");
         }
 
-        // 약관 동의 기록 삭제
-        userTermRepository.deleteByIdUserId(userId);
+        // Base64 디코딩
+        String headerJson = new String(java.util.Base64.getUrlDecoder().decode(parts[0]));
+        String payloadJson = new String(java.util.Base64.getUrlDecoder().decode(parts[1]));
 
-        // 온보딩 정보 삭제
-        userInfoRepository.deleteById(userId);
-
-        return ResponseEntity.ok(Map.of("message", "User " + userId + " reset completed"));
+        return Map.of(
+                "header", headerJson,
+                "payload", payloadJson
+        );
     }
 }

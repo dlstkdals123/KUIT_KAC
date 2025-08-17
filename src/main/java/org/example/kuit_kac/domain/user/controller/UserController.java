@@ -1,5 +1,6 @@
 package org.example.kuit_kac.domain.user.controller;
 
+import io.jsonwebtoken.Claims;
 import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
