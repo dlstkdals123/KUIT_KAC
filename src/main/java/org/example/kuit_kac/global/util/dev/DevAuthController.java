@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 package org.example.kuit_kac.global.util.dev;
 
 import lombok.RequiredArgsConstructor;
@@ -20,7 +19,7 @@ public class DevAuthController {
     @GetMapping("/mint")
     public Map<String, String> mint(@RequestParam(required = false) Long uid,
                                     @RequestParam(required = false) String kid) {
-        String access  = jwtProvider.generateAccessToken(uid, kid); // kid는 access에 실림
+        String access = jwtProvider.generateAccessToken(uid, kid); // kid는 access에 실림
         String refresh = jwtProvider.generateRefreshToken(uid);
         return Map.of("accessToken", access, "refreshToken", refresh);
     }
@@ -28,15 +27,9 @@ public class DevAuthController {
     // kid만으로 발급(온보딩 전 시나리오) — uid는 null
     @GetMapping("/mint-anon")
     public Map<String, String> mintAnon(@RequestParam String kid) {
-        String access  = jwtProvider.generateAccessToken(null, kid);
+        String access = jwtProvider.generateAccessToken(null, kid);
         String refresh = jwtProvider.generateRefreshToken(null);
         return Map.of("accessToken", access, "refreshToken", refresh);
     }
 
-
-=======
-package org.example.kuit_kac.domain.oauth.controller;
-
-public class DevAuthController {
->>>>>>> d7022c6b7d391ae1ec2e97ba37990da81a456a4a
 }
