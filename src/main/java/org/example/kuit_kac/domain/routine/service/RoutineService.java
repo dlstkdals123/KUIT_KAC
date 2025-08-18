@@ -58,17 +58,8 @@ public class RoutineService {
     // }
 
     @Transactional
-    public Routine createGeneralRoutine(User user, String name, String routineTypeStr, List<RoutineExerciseCreateRequest> routineExercises) {
-        // dietType과 dietEntryType이 모두 같은 값이 있으면 안됩니다.
-        RoutineType routineType = RoutineType.getRoutineType(routineTypeStr);
-
-        // entryType 검증
-        if (routineType == null || isTemplateType(routineType)) {
-            throw new CustomException(ErrorCode.ROUTINE_TYPE_INVALID);
-        }
-
-        // 모든 검증 통과 후 저장
-        Routine routine = new Routine(user, name, routineType);
+    public Routine createGeneralRoutine(User user, String name, List<RoutineExerciseCreateRequest> routineExercises) {
+        Routine routine = new Routine(user, name, RoutineType.RECORD);
         Routine saved = routineRepository.save(routine);
         
         List<RoutineExercise> savedRoutineExercises = routineExerciseService.createRoutineExercises(routine, routineExercises);

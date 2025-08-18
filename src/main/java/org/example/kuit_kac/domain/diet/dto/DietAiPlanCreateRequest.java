@@ -12,15 +12,15 @@ import jakarta.validation.constraints.NotNull;
 
 @Schema(description = "AI 계획 생성 요청 DTO")
 public record DietAiPlanCreateRequest(
-    @Schema(description = "식단 종류", example = "아침", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(description = "식단 종류 (가능한 값: 아침, 점심, 저녁)", example = "아침", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotBlank(message = "식단 종류는 필수입니다.")
     String dietType,
 
-    @Schema(description = "음식 목록", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(description = "음식 목록 (중복 불가)", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotNull(message = "음식 목록은 필수입니다.")
     List<@Valid DietFoodCreateRequest> foods,
     
-    @Schema(description = "AI 음식 목록", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(description = "AI 음식 목록 (중복 불가)", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotNull(message = "AI 음식 목록은 필수입니다.")
     List<@Valid DietAifoodCreateRequest> aiDietFoods
 ) {} 

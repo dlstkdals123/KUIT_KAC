@@ -11,7 +11,7 @@ import java.time.LocalTime;
 @Schema(description = "식단에 포함될 음식 생성 요청 DTO")
 public record DietFoodSnackCreateRequest(
     //TODO: 하나의 요청에 음식 ID가 중복되어서는 안됩니다.
-    @Schema(description = "음식 ID", example = "10", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(description = "음식 ID (중복 불가)", example = "10", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotNull(message = "음식 ID는 필수입니다.")
     Long foodId,
 

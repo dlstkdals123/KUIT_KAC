@@ -38,10 +38,10 @@ INSERT INTO `diet` (`user_id`, `name`, `diet_date`, `diet_type`, `diet_entry_typ
 (1, '나만의 아침', NULL, 'TEMPLATE', NULL),
 (1, '나만의 점심', NULL, 'TEMPLATE', NULL),
 (1, '나만의 저녁', NULL, 'TEMPLATE', NULL),
-(2, NULL, NULL, 'BREAKFAST', 'PLAN'),
-(2, NULL, NULL, 'LUNCH', 'PLAN'),
-(2, NULL, NULL, 'DINNER', 'PLAN'),
-(2, NULL, NULL, 'BREAKFAST', 'FASTING');
+(2, NULL, CURRENT_DATE(), 'BREAKFAST', 'PLAN'),
+(2, NULL, CURRENT_DATE(), 'LUNCH', 'PLAN'),
+(2, NULL, CURRENT_DATE(), 'DINNER', 'PLAN'),
+(2, NULL, CURRENT_DATE(), 'BREAKFAST', 'FASTING');
 
 
 INSERT INTO `food` (`name`, `unit_type`, `unit_num`, `food_type`, `is_processed_food`, `calorie`, `carbohydrate`, `protein`, `fat`, `sugar`, `score`)

@@ -20,8 +20,8 @@ public record DietAifoodCreateRequest(
     @DecimalMax(value = "100", message = "음식 섭취량은 100 이하이어야 합니다.")
     double quantity,
 
-    @Schema(description = "음식 목록", requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotNull(message = "음식 목록은 필수입니다.")
-    @Size(min = 1, message = "음식은 한 개 이상 등록해야 합니다.")
+    @Schema(description = "AI 음식 목록 (중복 불가)", requiredMode = Schema.RequiredMode.REQUIRED)
+    @NotNull(message = "AI 음식 목록은 필수입니다.")
+    @Size(min = 1, message = "AI 음식은 한 개 이상 등록해야 합니다.")
     List<@Valid AifoodCreateRequest> aiFoods
 ) {} 

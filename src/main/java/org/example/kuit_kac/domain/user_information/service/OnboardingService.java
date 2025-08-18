@@ -110,7 +110,7 @@ public class OnboardingService {
                 dto.getDietFailReason(),                         // String or null
                 nameOrNull(dto.getAppetiteType()),               // SMALL/BIG or null
                 dto.getWeeklyEatingOutCount(),                   // String or null
-                dto.getEatingOutType().name(),                   // NOT NULL
+                dto.getEatingOutType(),                          // NOT NULL
                 dto.getDietVelocity().name()                     // NOT NULL
         );
     }

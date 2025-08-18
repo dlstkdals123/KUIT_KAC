@@ -61,6 +61,8 @@ public class DietService {
     public List<Diet> getPlansByUserIdBetweenDietDate(Long userId, LocalDate startDate, LocalDate endDate) {
         List<Diet> plans = dietRepository.findByUserIdAndDietEntryTypeAndDietDateBetween(userId, DietEntryType.PLAN, startDate, endDate);
         plans.addAll(dietRepository.findByUserIdAndDietEntryTypeAndDietDateBetween(userId, DietEntryType.AI_PLAN, startDate, endDate));
+        plans.addAll(dietRepository.findByUserIdAndDietEntryTypeAndDietDateBetween(userId, DietEntryType.DRINKING, startDate, endDate));
+        plans.addAll(dietRepository.findByUserIdAndDietEntryTypeAndDietDateBetween(userId, DietEntryType.DINING_OUT, startDate, endDate));
         return plans;
     }
 
@@ -144,8 +146,8 @@ public class DietService {
     }
 
     @Transactional
-    public Diet createSnackDiet(User user, String name, String dietEntryTypeStr, List<DietFoodSnackCreateRequest> foods) {
-        Diet diet = new Diet(user, name, DietType.SNACK, DietEntryType.getDietEntryType(dietEntryTypeStr));
+    public Diet createSnackDiet(User user, String name, List<DietFoodSnackCreateRequest> foods) {
+        Diet diet = new Diet(user, name, DietType.SNACK, DietEntryType.RECORD);
         Diet saved = dietRepository.save(diet);
         List<DietFood> dietFoods = dietFoodService.createDietFoodsSnack(foods, saved);
         dietFoods.forEach(saved::addDietFood);

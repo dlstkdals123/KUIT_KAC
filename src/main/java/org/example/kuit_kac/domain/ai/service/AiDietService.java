@@ -43,7 +43,7 @@ public class AiDietService {
         double bmr = user.getBMR(weightValue);
         String events = getEventsString(request);
         String exception = getExceptionString(user, request);
-        String eating_out_type = userInfoService.getUserInformationByUserId(user.getId()).getEatingOutType().getValue();
+        String eating_out_type = userInfoService.getUserInformationByUserId(user.getId()).getEatingOutType();
 
         System.out.println("events: " + events);
         System.out.println("exception: " + exception);

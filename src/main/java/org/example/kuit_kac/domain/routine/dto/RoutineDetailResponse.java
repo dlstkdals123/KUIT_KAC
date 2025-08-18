@@ -13,16 +13,16 @@ public record RoutineDetailResponse(
     @Schema(description = "루틴 운동 ID", example = "1")
     Long routineExerciseId,
 
-    @Schema(description = "운동 시간 (분)", example = "30")
+    @Schema(description = "운동 시간 (단위: 분)", example = "30")
     Integer time,
 
-    @Schema(description = "운동 강도", example = "보통")
+    @Schema(description = "운동 강도 (가능한 값: 느슨함, 보통, 강함)", example = "보통")
     String intensity,
 
-    @Schema(description = "루틴 상세 정보 생성일시", example = "2025-07-24T12:00:00")
+    @Schema(description = "루틴 상세 정보 생성일시 (형식: YYYY-MM-DDTHH:MM:SS)", example = "2025-07-24T12:00:00")
     LocalDateTime createdAt,
 
-    @Schema(description = "루틴 상세 정보 최종 수정일시", example = "2025-07-24T12:00:00")
+    @Schema(description = "루틴 상세 정보 최종 수정일시 (형식: YYYY-MM-DDTHH:MM:SS)", example = "2025-07-24T12:00:00")
     LocalDateTime updatedAt
 ) {
     public static RoutineDetailResponse from(RoutineDetail routineDetail) {

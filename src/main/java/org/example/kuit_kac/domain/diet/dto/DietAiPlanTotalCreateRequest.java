@@ -9,7 +9,7 @@ import java.util.List;
 
 @Schema(description = "계획 식단 생성 요청 DTO")
 public record DietAiPlanTotalCreateRequest(
-    @Schema(description = "계획 식단 생성 요청 DTO", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(description = "AI 계획 생성 요청 정보", requiredMode = Schema.RequiredMode.REQUIRED)
     @Valid AiPlanGenerateRequest dietAiPlanGenerateRequest,
 
     @Schema(description = "계획 식단 날짜 목록", requiredMode = Schema.RequiredMode.REQUIRED)

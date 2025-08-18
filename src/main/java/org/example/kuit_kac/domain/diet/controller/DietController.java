@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.List;
 import org.example.kuit_kac.domain.user.model.User;
 import org.example.kuit_kac.domain.user.service.UserService;
@@ -57,13 +58,14 @@ public class DietController {
         return ResponseEntity.ok(responses);
     }
 
-    @GetMapping("/plans/months/profiles")
-    @Operation(summary = "사용자 ID로 한 달 동안의 계획(Plan) 식단 조회", description = "제공된 사용자 ID를 사용하여 해당 사용자의 한 달 동안의 계획(Plan) 식단을 조회합니다.")
+    @GetMapping("/activities/months")
+    @Operation(summary = "사용자 ID로 한 달 동안의 계획(Plan) 식단 조회", description = "제공된 사용자 ID를 사용하여 해당 사용자의 한 달 동안의 활동(계획, AI 계획, 술자리, 외식) 식단을 조회합니다.")
     public ResponseEntity<List<DietRecordProfileResponse>> getDietPlansMonths(
             @Parameter(description = "조회할 사용자의 고유 ID", example = "1")
-            @RequestParam("userId") Long userId) {
+            @RequestParam("userId") Long userId,
+            @RequestParam("yearMonth") YearMonth yearMonth) {
         
-        List<Diet> diets = dietService.getPlansByUserIdBetweenDietDate(userId, LocalDate.now(), LocalDate.now().plusMonths(1));
+        List<Diet> diets = dietService.getPlansByUserIdBetweenDietDate(userId, yearMonth.atDay(1), yearMonth.atEndOfMonth());
 
         List<DietRecordProfileResponse> responses = diets.stream()
                 .map(DietRecordProfileResponse::from)
@@ -150,7 +152,7 @@ public class DietController {
             @RequestBody @Valid DietSnackCreateRequest request
     ) {
         User user = userService.getUserById(request.userId());
-        Diet diet = dietService.createSnackDiet(user, request.name(), request.dietEntryType(), request.foods());
+        Diet diet = dietService.createSnackDiet(user, request.name(), request.foods());
         DietRecordProfileResponse response = DietRecordProfileResponse.from(diet);
         return ResponseEntity.ok(response);
     }
