@@ -63,7 +63,10 @@ public enum ErrorCode {
     ROUTINE_NOT_FOUND("ROUTINE_001", "존재하지 않는 루틴입니다."),
 
     // 운동(Exercise) 관련 에러 코드,
-    EXERCISE_NOT_FOUND("EXERCISE_001", "존재하지 않는 운동입니다.");
+    EXERCISE_NOT_FOUND("EXERCISE_001", "존재하지 않는 운동입니다."),
+
+    // AI 관련 에러 코드
+    GPT_API_ERROR("AI_001", "GPT API 오류가 발생했습니다.");
 
     private final String code;
     private final String message;
