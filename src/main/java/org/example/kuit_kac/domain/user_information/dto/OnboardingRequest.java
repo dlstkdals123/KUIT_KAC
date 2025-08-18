@@ -9,7 +9,6 @@ import org.example.kuit_kac.domain.home.model.DietVelocity;
 import org.example.kuit_kac.domain.terms.dto.TermAgreementItem;
 import org.example.kuit_kac.domain.user.model.GenderType;
 import org.example.kuit_kac.domain.user_information.model.AppetiteType;
-import org.example.kuit_kac.domain.user_information.model.EatingOutType;
 
 import java.util.List;
 
@@ -47,8 +46,8 @@ public class OnboardingRequest {
     @Schema(description = "주간 외식 횟수", example = "4번 이상")
     private String weeklyEatingOutCount;
 
-    @Schema(description = "외식 유형", example = "FAST_FOOD")
-    private EatingOutType eatingOutType;
+    @Schema(description = "외식 유형", example = "FAST_FOOD, KOREAN")
+    private String eatingOutType;
 
     @Schema(description = "다이어트 속도", example = "YUMYUM/COACH/ALL_IN")
     private DietVelocity dietVelocity;
