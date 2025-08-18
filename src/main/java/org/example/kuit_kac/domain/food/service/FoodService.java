@@ -14,6 +14,8 @@ import org.example.kuit_kac.exception.CustomException;
 import org.example.kuit_kac.exception.ErrorCode;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class FoodService {
@@ -30,5 +32,9 @@ public class FoodService {
     public Aifood createAifood(User user, AifoodCreateRequest request) {
         Aifood aifood = new Aifood(user, request.name(), request.unitType(), request.unitNum(), FoodType.getFoodType(request.foodType()), request.isProcessedFood(), request.kcal(), request.carb(), request.protein(), request.fat(), request.sugar(), request.score());
         return aifoodRepository.save(aifood);
+    }
+
+    public List<Aifood> getAifoodsByUserId(Long userId) {
+        return aifoodRepository.findByUserId(userId);
     }
 }
