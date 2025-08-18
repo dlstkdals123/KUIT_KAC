@@ -75,6 +75,10 @@ public class DietService {
             throw new CustomException(ErrorCode.DIET_ENTRY_TYPE_MUST_HAVE_FOOD);
         }
 
+        if (diet.getDietType() != DietType.TEMPLATE) {
+            throw new CustomException(ErrorCode.DIET_TYPE_INVALID);
+        }
+
         diet.setName(name);
         diet.getDietFoods().clear();
 
@@ -118,6 +122,10 @@ public class DietService {
 
     @Transactional
     public Diet updateRecordDiet(Diet diet, String name, LocalTime dietTime, List<DietFoodCreateRequest> foods) {
+        if (diet.getDietEntryType() != DietEntryType.RECORD) {
+            throw new CustomException(ErrorCode.DIET_ENTRY_TYPE_INVALID);
+        }
+
         diet.setName(name);
         diet.getDietFoods().clear();
         LocalDateTime dietDateTime = dietTime.atDate(LocalDate.now());
@@ -137,6 +145,10 @@ public class DietService {
 
     @Transactional
     public Diet updateSnackDiet(Diet diet, String name, List<DietFoodSnackCreateRequest> foods) {
+        if (diet.getDietType() != DietType.SNACK) {
+            throw new CustomException(ErrorCode.DIET_TYPE_INVALID);
+        }
+
         diet.setName(name);
         diet.getDietFoods().clear();
         List<DietFood> dietFoods = dietFoodService.createDietFoodsSnack(foods, diet);
@@ -156,6 +168,10 @@ public class DietService {
 
     @Transactional
     public Diet updatePlanDiet(Diet diet, LocalDate date, List<DietFoodCreateRequest> foods) {
+        if (diet.getDietEntryType() != DietEntryType.PLAN) {
+            throw new CustomException(ErrorCode.DIET_ENTRY_TYPE_INVALID);
+        }
+        
         LocalDateTime dietDateTime = TimeGenerator.getDateStart(date);
         diet.getDietFoods().clear();
         diet.setDietDate(date);
