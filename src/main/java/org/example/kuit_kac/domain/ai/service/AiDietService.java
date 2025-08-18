@@ -5,40 +5,45 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.example.kuit_kac.domain.ai.dto.AIPlanCreateRequest;
 import org.example.kuit_kac.domain.diet.service.DietService;
+import org.example.kuit_kac.domain.food.model.FoodType;
 import org.example.kuit_kac.domain.home.service.WeightService;
 import org.example.kuit_kac.domain.user.model.User;
 import org.example.kuit_kac.domain.user_information.service.UserInfoService;
 import org.example.kuit_kac.global.util.DateRange;
-import org.example.kuit_kac.domain.user.service.UserService;
+import org.example.kuit_kac.domain.ai.dto.AiGenerateResponse;
+import org.example.kuit_kac.domain.diet.dto.AiPlanGenerateRequest;
 import org.example.kuit_kac.domain.diet.model.Diet;
+import org.example.kuit_kac.domain.diet.model.DietType;
 
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.example.kuit_kac.exception.CustomException;
+import org.example.kuit_kac.exception.ErrorCode;
+import java.util.Map;
+
 @Service
 @RequiredArgsConstructor
 public class AiDietService {
 
-    private final UserService userService;
     private final UserInfoService userInfoService;
     private final WeightService weightService;
     private final DietService dietService;
 
-    public String getSystemPrompt(AIPlanCreateRequest request) {
+    public String getSystemPrompt(User user, AiPlanGenerateRequest request) {
         // 필요한 정보 추출
-        Long userId = request.userId();
-        User user = userService.getUserById(userId);
-        double weightValue = weightService.getLatestWeightByUserId(userId).getWeight();
+        double weightValue = weightService.getLatestWeightByUserId(user.getId()).getWeight();
 
         // 프롬프트 파라미터 설정
         String gender = user.getGender().getValue();
         double bmr = user.getBMR(weightValue);
         String events = getEventsString(request);
-        String exception = getExceptionString(request);
-        String eating_out_type = userInfoService.getUserInformationByUserId(userId).getEatingOutType().getValue();
+        String exception = getExceptionString(user, request);
+        String eating_out_type = userInfoService.getUserInformationByUserId(user.getId()).getEatingOutType().getValue();
 
         System.out.println("events: " + events);
         System.out.println("exception: " + exception);
@@ -75,7 +80,7 @@ Please adapt total caloric intake and macronutrient distribution accordingly:
 * Event %s, exception %s
 - If applicable, describe relevant events (e.g., training, competition, travel, recovery):*
 - Day before event: Emphasize hydration, low sodium, light digestion
-- Event day: Omit [event meal and exception], optimize other meals for stabilized energy and electrolyte support
+- Event day: Omit [both event and exception meals], optimize other meals for stabilized energy and electrolyte support
 - Day after event: Prioritize gut-friendly recovery foods—e.g., porridge, soft proteins, mineral-rich broths
 * Preferred cuisine style: %s
 - Incorporate elements of this cuisine for comfort and cultural fit while keeping nutritional integrity.*
@@ -97,7 +102,7 @@ Respect implicit exclusions (e.g., fatigue from repeated meals, known allergies,
         return systemPrompt.formatted(gender, bmr, events, exception, eating_out_type);
     }
 
-    public String getUserPrompt(AIPlanCreateRequest request) {
+    public String getUserPrompt(AiPlanGenerateRequest request) {
         List<DateRange> dateRanges = getDateRanges(request);
         int dayCount = calculateTotalDays(dateRanges);
 
@@ -105,7 +110,7 @@ Respect implicit exclusions (e.g., fatigue from repeated meals, known allergies,
         
         String userPrompt = """
         ## Each food item must include:
-- `name`: food name/ `food_type`: one of food type enum/ `kcal`: number of kcal/ `protein`: grams of protein/ `fat`: grams of fat/ `carb`: grams of carbohydrates/ `unit_type`: portion unit (e.g., "그릇", "개", "팩")/ `unit_num`: weight or volume per unit (e.g., 600 for grams or ml)
+- `name`: food name/ `food_type`: one of food type enum/ `is_processed_food`: boolean value/ `kcal`: number of kcal/ `protein`: grams of protein/ `fat`: grams of fat/ `carb`: grams of carbohydrates/ `sugar`: grams of sugar/ `score`: 0 or 1 or 2/ `unit_type`: portion unit (e.g., "그릇", "개", "팩")/ `unit_num`: weight or volume per unit (e.g., 600 for grams or ml)
 - `food_type` is one of the following:
 NORMAL_GRAIN_AND_TUBER, NORMAL_FRUIT, NORMAL_GRILLED, NORMAL_SOUP_AND_TANG, NORMAL_KIMCHI, NORMAL_NAMUL_AND_SUKCHAE, NORMAL_BEANS_AND_NUTS, NORMAL_NOODLE_AND_DUMPLING, NORMAL_RICE, NORMAL_STIR_FRIED, NORMAL_BREAD_AND_SNACK, NORMAL_FRESH_AND_MUCHIM, NORMAL_FISH_AND_MEAT, NORMAL_DAIRY_AND_ICECREAM, NORMAL_BEVERAGE_AND_TEA, NORMAL_SAUCE_AND_SEASONING, NORMAL_PICKLE, NORMAL_PANCAKE, NORMAL_SALTED_SEAFOOD, NORMAL_BRAISED, NORMAL_PORRIDGE_AND_SOUP, NORMAL_STEW_AND_HOT_POT, NORMAL_STEAMED, NORMAL_VEGETABLE_AND_SEAWEED, NORMAL_FRIED, PROCESSED_BREAD_AND_SNACK, PROCESSED_OTHER_FOOD, PROCESSED_AGRICULTURAL, PROCESSED_SUGAR, PROCESSED_ANIMAL, PROCESSED_TOFU_AND_MUK, PROCESSED_NOODLE, PROCESSED_ICECREAM, PROCESSED_SEAFOOD, PROCESSED_OIL, PROCESSED_MEAT, PROCESSED_EGG, PROCESSED_DAIRY, PROCESSED_BEVERAGE, PROCESSED_SAUCE, PROCESSED_JAM, PROCESSED_PICKLE_AND_BRAISED, PROCESSED_SEASONING, PROCESSED_ALCOHOL, PROCESSED_INSTANT, PROCESSED_COCOA_CHOCOLATE, PROCESSED_NUTRITION, PROCESSED_MEDICAL
 
@@ -116,12 +121,15 @@ NORMAL_GRAIN_AND_TUBER, NORMAL_FRUIT, NORMAL_GRILLED, NORMAL_SOUP_AND_TANG, NORM
       {
         "name": "현미죽",
         "food_type": "NORMAL_RICE",
+        "is_processed_food": false,
         "kcal": 200,
         "protein": 6.0,
         "fat": 1.0,
         "carb": 40.0,
+        "sugar": 5.0,
         "unit_type": "그릇",
-        "unit_num": 400
+        "unit_num": 400,
+        "score": 1
       }
     ],
     "점심": [
@@ -143,7 +151,54 @@ Think about this logically.
         return userPrompt.formatted(dayCount, dayCount);
     }
 
-    private List<DateRange> getDateRanges(AIPlanCreateRequest request) {
+    public AiGenerateResponse validateResponse(String response) {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            Map<String, Map<String, List<AiGenerateResponse.FoodItem>>> responseMap = 
+                objectMapper.readValue(response, 
+                    new com.fasterxml.jackson.core.type.TypeReference<Map<String, Map<String, List<AiGenerateResponse.FoodItem>>>>() {}
+                );
+            
+            // 유효성 검사 추가
+            validateResponseStructure(responseMap);
+            
+            return new AiGenerateResponse(responseMap);
+        } catch (JsonProcessingException e) {
+            throw new CustomException(ErrorCode.GPT_API_ERROR);
+        } catch (Exception e) {
+            throw new CustomException(ErrorCode.GPT_API_ERROR);
+        }
+    }
+
+    private void validateResponseStructure(Map<String, Map<String, List<AiGenerateResponse.FoodItem>>> responseMap) {
+        for (Map.Entry<String, Map<String, List<AiGenerateResponse.FoodItem>>> dayEntry : responseMap.entrySet()) {
+            String day = dayEntry.getKey();
+            Map<String, List<AiGenerateResponse.FoodItem>> meals = dayEntry.getValue();
+            
+            for (Map.Entry<String, List<AiGenerateResponse.FoodItem>> mealEntry : meals.entrySet()) {
+                String dietType = mealEntry.getKey();
+                List<AiGenerateResponse.FoodItem> foods = mealEntry.getValue();
+                
+                // dietType 검증 - DietType enum의 koreanName과 비교
+                try {
+                    DietType.getDietType(dietType);
+                } catch (CustomException e) {
+                    throw new CustomException(ErrorCode.GPT_API_ERROR);
+                }
+                
+                // foodType 검증 - FoodType enum의 value와 비교
+                for (AiGenerateResponse.FoodItem food : foods) {
+                    try {
+                        FoodType.getFoodType(food.food_type());
+                    } catch (CustomException e) {
+                        throw new CustomException(ErrorCode.GPT_API_ERROR);
+                    }
+                }
+            }
+        }
+    }
+
+    private List<DateRange> getDateRanges(AiPlanGenerateRequest request) {
         // 활동 날짜들을 기준으로 전/후 1일씩 포함하는 날짜 범위 계산
         List<LocalDate> activityDates = request.dietActivities().stream()
                 .map(activity -> activity.dietDate())
@@ -183,7 +238,7 @@ Think about this logically.
                 .sum();
     }
 
-    private List<LocalDate> getAllDatesInOrder(AIPlanCreateRequest request) {
+    private List<LocalDate> getAllDatesInOrder(AiPlanGenerateRequest request) {
         List<DateRange> dateRanges = getDateRanges(request);
         List<LocalDate> allDates = new ArrayList<>();
         
@@ -199,29 +254,31 @@ Think about this logically.
         return allDates;
     }
 
-    private String getEventsString(AIPlanCreateRequest request) {
+    private String getEventsString(AiPlanGenerateRequest request) {
         if (request.dietActivities().isEmpty()) {
             return "none";
         }
 
         List<LocalDate> allDates = getAllDatesInOrder(request);
-        List<LocalDate> activityDates = request.dietActivities().stream()
-                .map(activity -> activity.dietDate())
-                .toList();
+        List<String> events = new ArrayList<>();
 
-        List<Integer> dayNumbers = new ArrayList<>();
-        for (LocalDate activityDate : activityDates) {
+        // 각 활동 날짜에 대해 Day 번호와 식사 타입을 조합
+        for (var activity : request.dietActivities()) {
+            LocalDate activityDate = activity.dietDate();
             int dayIndex = allDates.indexOf(activityDate) + 1; // 1부터 시작하는 인덱스
-            dayNumbers.add(dayIndex);
+            
+            // 식사 타입을 한글로 변환
+            String dietType = activity.dietType();
+            
+            events.add("Day" + dayIndex + "-" + dietType);
         }
 
         // Day 번호들을 문자열로 변환
-        return dayNumbers.stream()
-                .map(day -> "Day" + day)
+        return events.stream()
                 .collect(Collectors.joining(", "));
     }
 
-    private String getExceptionString(AIPlanCreateRequest request) {
+    private String getExceptionString(User user, AiPlanGenerateRequest request) {
         if (request.dietActivities().isEmpty()) {
             return "none";
         }
@@ -231,7 +288,7 @@ Think about this logically.
         // 해당 사용자의 dateRanges 기간 내 모든 식사 기록 조회
         List<Diet> userDiets = new ArrayList<>();
         for (DateRange dateRange : getDateRanges(request)) {
-            userDiets.addAll(dietService.getPlansByUserIdBetweenDietDate(request.userId(), dateRange.start(), dateRange.end()));
+            userDiets.addAll(dietService.getPlansByUserIdBetweenDietDate(user.getId(), dateRange.start(), dateRange.end()));
         }
         
         if (userDiets.isEmpty()) {
@@ -260,7 +317,7 @@ Think about this logically.
         return exceptions.isEmpty() ? "none" : String.join(", ", exceptions);
     }
 
-    public String convertDayToDate(String dayResponse, AIPlanCreateRequest request) {
+    public String convertDayToDate(String dayResponse, AiPlanGenerateRequest request) {
         List<LocalDate> allDates = getAllDatesInOrder(request);
         
         // Day1, Day2... 를 실제 날짜로 치환

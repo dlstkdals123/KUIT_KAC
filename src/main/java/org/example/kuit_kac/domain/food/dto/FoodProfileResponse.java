@@ -7,6 +7,7 @@ import lombok.Getter;
 import java.time.LocalDateTime;
 
 import org.example.kuit_kac.domain.food.model.Food;
+import org.example.kuit_kac.domain.food.model.Aifood;
 
 @Getter
 @AllArgsConstructor
@@ -40,6 +41,19 @@ public class FoodProfileResponse {
     private LocalDateTime updatedAt;
 
     public static FoodProfileResponse from(Food food) {
+        return new FoodProfileResponse(
+            food.getId(), 
+            food.getName(), 
+            food.getUnitType(), 
+            food.getFoodType().getKoreanName(), 
+            food.getIsProcessedFood(), 
+            food.getCalorie(), 
+            food.getScore(),
+            food.getCreatedAt(), 
+            food.getUpdatedAt());
+    }
+
+    public static FoodProfileResponse from(Aifood food) {
         return new FoodProfileResponse(
             food.getId(), 
             food.getName(), 
