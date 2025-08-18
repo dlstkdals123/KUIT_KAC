@@ -14,6 +14,8 @@ import org.example.kuit_kac.domain.diet.service.DietService;
 import org.example.kuit_kac.domain.user.model.User;
 import org.example.kuit_kac.domain.user.model.UserPrincipal;
 import org.example.kuit_kac.domain.user.service.UserService;
+import org.example.kuit_kac.exception.CustomException;
+import org.example.kuit_kac.exception.ErrorCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -26,10 +28,6 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
 
 @RestController
 @RequestMapping("/ai")
@@ -50,10 +48,9 @@ public class AiController {
         @AuthenticationPrincipal UserPrincipal p
     ) {
         if (p == null) {
-            // throw new CustomException(ErrorCode.AUTH_UNAUTHORIZED);
+            throw new CustomException(ErrorCode.AUTH_UNAUTHORIZED);
         }
-        // User user = userService.getUserById(p.getUserId());
-        User user = userService.getUserById(1L);
+        User user = userService.getUserById(p.getUserId());
         String systemPrompt = aiDietService.getSystemPrompt(user, request);
         String userPrompt = aiDietService.getUserPrompt(request);
         String dayResponse = gptConfig.getResponse(systemPrompt, userPrompt);
@@ -69,10 +66,9 @@ public class AiController {
         @AuthenticationPrincipal UserPrincipal p
     ) {
         if (p == null) {
-            // throw new CustomException(ErrorCode.AUTH_UNAUTHORIZED);
+            throw new CustomException(ErrorCode.AUTH_UNAUTHORIZED);
         }
-        // User user = userService.getUserById(p.getUserId());
-        User user = userService.getUserById(1L);
+        User user = userService.getUserById(p.getUserId());
         List<Diet> diets = new ArrayList<>();
         createRequest.plans().forEach(dietAiPlanDay -> {
             dietAiPlanDay.diets().forEach(dietAiPlan -> {
