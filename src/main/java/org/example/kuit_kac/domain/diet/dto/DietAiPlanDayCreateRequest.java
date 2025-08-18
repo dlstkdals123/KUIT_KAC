@@ -17,5 +17,5 @@ public record DietAiPlanDayCreateRequest(
     @Schema(description = "계획 식단 날짜 목록", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotNull(message = "계획 식단 날짜 목록은 필수입니다.")
     @Size(min = 1, message = "계획 식단 날짜는 한 개 이상 등록해야 합니다.")
-    List<@Valid DietAiPlanCreateRequest> plans
+    List<@Valid DietAiPlanCreateRequest> diets
 ) {} 
