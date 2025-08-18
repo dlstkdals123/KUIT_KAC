@@ -101,7 +101,7 @@ public class RoutineController {
             @RequestBody @Valid RoutineGeneralCreateRequest request
     ) {
         User user = userService.getUserById(request.userId());
-        Routine routine = routineService.createGeneralRoutine(user, request.name(), request.routineType(), request.routineExercises());
+        Routine routine = routineService.createGeneralRoutine(user, request.name(), request.routineExercises());
         RoutineRecordProfileResponse response = RoutineRecordProfileResponse.from(routine);
         return ResponseEntity.ok(response);
     }

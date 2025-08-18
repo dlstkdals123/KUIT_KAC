@@ -17,11 +17,7 @@ public record RoutineGeneralCreateRequest(
     @Schema(description = "루틴 이름", example = "상체 루틴1", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotBlank(message = "루틴 이름은 필수입니다.")
     String name,
-
-    @Schema(description = "루틴 종류 (가능한 값: 기록, 나만의 루틴)", example = "기록", requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotBlank(message = "루틴 종류는 필수입니다.")
-    String routineType,
-
+    
     @Schema(description = "루틴 운동 목록 (중복 불가, 1개 이상)", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotNull(message = "루틴 운동 목록은 필수입니다.")
     @Size(min = 1, message = "루틴 운동 목록은 한 개 이상 등록해야 합니다.")
