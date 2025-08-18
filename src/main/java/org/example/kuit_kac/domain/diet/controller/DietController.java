@@ -58,7 +58,7 @@ public class DietController {
         return ResponseEntity.ok(responses);
     }
 
-    @GetMapping("/activities/months/")
+    @GetMapping("/activities/months")
     @Operation(summary = "사용자 ID로 한 달 동안의 계획(Plan) 식단 조회", description = "제공된 사용자 ID를 사용하여 해당 사용자의 한 달 동안의 활동(계획, AI 계획, 술자리, 외식) 식단을 조회합니다.")
     public ResponseEntity<List<DietRecordProfileResponse>> getDietPlansMonths(
             @Parameter(description = "조회할 사용자의 고유 ID", example = "1")
