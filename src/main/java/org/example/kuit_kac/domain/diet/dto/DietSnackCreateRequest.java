@@ -19,10 +19,6 @@ public record DietSnackCreateRequest(
     @Schema(description = "식단 이름", example = "간식1", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotBlank(message = "식단 이름은 필수입니다.")
     String name,
-    
-    @Schema(description = "식단 항목 종류 (가능한 값: 기록, 단식, 계획, AI 계획, 외식, 술자리)", example = "기록", requiredMode = Schema.RequiredMode.REQUIRED)
-    @NotBlank(message = "식단 항목 종류는 필수입니다.")
-    String dietEntryType,
 
     @Schema(description = "음식 목록 (중복 불가, 1개 이상)", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotNull(message = "음식 목록은 필수입니다.")

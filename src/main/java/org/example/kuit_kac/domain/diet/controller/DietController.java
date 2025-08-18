@@ -152,7 +152,7 @@ public class DietController {
             @RequestBody @Valid DietSnackCreateRequest request
     ) {
         User user = userService.getUserById(request.userId());
-        Diet diet = dietService.createSnackDiet(user, request.name(), request.dietEntryType(), request.foods());
+        Diet diet = dietService.createSnackDiet(user, request.name(), request.foods());
         DietRecordProfileResponse response = DietRecordProfileResponse.from(diet);
         return ResponseEntity.ok(response);
     }

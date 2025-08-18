@@ -146,8 +146,8 @@ public class DietService {
     }
 
     @Transactional
-    public Diet createSnackDiet(User user, String name, String dietEntryTypeStr, List<DietFoodSnackCreateRequest> foods) {
-        Diet diet = new Diet(user, name, DietType.SNACK, DietEntryType.getDietEntryType(dietEntryTypeStr));
+    public Diet createSnackDiet(User user, String name, List<DietFoodSnackCreateRequest> foods) {
+        Diet diet = new Diet(user, name, DietType.SNACK, DietEntryType.RECORD);
         Diet saved = dietRepository.save(diet);
         List<DietFood> dietFoods = dietFoodService.createDietFoodsSnack(foods, saved);
         dietFoods.forEach(saved::addDietFood);
