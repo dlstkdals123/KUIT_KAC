@@ -32,7 +32,6 @@ public class UserInformation {
     @Column(name = "weekly_eating_out_count", nullable = false)
     private String weeklyEatingOutCount;
 
-    @Enumerated(EnumType.STRING)
     @Column(name = "eating_out_type", nullable = false)
     private String eatingOutType;
 
