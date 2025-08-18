@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.example.kuit_kac.config.GptConfig;
+import org.example.kuit_kac.domain.ai.dto.AiGenerateResponse;
 import org.example.kuit_kac.domain.ai.service.AiDietService;
 import org.example.kuit_kac.domain.diet.dto.AiPlanGenerateRequest;
 import org.example.kuit_kac.domain.diet.dto.DietAiPlanTotalCreateRequest;
@@ -24,6 +25,12 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+
 @RestController
 @RequestMapping("/ai")
 @Tag(name = "AI 관리", description = "AI를 관리하는 API입니다.")
@@ -37,7 +44,8 @@ public class AiController {
     private final DietService dietService;
 
     @PostMapping("/diets")
-    public ResponseEntity<String> getResponse(
+    @Operation(summary = "AI 식단 예측", description = "사용자 정보를 기반으로 AI가 개인화된 식단을 예측합니다.")
+    public ResponseEntity<AiGenerateResponse> getResponse(
         @RequestBody @Valid AiPlanGenerateRequest request,
         @AuthenticationPrincipal UserPrincipal p
     ) {
@@ -50,10 +58,12 @@ public class AiController {
         String userPrompt = aiDietService.getUserPrompt(request);
         String dayResponse = gptConfig.getResponse(systemPrompt, userPrompt);
         String response = aiDietService.convertDayToDate(dayResponse, request);
-        return ResponseEntity.ok(response);
+        AiGenerateResponse aiGenerateResponse = aiDietService.validateResponse(response);
+        return ResponseEntity.ok(aiGenerateResponse);
     }
 
     @PostMapping("/diets/create")
+    @Operation(summary = "AI 식단 생성", description = "사용자 정보를 기반으로 AI가 개인화된 식단을 생성합니다.")
     public ResponseEntity<List<DietRecordProfileResponse>> createDiet(
         @RequestBody @Valid DietAiPlanTotalCreateRequest createRequest,
         @AuthenticationPrincipal UserPrincipal p
@@ -65,7 +75,7 @@ public class AiController {
         User user = userService.getUserById(1L);
         List<Diet> diets = new ArrayList<>();
         createRequest.plans().forEach(dietAiPlanDay -> {
-            dietAiPlanDay.plans().forEach(dietAiPlan -> {
+            dietAiPlanDay.diets().forEach(dietAiPlan -> {
                 Diet diet = dietService.createAiPlanDiet(user, dietAiPlan.dietType(), dietAiPlanDay.dietDate(), dietAiPlan.aiDietFoods());
                 diets.add(diet);
             });

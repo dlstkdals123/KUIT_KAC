@@ -6,16 +6,25 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.example.kuit_kac.domain.diet.service.DietService;
+import org.example.kuit_kac.domain.food.model.FoodType;
 import org.example.kuit_kac.domain.home.service.WeightService;
 import org.example.kuit_kac.domain.user.model.User;
 import org.example.kuit_kac.domain.user_information.service.UserInfoService;
 import org.example.kuit_kac.global.util.DateRange;
+import org.example.kuit_kac.domain.ai.dto.AiGenerateResponse;
 import org.example.kuit_kac.domain.diet.dto.AiPlanGenerateRequest;
 import org.example.kuit_kac.domain.diet.model.Diet;
+import org.example.kuit_kac.domain.diet.model.DietType;
 
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.stereotype.Service;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.example.kuit_kac.exception.CustomException;
+import org.example.kuit_kac.exception.ErrorCode;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -140,6 +149,53 @@ NORMAL_GRAIN_AND_TUBER, NORMAL_FRUIT, NORMAL_GRILLED, NORMAL_SOUP_AND_TANG, NORM
 Think about this logically.
     """;
         return userPrompt.formatted(dayCount, dayCount);
+    }
+
+    public AiGenerateResponse validateResponse(String response) {
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            Map<String, Map<String, List<AiGenerateResponse.FoodItem>>> responseMap = 
+                objectMapper.readValue(response, 
+                    new com.fasterxml.jackson.core.type.TypeReference<Map<String, Map<String, List<AiGenerateResponse.FoodItem>>>>() {}
+                );
+            
+            // 유효성 검사 추가
+            validateResponseStructure(responseMap);
+            
+            return new AiGenerateResponse(responseMap);
+        } catch (JsonProcessingException e) {
+            throw new CustomException(ErrorCode.GPT_API_ERROR);
+        } catch (Exception e) {
+            throw new CustomException(ErrorCode.GPT_API_ERROR);
+        }
+    }
+
+    private void validateResponseStructure(Map<String, Map<String, List<AiGenerateResponse.FoodItem>>> responseMap) {
+        for (Map.Entry<String, Map<String, List<AiGenerateResponse.FoodItem>>> dayEntry : responseMap.entrySet()) {
+            String day = dayEntry.getKey();
+            Map<String, List<AiGenerateResponse.FoodItem>> meals = dayEntry.getValue();
+            
+            for (Map.Entry<String, List<AiGenerateResponse.FoodItem>> mealEntry : meals.entrySet()) {
+                String dietType = mealEntry.getKey();
+                List<AiGenerateResponse.FoodItem> foods = mealEntry.getValue();
+                
+                // dietType 검증 - DietType enum의 koreanName과 비교
+                try {
+                    DietType.getDietType(dietType);
+                } catch (CustomException e) {
+                    throw new CustomException(ErrorCode.GPT_API_ERROR);
+                }
+                
+                // foodType 검증 - FoodType enum의 value와 비교
+                for (AiGenerateResponse.FoodItem food : foods) {
+                    try {
+                        FoodType.getFoodType(food.food_type());
+                    } catch (CustomException e) {
+                        throw new CustomException(ErrorCode.GPT_API_ERROR);
+                    }
+                }
+            }
+        }
     }
 
     private List<DateRange> getDateRanges(AiPlanGenerateRequest request) {
