@@ -20,25 +20,25 @@ public record DietRecordProfileResponse(
     @Schema(description = "식단의 이름", example = "점심1", requiredMode = Schema.RequiredMode.REQUIRED)
     String name,
 
-    @Schema(description = "식단의 날짜", example = "2025-08-09", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(description = "식단의 날짜 (형식: YYYY-MM-DD)", example = "2025-08-09", requiredMode = Schema.RequiredMode.REQUIRED)
     LocalDate dietDate,
 
-    @Schema(description = "식단의 유형", example = "점심", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(description = "식단의 유형 (아침, 점심, 저녁, 간식, 나만의 식단)", example = "점심", requiredMode = Schema.RequiredMode.REQUIRED)
     String dietType,
 
-    @Schema(description = "식단의 항목 종류", example = "기록", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(description = "식단의 항목 종류 (기록, 단식, 계획, AI 계획, 외식, 술자리)", example = "기록", requiredMode = Schema.RequiredMode.REQUIRED)
     String dietEntryType,
 
-    @Schema(description = "식단의 상태", example = "양호", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(description = "식단의 상태 (양호, 적당, 위험)", example = "양호", requiredMode = Schema.RequiredMode.REQUIRED)
     String foodStatusType,
 
-    @Schema(description = "식단 정보 생성일시", example = "2025-07-10T12:00:00")
+    @Schema(description = "식단 정보 생성일시 (형식: YYYY-MM-DDTHH:MM:SS)")
     LocalDateTime createdAt,
 
-    @Schema(description = "식단 정보 최종 수정일시", example = "2025-07-10T12:00:00")
+    @Schema(description = "식단 정보 최종 수정일시 (형식: YYYY-MM-DDTHH:MM:SS)")
     LocalDateTime updatedAt,
 
-    @Schema(description = "식단의 총 칼로리", example = "368", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(description = "식단의 총 칼로리 (단위: kcal)", example = "368", requiredMode = Schema.RequiredMode.REQUIRED)
     Double totalKcal,
 
     @Schema(description = "식단에 포함된 음식 목록", requiredMode = Schema.RequiredMode.REQUIRED)
