@@ -1,8 +1,6 @@
 package org.example.kuit_kac.domain.user_information.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.persistence.Column;
-import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -40,7 +38,7 @@ public class OnboardingRequest {
     @Schema(description = "다이어트 경험 여부", example = "true")
     private boolean hasDietExperience;
 
-    @Schema(description = "다이어트 실패 이유", example = "의지 부족")
+    @Schema(description = "다이어트 실패 이유", example = "야식, 의지 부족")
     private String dietFailReason;
 
     @Schema(description = "식욕 유형", example = "BIG, SMALL")
