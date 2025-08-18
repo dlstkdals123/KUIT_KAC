@@ -10,7 +10,7 @@ import java.util.List;
 @Schema(description = "루틴에 포함될 운동 생성 요청 DTO")
 public record RoutineExerciseCreateRequest(
     //TODO: 하나의 요청에 운동 ID가 중복되어서는 안됩니다.
-    @Schema(description = "운동 ID", example = "10", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(description = "운동 ID (중복 불가)", example = "10", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotNull(message = "운동 ID는 필수입니다.")
     Long exerciseId,
 
@@ -19,7 +19,7 @@ public record RoutineExerciseCreateRequest(
     @Valid
     RoutineDetailCreateRequest routineDetail,
 
-    @Schema(description = "루틴 세트 목록", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(description = "루틴 세트 목록 (1개 이상)", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotNull(message = "루틴 세트 목록은 필수입니다.")
     @Size(min = 1, message = "루틴 세트 목록은 한 개 이상 등록해야 합니다.")
     List<@Valid RoutineSetCreateRequest> routineSets

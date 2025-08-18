@@ -13,28 +13,28 @@ public record RoutineSetResponse(
     @Schema(description = "루틴 운동 ID", example = "1")
     Long routineExerciseId,
 
-    @Schema(description = "반복 횟수", example = "10")
+    @Schema(description = "반복 횟수 (단위: 회)", example = "10")
     Integer count,
 
-    @Schema(description = "중량 (kg)", example = "50")
+    @Schema(description = "중량 (단위: kg)", example = "50")
     Integer weightKg,
 
-    @Schema(description = "중량 개수", example = "2")
+    @Schema(description = "중량 개수 (단위: 개)", example = "2")
     Integer weightNum,
 
-    @Schema(description = "거리 (m)", example = "1000")
+    @Schema(description = "거리 (단위: m)", example = "1000")
     Integer distance,
 
-    @Schema(description = "시간 (분)", example = "15.5")
+    @Schema(description = "시간 (단위: 분)", example = "15.5")
     Double time,
 
-    @Schema(description = "세트 순서", example = "1")
+    @Schema(description = "세트 순서 (단위: 세트)", example = "1")
     Integer setOrder,
 
-    @Schema(description = "루틴 세트 정보 생성일시", example = "2025-07-24T12:00:00")
+    @Schema(description = "루틴 세트 정보 생성일시 (형식: YYYY-MM-DDTHH:MM:SS)", example = "2025-07-24T12:00:00")
     LocalDateTime createdAt,
 
-    @Schema(description = "루틴 세트 정보 최종 수정일시", example = "2025-07-24T12:00:00")
+    @Schema(description = "루틴 세트 정보 최종 수정일시 (형식: YYYY-MM-DDTHH:MM:SS)", example = "2025-07-24T12:00:00")
     LocalDateTime updatedAt
 ) {
     public static RoutineSetResponse from(RoutineSet routineSet) {
