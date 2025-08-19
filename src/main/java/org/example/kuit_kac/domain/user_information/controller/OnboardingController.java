@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.servlet.http.HttpServletRequest;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,7 @@ import org.example.kuit_kac.domain.user_information.service.OnboardingService;
 import org.example.kuit_kac.exception.CustomException;
 import org.example.kuit_kac.exception.ErrorCode;
 import org.example.kuit_kac.global.util.JwtProvider;
+import org.example.kuit_kac.global.util.dev.DevAutofillProperties;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.ErrorResponse;
@@ -32,81 +34,52 @@ public class OnboardingController {
     private final OnboardingService onboardingService;
     private final JwtProvider jwtProvider;
     private final UserService userService;
+    private final DevAutofillProperties autofill; // ← 주입
 
-    @Operation(
-            summary = "온보딩 등록",
-            description = """
-                    회원 가입 시 필수 정보(온보딩)를 등록합니다.<br>
-                    - `Authorization` 헤더의 Access 토큰 또는 AuthenticationPrincipal에서 카카오 ID를 추출하여 처리합니다.<br>
-                    - 이미 존재하는 회원이 온보딩 완료 상태라면 에러를 반환합니다.
-                    """
-    )
-    @Parameter(
-            name = "Authorization",
-            description = "Bearer {Access 토큰}",
-            in = ParameterIn.HEADER,
-            required = true,
-            example = "Bearer eyJhbGciOi..."
-    )
-    @ApiResponse(
-            responseCode = "200",
-            description = "온보딩 완료",
-            content = @Content(schema = @Schema(example = "{\"userId\": 3}"))
-    )
-    @ApiResponse(
-            responseCode = "401",
-            description = "토큰에 kid 없음 / 인증 실패",
-            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
-    )
-    @ApiResponse(
-            responseCode = "400",
-            description = "요청 데이터 유효성 실패",
-            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
-    )
     @PostMapping
     public ResponseEntity<Map<String, Object>> onboarding(
-
             @AuthenticationPrincipal UserPrincipal principal,
             @RequestHeader(value = "Authorization", required = false) String bearer,
-            @RequestBody @Valid OnboardingRequest req) {
-
-        // refresh 토큰으로 온보딩 차단
-        String token = null;
-        if (bearer != null && bearer.startsWith("Bearer ")) {
-            token = bearer.substring(7);
-            if ("refresh".equals(jwtProvider.getTokenType(token))) {
-                // refresh로는 온보딩/쓰기 불가
-                throw new CustomException(ErrorCode.AUTH_ACCESS_NEEDED); // 401
-            }
-        }
-
-        String kid = null;
-
-        // Principal에서 시도
-        if (principal != null && principal.getKakaoId() != null && !principal.getKakaoId().isBlank()) {
-            kid = principal.getKakaoId();
-        }
-
-        // 헤더 access 토큰에서 추출
-        if (kid == null && bearer != null && bearer.startsWith("Bearer ")) {
-            String access = bearer.substring(7);
-            kid = jwtProvider.getKakaoIdOrNullFromToken(access);
-
-            // kid가 여전히 없고 uid가 있으면 DB로 역조회
-            if (kid == null) {
-                Long uid = jwtProvider.getUserIdOrNullFromToken(access);
-                if (uid != null) {
-                    kid = userService.getUserById(uid).getKakaoId(); // 온보딩 완료 사용자라면 존재
-                }
-            }
-        }
-
+            @RequestBody @Valid OnboardingRequest req,
+            jakarta.servlet.http.HttpServletRequest httpRequest
+    ) {
+        final String kid = resolveKid(principal, bearer, httpRequest);
         if (kid == null || kid.isBlank()) {
-            // 토큰에 kid가 진짜로 없거나, uid도 없어 역조회 실패
-            return ResponseEntity.status(401).body(Map.of("error", "missing kid in token"));
+            return ResponseEntity.status(401).body(Map.of("error", "missing kid"));
         }
 
-        Long userId = onboardingService.createUserWithOnboarding(kid, req);
+        // DEV 판단: (추천) dev 필터가 넣는 가짜 uid < 0 를 기준
+        boolean isDev = principal != null && principal.getUserId() != null && principal.getUserId() < 0L;
+
+        Long userId = onboardingService.createUserWithOnboarding(
+                kid, req,
+                /* allowAutofill */ autofill.isEnabled() && isDev
+        );
         return ResponseEntity.ok(Map.of("userId", userId));
+    }
+
+
+    private String resolveKid(UserPrincipal principal, String bearer, jakarta.servlet.http.HttpServletRequest req) {
+        if (principal != null && principal.getKakaoId() != null && !principal.getKakaoId().isBlank()) {
+            return principal.getKakaoId();
+        }
+        if (bearer != null && bearer.startsWith("Bearer ")) {
+            String t = bearer.substring(7);
+            try {
+                String kid = jwtProvider.getKakaoIdFromAccessOrNull(t);
+                if (kid != null && !kid.isBlank()) return kid;
+                Long uid = jwtProvider.getUserIdFromAccessOrNull(t);
+                if (uid != null && uid >= 0L) {
+                    try { return userService.getUserById(uid).getKakaoId(); } catch (Exception ignore) {}
+                }
+            } catch (Exception ignore) {}
+        }
+        String headerKid = req.getHeader("X-KID");
+        if (headerKid != null && !headerKid.isBlank()) return headerKid;
+
+        String qpKid = req.getParameter("kid"); // 로컬 디버그
+        if (qpKid != null && !qpKid.isBlank()) return qpKid;
+
+        return null;
     }
 }

@@ -53,3 +53,18 @@ logging:
     org.hibernate.SQL: INFO
     org.hibernate.type.descriptor.sql.BasicBinder: OFF
     com.zaxxer.hikari: INFO
+
+
+debug:
+  kid-auth:
+    enabled: true
+    secret: ${KID_AUTH_SECRET}
+    ts-skew-seconds: 300
+    whitelist:
+      enabled: true
+      kids:
+        - ${ANDROID_MH}
+        - ${ANDROID_SW}
+        - ${ANDROID_JH}
+    success:
+      log-deeplink-full: true
