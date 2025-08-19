@@ -9,8 +9,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import kotlin.text.UStringsKt;
 import lombok.RequiredArgsConstructor;
+import org.example.kuit_kac.config.AuthOnboardingProperties;
+import org.example.kuit_kac.global.util.dev.DevWhitelistProperties;
 import org.example.kuit_kac.domain.terms.service.UserTermsService;
 import org.example.kuit_kac.domain.user.dto.UserResponse;
 import org.example.kuit_kac.domain.user.model.User;
@@ -21,7 +22,6 @@ import org.example.kuit_kac.exception.CustomException;
 import org.example.kuit_kac.exception.ErrorCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.ErrorResponse;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -39,6 +39,9 @@ public class UserController {
     private final UserService userService;
     private final UserTermsService userTermsService;
     private final UserInfoRepository userInfoRepository;
+    private final DevWhitelistProperties devWhitelist;
+    private final AuthOnboardingProperties onboardingProps;
+
 
     // 내 정보 조회 전용 엔드포인트
     @Operation(
@@ -68,6 +71,35 @@ public class UserController {
                             .build());
         }
 
+        // ✅ 0) 로컬/개발용 빠른 우회: yml에서 require=false면 항상 200
+        if (!onboardingProps.isRequire()) {
+            return ResponseEntity.ok(
+                    UserResponse.builder()
+                            .userId(p.getUserId())      // null이어도 OK
+                            .termsAgreed(true)
+                            .onboardingNeeded(false)
+                            .build()
+            );
+        }
+
+        // 2) uid가 없으면 kid(kakaoId) 폴백
+        final String kid = p.getKakaoId();
+        final boolean devBypass = (kid != null && !kid.isBlank())
+                && devWhitelist != null
+                && devWhitelist.isEnabled()
+                && devWhitelist.allows(kid);
+
+        if (devBypass) {
+            // uid가 없어도 통과시키고, 온보딩/약관 모두 false/true로 고정
+            return ResponseEntity.ok(
+                    UserResponse.builder()
+                            .userId(p.getUserId())          // null이어도 OK
+                            .termsAgreed(true)
+                            .onboardingNeeded(false)
+                            .build()
+            );
+        }
+
         Long userId = p.getUserId();
 
         // 1) uid가 있는 경우 (온보딩 완료 사용자)
@@ -78,23 +110,12 @@ public class UserController {
             );
         }
 
-        // 2) uid가 없으면 kid(kakaoId) 폴백
-        String kakaoId = p.getKakaoId();
-        if (kakaoId == null || kakaoId.isBlank()) {
-            // 토큰에 kakaoId도 없으면 잘못된 토큰
-            return ResponseEntity.status(401)
-                    .body(UserResponse.builder()
-                            .termsAgreed(false)
-                            .onboardingNeeded(true)
-                            .build());
-        }
-
-        // kid로 조회 시 DB에 있으면 UserResponse 반환
-        return userService.findByKakaoId(kakaoId)
+        // kid로 조회: 있으면 OK, 없으면 일반 유저만 409 (DEV는 위에서 이미 우회)
+        return userService.findByKakaoId(kid)
                 .map(u -> ResponseEntity.ok(
                         UserResponse.from(u, p.isTermsAgreed(), p.isOnboardingNeeded())
                 ))
-                .orElseGet(() -> ResponseEntity.status(409) // 온보딩 필요
+                .orElseGet(() -> ResponseEntity.status(409)
                         .body(UserResponse.builder()
                                 .termsAgreed(p.isTermsAgreed())
                                 .onboardingNeeded(true)
@@ -124,7 +145,15 @@ public class UserController {
             )
     })
     @GetMapping("/status")    public ResponseEntity<Map<String, Boolean>> getUserStatus(@AuthenticationPrincipal UserPrincipal p) {
-        Long userId = p.getUserId();
+        // p가 없거나, dev 가짜 uid(-1 등)면 바로 통과값 반환
+        if (p == null || p.getUserId() == null || p.getUserId() < 0L) {
+            return ResponseEntity.ok(Map.of(
+                    "termsCompleted", true,    // dev 우회
+                    "onboardingCompleted", true
+            ));
+        }
+
+        final Long userId = p.getUserId(); // 여기서부턴 절대 null 아님
 
         boolean termsCompleted = userTermsService.hasRequiredTerms(userId);
         boolean onboardingCompleted = userInfoRepository.existsById(userId);

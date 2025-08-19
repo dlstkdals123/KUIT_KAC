@@ -28,4 +28,17 @@ public class UserPrincipal {
                 termsAgreed,
                 onboardingNeeded);
     }
+
+    // ✅ DEV 우회용: 약관/온보딩을 항상 통과시키는 프린시펄
+    public static UserPrincipal devBypass(Long userId, String kakaoId) {
+        // 절대 null 금지: 음수로 고정(실 유저와 안 겹치게)
+        long fakeUid = (userId == null ? -1L : userId);
+        return new UserPrincipal(
+                userId,
+                kakaoId,
+                "ROLE_USER",
+                true,                 // termsAgreed = true
+                false                 // onboardingNeeded = false
+        );
+    }
 }

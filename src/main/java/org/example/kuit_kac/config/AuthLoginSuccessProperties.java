@@ -1,14 +1,19 @@
 package org.example.kuit_kac.config;
 
 
+import jakarta.annotation.PostConstruct;
 import lombok.Getter;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 @Component
 @Getter
-@ConfigurationProperties(prefix = "auth.login-success")
+@Setter
+@ConfigurationProperties(prefix = "auth.login.success")
+@Slf4j
 public class AuthLoginSuccessProperties {
     public enum Mode {JSON, DEEPLINK}
 
@@ -18,7 +23,7 @@ public class AuthLoginSuccessProperties {
     private String refreshParam = "refresh_token"; // refreshToken
     private String expiresParam = "expires_in";
     private String stateParam = "state";
-    private String onboardingParam = "onboarding_required";
+    private String onboardingRequired = "onboarding_required";
     private long accessTtlSeconds = 1800;
 
 
@@ -27,5 +32,12 @@ public class AuthLoginSuccessProperties {
     }
 
     public boolean requireOnboarding = true;
+
+    // 임시 로그
+    @PostConstruct
+    public void _log() {
+        log.info("[Props] mode={}, deepLink='{}', onboardingParam='{}'",
+                mode, deepLink, onboardingRequired);
+    }
 
 }

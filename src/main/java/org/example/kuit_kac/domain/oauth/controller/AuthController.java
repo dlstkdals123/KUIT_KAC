@@ -2,7 +2,6 @@ package org.example.kuit_kac.domain.oauth.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -62,13 +61,13 @@ public class AuthController {
         }
 
         String token = bearer.substring(7);
-        String type = jwtProvider.getTokenType(token);
+        String type = jwtProvider.getTokenTypeStrict(token);
         if (!jwtProvider.validateToken(token) || !"refresh".equals(type)) {
             throw new CustomException(ErrorCode.AUTH_UNAUTHORIZED);
         }
 
-        Long   uid = jwtProvider.getUserIdOrNullFromToken(token);   // ← 예외 대신 null 가능
-        String kid = jwtProvider.getKakaoIdOrNullFromToken(token);  // ← 유지 권장
+        Long   uid = jwtProvider.getUserIdFromAccessOrNull(token);   // ← 예외 대신 null 가능
+        String kid = jwtProvider.getKakaoIdFromAccessOrNull(token);  // ← 유지 권장
 
         String newAccess  = jwtProvider.generateAccessToken(uid, kid);
         String newRefresh = jwtProvider.generateRefreshToken(uid); // 회전 정책이면 유지

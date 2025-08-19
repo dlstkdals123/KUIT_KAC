@@ -20,7 +20,6 @@ public class UserService {
     @Transactional(readOnly = true)
     // TODO: 토큰으로 본인 맞는지 로직 필요
     // TODO: request에서 이 메서드 부를 때 유저 없을때 뿐만 아니라 본인맞는지도 체크하도록
-    // TODO: (안드에서 마스터키로 접근) 마스터키면 무조건 마스터계정 유저 리턴하도록
     // TODO: 마스터계정은 DB에 삽입
     public User getUserById(Long id) {
         return userRepository.findById(id)

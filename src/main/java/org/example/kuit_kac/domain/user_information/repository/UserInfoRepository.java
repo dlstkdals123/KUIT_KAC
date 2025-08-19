@@ -1,5 +1,6 @@
 package org.example.kuit_kac.domain.user_information.repository;
 
+import org.example.kuit_kac.domain.user.model.User;
 import org.example.kuit_kac.domain.user_information.model.UserInformation;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -9,4 +10,6 @@ public interface UserInfoRepository extends JpaRepository<UserInformation, Long>
     Optional<UserInformation> findByUserId(Long userId);
 
     void deleteByUserId(Long userId);
+
+    boolean existsByUserId(Long existingId);
 }
