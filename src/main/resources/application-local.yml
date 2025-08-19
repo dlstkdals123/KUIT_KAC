@@ -61,12 +61,12 @@ debug:
     ts-skew-seconds: 300
     whitelist:
       enabled: true
-
       kids:
         - ${ANDROID_MH}
         - ${ANDROID_SW}
         - ${ANDROID_JH}
         - ${SERVER_YR}
+        - "1323525"
     success:
       log-deeplink-full: true
   onboarding:
