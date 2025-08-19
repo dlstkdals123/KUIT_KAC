@@ -15,7 +15,6 @@ import org.example.kuit_kac.exception.ErrorCode;
 import org.example.kuit_kac.global.util.dev.DevAutofillProperties;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.example.kuit_kac.exception.OnboardingAlreadyDoneException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;

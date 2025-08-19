@@ -21,7 +21,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Query("select u.id from User u where u.kakaoId = :kakaoId")
     Optional<Long> findIdByKakaoId(@Param("kakaoId") String kakaoId);
 
-    @Modifying(clearAutomatically = true, flushAutomatically = true)
-    @Query(value = "DELETE FROM `user` WHERE id = :userId", nativeQuery = true)
-    int deleteCascadeById(@Param("userId") Long userId);
+//    @Modifying(clearAutomatically = true, flushAutomatically = true)
+//    @Query(value = "DELETE FROM `user` WHERE id = :userId", nativeQuery = true)
+//    int deleteCascadeById(@Param("userId") Long userId);
 }

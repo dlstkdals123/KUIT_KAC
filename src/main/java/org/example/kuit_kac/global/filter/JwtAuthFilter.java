@@ -109,7 +109,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 return;
             }
 
-
 //            정상 경로: DB 조회 + 약관 체크
             try {
                 if (userId != null) {
@@ -141,13 +140,11 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             SecurityContextHolder.getContext().setAuthentication(auth);
 
         } catch (io.jsonwebtoken.JwtException jwtEx) {
-
             // JWT 문제면 인증 제거
             log.info("[JwtAuth] jwt error: {}", jwtEx.getMessage());
             SecurityContextHolder.clearContext();
         } catch (Exception e) {
             log.info("[JwtAuth] error: {}", e.getMessage());
-
             SecurityContextHolder.clearContext();
         }
         // 다음 필터로 넘김

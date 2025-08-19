@@ -34,7 +34,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
     private final JwtProvider jwtProvider;
     private final AuthLoginSuccessProperties props;
     private final AuthOnboardingProperties onboardingProperties;
-    private final OnboardingService onboardingService; // HMAC 서명용 (local/dev 전용 비밀키)
+    private final OnboardingService onboardingService;
     private final DevWhitelistProperties devWhitelistProperties;
 
     @Value("${debug.kid-auth.secret}")
@@ -86,7 +86,6 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         refreshClaims.put("sub", "refresh");
         refreshClaims.put("kid", kakaoId);
         if (userId != null) refreshClaims.put("uid", userId);
-
         String access = jwtProvider.generateAccessToken(userId, kakaoId); // kakaoId를 access에만 실어줌
         String refresh = jwtProvider.generateRefreshToken(userId);
         long expiresIn = props.getAccessTtlSeconds();
@@ -99,7 +98,6 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         } else {
             onboardingRequired = true;
         }
-
 
         // ✅ DEV 화이트리스트면 무조건 우회
         boolean devBypass = devWhitelistProperties != null
@@ -116,6 +114,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         // // TODO: 서버토큰 JSON 활성화 코드 넣는 자리
 
         // 딥링크 파라미터
+
         String target = props.getDeepLink();
         boolean useDeepLink = "DEEPLINK".equalsIgnoreCase(props.getMode().toString());
         if (!useDeepLink || target == null || target.isBlank()) {
@@ -164,7 +163,8 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         // 302 리다이렉트
         response.setStatus(HttpServletResponse.SC_FOUND);
         response.setHeader("Location", deep);
-        response.setContentLength(0);
+//        response.setContentLength(0);
+        writeJson(response, access, refresh, expiresIn, state, onboardingRequired, kakaoId);
     }
 
     // 민감값 미리보기 (앞 10글자 + 길이)
@@ -188,11 +188,23 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         }
     }
 
-    private static void writeJson(HttpServletResponse response, String access, String refresh, long expiresIn, String state, boolean onboardingRequired) throws IOException {
+    private static void writeJson(HttpServletResponse response, String access, String refresh, long expiresIn, String state, boolean onboardingRequired, String kakaoId) throws IOException {
         response.setStatus(HttpServletResponse.SC_OK);
         response.setContentType("application/json;charset=UTF-8");
-        StringBuilder sb = new StringBuilder().append("{\"accessToken\":\"").append(access).append("\",").append("\"refreshToken\":\"").append(refresh).append("\",").append("\"expiresIn\":").append(expiresIn).append(",").append("\"onboardingRequired\":").append(onboardingRequired);
-        if (state != null) sb.append(",\"state\":\"").append(state).append("\"");
+        StringBuilder sb = new StringBuilder()
+                .append("{\"accessToken\":\"")
+                .append(access).append("\",")
+                .append("\"refreshToken\":\"")
+                .append(refresh).append("\",")
+                .append("\"expiresIn\":")
+                .append(expiresIn).append(",")
+                .append("\"onboardingRequired\":")
+                .append(onboardingRequired)
+                .append("\"kakaoId\":\"")
+                .append(kakaoId).append("\"");
+        if (state != null)
+            sb.append(",\"state\":\"")
+                    .append(state).append("\"");
         sb.append("}");
         response.getWriter().write(sb.toString());
     }
