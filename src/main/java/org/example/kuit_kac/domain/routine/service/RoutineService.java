@@ -2,6 +2,7 @@ package org.example.kuit_kac.domain.routine.service;
 
 import lombok.RequiredArgsConstructor;
 
+import org.example.kuit_kac.domain.routine.dto.RoutineDetailCreateRequest;
 import org.example.kuit_kac.domain.routine.dto.RoutineExerciseCreateRequest;
 import org.example.kuit_kac.domain.routine.model.Routine;
 import org.example.kuit_kac.domain.routine.model.RoutineExercise;
@@ -57,20 +58,13 @@ public class RoutineService {
     // }
 
     @Transactional
-    public Routine createGeneralRoutine(User user, String name, String routineTypeStr, List<RoutineExerciseCreateRequest> routineExercises) {
-        // dietType과 dietEntryType이 모두 같은 값이 있으면 안됩니다.
-        RoutineType routineType = RoutineType.getRoutineType(routineTypeStr);
-
-        // 2. entryType 검증
-        if (routineType == null || isTemplateType(routineType)) {
-            throw new CustomException(ErrorCode.ROUTINE_TYPE_INVALID);
-        }
-
-        // 4. 모든 검증 통과 후 저장
-        Routine routine = new Routine(user, name, routineType);
+    public Routine createGeneralRoutine(User user, String name, List<RoutineExerciseCreateRequest> routineExercises) {
+        Routine routine = new Routine(user, name, RoutineType.RECORD);
         Routine saved = routineRepository.save(routine);
+        
         List<RoutineExercise> savedRoutineExercises = routineExerciseService.createRoutineExercises(routine, routineExercises);
         savedRoutineExercises.forEach(saved::addRoutineExercise);
+
         return saved;
     }
 
@@ -81,6 +75,15 @@ public class RoutineService {
         List<RoutineExercise> savedRoutineExercises = routineExerciseService.createRoutineExercises(routine, routineExercises);
         savedRoutineExercises.forEach(routine::addRoutineExercise);
         return routineRepository.save(routine);
+    }
+
+    @Transactional
+    public Routine createSimpleRoutine(User user, RoutineDetailCreateRequest aerobicDetail, RoutineDetailCreateRequest anaerobicDetail) {
+        Routine routine = new Routine(user, null, RoutineType.RECORD);
+        Routine saved = routineRepository.save(routine);
+        List<RoutineExercise> savedRoutineExercises = routineExerciseService.createSimpleRoutineExercises(routine, aerobicDetail, anaerobicDetail);
+        savedRoutineExercises.forEach(saved::addRoutineExercise);
+        return saved;
     }
 
     @Transactional

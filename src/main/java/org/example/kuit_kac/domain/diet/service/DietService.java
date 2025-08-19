@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.example.kuit_kac.domain.diet.model.Diet;
 import org.example.kuit_kac.domain.diet.model.DietEntryType;
 import org.example.kuit_kac.domain.diet.repository.DietRepository;
+import org.example.kuit_kac.domain.diet_food.model.DietAifood;
 import org.example.kuit_kac.domain.diet_food.model.DietFood;
 import org.example.kuit_kac.domain.diet_food.service.DietFoodService;
 import org.example.kuit_kac.domain.user.model.User;
@@ -18,11 +19,17 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.example.kuit_kac.exception.CustomException;
 import org.example.kuit_kac.exception.ErrorCode;
+import org.example.kuit_kac.domain.diet_food.dto.DietAifoodCreateRequest;
 import org.example.kuit_kac.domain.diet_food.dto.DietFoodCreateRequest;
 import org.example.kuit_kac.domain.diet_food.dto.DietFoodSnackCreateRequest;
+import org.example.kuit_kac.domain.food.model.Aifood;
+import org.example.kuit_kac.domain.food.service.FoodService;
+import org.example.kuit_kac.domain.diet_food.service.DietAifoodService;
 
 @Service
 @RequiredArgsConstructor
@@ -30,6 +37,8 @@ public class DietService {
 
     private final DietRepository dietRepository;
     private final DietFoodService dietFoodService;
+    private final DietAifoodService dietAifoodService;
+    private final FoodService foodService;
 
     @Transactional(readOnly = true)
     public List<Diet> getDietsByUserId(Long userId, DietEntryType dietEntryType) {
@@ -42,9 +51,18 @@ public class DietService {
     }
 
     @Transactional(readOnly = true)
-    public List<Diet> getPlansByUserId(Long userId) {
-        List<Diet> plans = dietRepository.findByUserIdAndDietEntryType(userId, DietEntryType.PLAN);
-        plans.addAll(dietRepository.findByUserIdAndDietEntryType(userId, DietEntryType.AI_PLAN));
+    public List<Diet> getPlansByUserIdAndDietDate(Long userId, LocalDate dietDate) {
+        List<Diet> plans = dietRepository.findByUserIdAndDietEntryTypeAndDietDate(userId, DietEntryType.PLAN, dietDate);
+        plans.addAll(dietRepository.findByUserIdAndDietEntryTypeAndDietDate(userId, DietEntryType.AI_PLAN, dietDate));
+        return plans;
+    }
+
+    @Transactional(readOnly = true)
+    public List<Diet> getPlansByUserIdBetweenDietDate(Long userId, LocalDate startDate, LocalDate endDate) {
+        List<Diet> plans = dietRepository.findByUserIdAndDietEntryTypeAndDietDateBetween(userId, DietEntryType.PLAN, startDate, endDate);
+        plans.addAll(dietRepository.findByUserIdAndDietEntryTypeAndDietDateBetween(userId, DietEntryType.AI_PLAN, startDate, endDate));
+        plans.addAll(dietRepository.findByUserIdAndDietEntryTypeAndDietDateBetween(userId, DietEntryType.DRINKING, startDate, endDate));
+        plans.addAll(dietRepository.findByUserIdAndDietEntryTypeAndDietDateBetween(userId, DietEntryType.DINING_OUT, startDate, endDate));
         return plans;
     }
 
@@ -68,6 +86,10 @@ public class DietService {
             throw new CustomException(ErrorCode.DIET_ENTRY_TYPE_MUST_HAVE_FOOD);
         }
 
+        if (diet.getDietType() != DietType.TEMPLATE) {
+            throw new CustomException(ErrorCode.DIET_TYPE_INVALID);
+        }
+
         diet.setName(name);
         diet.getDietFoods().clear();
 
@@ -77,17 +99,12 @@ public class DietService {
     }
 
     @Transactional
-    public Diet createSimpleDiet(User user, String dietTypeStr, String dietEntryTypeStr) {
-        // diet_entry_type = FASTING, DINING_OUT, DRINKING, name=null, foods=null
-        DietEntryType entryType = DietEntryType.getDietEntryType(dietEntryTypeStr);
-        if (entryType == null || !isSimpleDietEntryType(entryType)) {
-            throw new CustomException(ErrorCode.DIET_ENTRY_TYPE_INVALID);
-        }
+    public Diet createFastingDiet(User user, LocalDate dietDate, String dietTypeStr) {
         DietType dietType = DietType.getDietType(dietTypeStr);
         if (dietType == null || isTemplateDietType(dietType)) {
             throw new CustomException(ErrorCode.DIET_TYPE_INVALID);
         }
-        Diet diet = new Diet(user, null, dietType, entryType);
+        Diet diet = new Diet(user, null, dietDate, dietType, DietEntryType.FASTING);
         return dietRepository.save(diet);
     }
 
@@ -116,6 +133,10 @@ public class DietService {
 
     @Transactional
     public Diet updateRecordDiet(Diet diet, String name, LocalTime dietTime, List<DietFoodCreateRequest> foods) {
+        if (diet.getDietEntryType() != DietEntryType.RECORD) {
+            throw new CustomException(ErrorCode.DIET_ENTRY_TYPE_INVALID);
+        }
+
         diet.setName(name);
         diet.getDietFoods().clear();
         LocalDateTime dietDateTime = dietTime.atDate(LocalDate.now());
@@ -125,8 +146,8 @@ public class DietService {
     }
 
     @Transactional
-    public Diet createSnackDiet(User user, String name, String dietEntryTypeStr, List<DietFoodSnackCreateRequest> foods) {
-        Diet diet = new Diet(user, name, DietType.SNACK, DietEntryType.getDietEntryType(dietEntryTypeStr));
+    public Diet createSnackDiet(User user, String name, List<DietFoodSnackCreateRequest> foods) {
+        Diet diet = new Diet(user, name, DietType.SNACK, DietEntryType.RECORD);
         Diet saved = dietRepository.save(diet);
         List<DietFood> dietFoods = dietFoodService.createDietFoodsSnack(foods, saved);
         dietFoods.forEach(saved::addDietFood);
@@ -135,6 +156,10 @@ public class DietService {
 
     @Transactional
     public Diet updateSnackDiet(Diet diet, String name, List<DietFoodSnackCreateRequest> foods) {
+        if (diet.getDietType() != DietType.SNACK) {
+            throw new CustomException(ErrorCode.DIET_TYPE_INVALID);
+        }
+
         diet.setName(name);
         diet.getDietFoods().clear();
         List<DietFood> dietFoods = dietFoodService.createDietFoodsSnack(foods, diet);
@@ -145,7 +170,7 @@ public class DietService {
     @Transactional
     public Diet createPlanDiet(User user, String dietTypeStr, LocalDate date, List<DietFoodCreateRequest> foods) {
         LocalDateTime dietDateTime = TimeGenerator.getDateStart(date);
-        Diet diet = new Diet(user, null, DietType.getDietType(dietTypeStr), DietEntryType.PLAN);
+        Diet diet = new Diet(user, null, date, DietType.getDietType(dietTypeStr), DietEntryType.PLAN);
         Diet saved = dietRepository.save(diet);
         List<DietFood> dietFoods = dietFoodService.createDietFoodsWithDietTime(foods, saved, dietDateTime);
         dietFoods.forEach(saved::addDietFood);
@@ -154,21 +179,40 @@ public class DietService {
 
     @Transactional
     public Diet updatePlanDiet(Diet diet, LocalDate date, List<DietFoodCreateRequest> foods) {
+        if (diet.getDietEntryType() != DietEntryType.PLAN) {
+            throw new CustomException(ErrorCode.DIET_ENTRY_TYPE_INVALID);
+        }
+        
         LocalDateTime dietDateTime = TimeGenerator.getDateStart(date);
         diet.getDietFoods().clear();
+        diet.setDietDate(date);
         List<DietFood> dietFoods = dietFoodService.createDietFoodsWithDietTime(foods, diet, dietDateTime);
         dietFoods.forEach(diet::addDietFood);
         return dietRepository.save(diet);
     }
 
     @Transactional
+    public Diet createAiPlanDiet(User user, String dietTypeStr, LocalDate date, List<DietAifoodCreateRequest> aiDietFoods) {
+        Map<DietAifoodCreateRequest, List<Aifood>> aifoodMap = aiDietFoods.stream()
+                .collect(Collectors.toMap(
+                    dietAifood -> dietAifood,
+                    dietAifood -> dietAifood.aiFoods().stream()
+                            .map(aifood -> foodService.createAifood(user, aifood))
+                            .collect(Collectors.toList())
+                ));
+
+        LocalDateTime dietDateTime = TimeGenerator.getDateStart(date);
+        Diet diet = new Diet(user, null, date, DietType.getDietType(dietTypeStr), DietEntryType.AI_PLAN);
+        Diet saved = dietRepository.save(diet);
+        List<DietAifood> dietAifoods = dietAifoodService.createAiDietFoodsWithDietTime(user, aifoodMap, saved, dietDateTime);
+        dietAifoods.forEach(saved::addDietAifood);
+        return dietRepository.save(saved);
+    }
+
+    @Transactional
     public void deleteDiet(Diet diet) {
         dietFoodService.deleteDietFoods(diet.getDietFoods());
         dietRepository.delete(diet);
-    }
-
-    private boolean isSimpleDietEntryType(DietEntryType entryType) {
-        return entryType == DietEntryType.FASTING || entryType == DietEntryType.DINING_OUT || entryType == DietEntryType.DRINKING;
     }
 
     private boolean isTemplateDietType(DietType dietType) {

@@ -1,11 +1,7 @@
 package org.example.kuit_kac.domain.home.service;
 
 import lombok.RequiredArgsConstructor;
-import org.example.kuit_kac.domain.diet.model.Diet;
-import org.example.kuit_kac.domain.diet.repository.DietRepository;
-import org.example.kuit_kac.domain.diet.service.DietService;
 import org.example.kuit_kac.domain.diet_food.model.DietFood;
-import org.example.kuit_kac.domain.diet_food.repository.DietFoodRepository;
 import org.example.kuit_kac.domain.diet_food.service.DietFoodService;
 import org.example.kuit_kac.domain.food.model.Food;
 import org.example.kuit_kac.domain.home.dto.HomeNutritionResponse;

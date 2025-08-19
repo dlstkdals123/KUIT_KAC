@@ -1,7 +1,6 @@
 package org.example.kuit_kac.domain.home.service;
 
 import lombok.RequiredArgsConstructor;
-import org.example.kuit_kac.domain.diet.repository.DietRepository;
 import org.example.kuit_kac.domain.diet_food.model.DietFood;
 import org.example.kuit_kac.domain.diet_food.repository.DietFoodRepository;
 import org.example.kuit_kac.domain.food.model.Food;
@@ -22,10 +21,9 @@ import java.util.List;
 @RequiredArgsConstructor
 // TODO: 컨트롤러로 로직분리
 public class HomeSummaryService {
-    private final DietRepository dietRepository;
     private final DietFoodRepository dietFoodRepository;
     private final UserService userService;
-    private final OnboardingService userInformationService;
+    private final OnboardingService onboardingService;
     private final WeightService weightService;
 
     // 하루 섭취 영양소 요약
@@ -66,14 +64,11 @@ public class HomeSummaryService {
         // 일일섭취목표 : BMR - 일일감량목표칼로리
 
         User user = userService.getUserById(userId);
-        UserInformation userInfo = userInformationService.getUserInformationByUserId(userId);
+        UserInformation userInfo = onboardingService.getUserInformationByUserId(userId);
         double weightValue = weightService.getLatestWeightByUserId(userId).getWeight();
 
-        int age = user.getAge();
         //기초대사량 계산
-        double bmr = (user.getGender() == GenderType.MALE)
-                ? 10 * user.getTargetWeight() + 6.25 * user.getHeight() - 5 * age + 5
-                : 10 * user.getTargetWeight() + 6.25 * user.getHeight() - 5 * age - 161;
+        double bmr = user.getBMR(weightValue);
         // 목표까지 감량해야 할 몸무게
         double TargetWeightLoss = weightValue - user.getTargetWeight();
         int dietDays = userInfo.getDietVelocity().getPeriodInDays(); // 다이어트기간 '일'단위로 계산

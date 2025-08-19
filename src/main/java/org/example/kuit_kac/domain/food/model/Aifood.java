@@ -43,20 +43,11 @@ public class Aifood {
     @Column(name = "carbohydrate", nullable = false)
     private Double carbohydrate = 0.0;
 
-    @Column(name = "is_high_carbonhydrate", nullable = false)
-    private Boolean isHighCarbohydrate = false;
-
     @Column(name = "protein", nullable = false)
     private Double protein = 0.0;
 
-    @Column(name = "is_high_protein", nullable = false)
-    private Boolean isHighProtein = false;
-
     @Column(name = "fat", nullable = false)
     private Double fat = 0.0;
-
-    @Column(name = "is_high_fat", nullable = false)
-    private Boolean isHighFat = false;
 
     @Column(name = "sugar", nullable = false)
     private Double sugar = 0.0;
@@ -69,6 +60,21 @@ public class Aifood {
 
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
+
+    public Aifood(User user, String name, String unitType, Long unitNum, FoodType foodType, Boolean isProcessedFood, Double calorie, Double carbohydrate, Double protein, Double fat, Double sugar, Integer score) {
+        this.user = user;
+        this.name = name;
+        this.unitType = unitType;
+        this.unitNum = unitNum;
+        this.foodType = foodType;
+        this.isProcessedFood = isProcessedFood;
+        this.calorie = calorie;
+        this.carbohydrate = carbohydrate;
+        this.protein = protein;
+        this.fat = fat;
+        this.sugar = sugar;
+        this.score = score;
+    }
 
     @PrePersist
     protected void onCreate() {

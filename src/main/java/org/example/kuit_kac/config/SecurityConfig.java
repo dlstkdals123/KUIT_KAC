@@ -9,6 +9,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.config.Customizer;
+import org.springframework.context.annotation.Profile;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -34,6 +36,7 @@ public class SecurityConfig {
     }
 
     @Bean
+    @Profile("dev")
     public SecurityFilterChain securityFilterChain(HttpSecurity http, DevKidAuthFilter devKidAuthFilter) throws Exception {
         http
                 // H2 콘솔은 CRSF 예외, 전반적으로는 비활성화
@@ -55,7 +58,9 @@ public class SecurityConfig {
                                 "/login/oauth2/**",
 
                                 // 개발용
-                                "/h2-console/**"
+                                "/h2-console/**",
+                                "/dev-tools/**",
+                                "/dev-auth/**"
                         ).permitAll()
                         .requestMatchers(
                                 HttpMethod.POST,
@@ -111,6 +116,7 @@ public class SecurityConfig {
                         .userInfoEndpoint(u -> u.userService(kakaoOAuth2UserService))
                         .successHandler(oAuth2SuccessHandler)
                 )
+
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterAfter(devKidAuthFilter, JwtAuthFilter.class)
                 .headers(h -> h.frameOptions(f -> f.sameOrigin()));

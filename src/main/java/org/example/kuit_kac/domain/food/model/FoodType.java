@@ -1,5 +1,9 @@
 package org.example.kuit_kac.domain.food.model;
 
+import org.example.kuit_kac.global.util.EnumConverter;
+import org.example.kuit_kac.exception.CustomException;
+import org.example.kuit_kac.exception.ErrorCode;
+
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -59,4 +63,14 @@ public enum FoodType {
 
     private final String value;
     private final String koreanName;
+
+    public static FoodType getFoodType(String foodType) {
+        FoodType fromKorean = EnumConverter.fromKoreanFoodType(foodType);
+        if (fromKorean != null) return fromKorean;
+        try {
+            return FoodType.valueOf(foodType.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new CustomException(ErrorCode.FOOD_TYPE_INVALID);
+        }
+    }
 } 

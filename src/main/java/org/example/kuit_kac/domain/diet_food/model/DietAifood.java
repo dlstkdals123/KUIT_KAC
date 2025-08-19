@@ -3,7 +3,6 @@ package org.example.kuit_kac.domain.diet_food.model;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.Builder;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
 
@@ -57,11 +56,11 @@ public class DietAifood {
         this.updatedAt = LocalDateTime.now();
     }
 
-    @Builder
-    public DietAifood(Diet diet, Aifood aifood, double quantity) {
+    public DietAifood(Diet diet, Aifood aifood, double quantity, LocalDateTime dietTime) {
         this.diet = diet;
         this.aifood = aifood;
         this.quantity = quantity;
+        this.dietTime = dietTime;
     }
 
     public void setAifood(Aifood aifood) {

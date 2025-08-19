@@ -11,6 +11,8 @@ import org.example.kuit_kac.domain.diet.service.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.List;
 import org.example.kuit_kac.domain.user.model.User;
 import org.example.kuit_kac.domain.user.service.UserService;
@@ -47,25 +49,26 @@ public class DietController {
             @Parameter(description = "조회할 사용자의 고유 ID", example = "1")
             @RequestParam("userId") Long userId) {
 
-        List<Diet> diets = dietService.getPlansByUserId(userId);
+        List<Diet> diets = dietService.getPlansByUserIdAndDietDate(userId, LocalDate.now());
 
         List<DietRecordProfileResponse> responses = diets.stream()
-                .map(DietRecordProfileResponse::todayFrom)
+                .map(DietRecordProfileResponse::from)
                 .toList();
 
         return ResponseEntity.ok(responses);
     }
 
-    @GetMapping("/plans/months/profiles")
-    @Operation(summary = "사용자 ID로 한 달 동안의 계획(Plan) 식단 조회", description = "제공된 사용자 ID를 사용하여 해당 사용자의 한 달 동안의 계획(Plan) 식단을 조회합니다.")
+    @GetMapping("/activities/months")
+    @Operation(summary = "사용자 ID로 한 달 동안의 계획(Plan) 식단 조회", description = "제공된 사용자 ID를 사용하여 해당 사용자의 한 달 동안의 활동(계획, AI 계획, 술자리, 외식) 식단을 조회합니다.")
     public ResponseEntity<List<DietRecordProfileResponse>> getDietPlansMonths(
             @Parameter(description = "조회할 사용자의 고유 ID", example = "1")
-            @RequestParam("userId") Long userId) {
+            @RequestParam("userId") Long userId,
+            @RequestParam("yearMonth") YearMonth yearMonth) {
         
-        List<Diet> diets = dietService.getPlansByUserId(userId);
+        List<Diet> diets = dietService.getPlansByUserIdBetweenDietDate(userId, yearMonth.atDay(1), yearMonth.atEndOfMonth());
 
         List<DietRecordProfileResponse> responses = diets.stream()
-                .map(DietRecordProfileResponse::monthFrom)
+                .map(DietRecordProfileResponse::from)
                 .toList();
 
         return ResponseEntity.ok(responses);
@@ -110,12 +113,12 @@ public class DietController {
     }
 
     @PostMapping("/simple")
-    @Operation(summary = "단식, 외식, 술자리 식단 생성", description = "유저 ID와 식단 항목 종류를 입력하여 음식을 포함하지 않는 식단을 생성합니다.")
-    public ResponseEntity<DietRecordProfileResponse> createSimpleDiet(
-            @RequestBody @Valid DietSimpleCreateRequest request
+    @Operation(summary = "단식 식단 생성", description = "유저 ID와 식단 종류를 입력하여 단식을 생성합니다.")
+    public ResponseEntity<DietRecordProfileResponse> createFastingDiet(
+            @RequestBody @Valid DietFastingCreateRequest request
     ) {
         User user = userService.getUserById(request.userId());
-        Diet diet = dietService.createSimpleDiet(user, request.dietType(), request.dietEntryType());
+        Diet diet = dietService.createFastingDiet(user, request.dietDate(), request.dietType());
         DietRecordProfileResponse response = DietRecordProfileResponse.from(diet);
         return ResponseEntity.ok(response);
     }
@@ -149,7 +152,7 @@ public class DietController {
             @RequestBody @Valid DietSnackCreateRequest request
     ) {
         User user = userService.getUserById(request.userId());
-        Diet diet = dietService.createSnackDiet(user, request.name(), request.dietEntryType(), request.foods());
+        Diet diet = dietService.createSnackDiet(user, request.name(), request.foods());
         DietRecordProfileResponse response = DietRecordProfileResponse.from(diet);
         return ResponseEntity.ok(response);
     }

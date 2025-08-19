@@ -3,9 +3,7 @@ package org.example.kuit_kac.domain.home.dto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import org.example.kuit_kac.domain.home.model.Weight;
-import org.example.kuit_kac.domain.home.repository.WeightRepository;
 
 import java.time.LocalDateTime;
 

@@ -21,15 +21,15 @@ public record DietRecordCreateRequest(
     @NotBlank(message = "식단 이름은 필수입니다.")
     String name,
 
-    @Schema(description = "식단 종류", example = "아침", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(description = "식단 종류 (가능한 값: 아침, 점심, 저녁, 간식)", example = "아침", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotBlank(message = "식단 종류는 필수입니다.")
     String dietType,
 
-    @Schema(description = "식단 음식 섭취 시간", example = "12:00:00")
+    @Schema(description = "식단 음식 섭취 시간 (형식: HH:MM:SS)", example = "12:00:00")
     @NotNull(message = "식단 음식 섭취 시간은 필수입니다.")
     LocalTime dietTime,
 
-    @Schema(description = "음식 목록", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(description = "음식 목록 (중복 불가, 1개 이상)", requiredMode = Schema.RequiredMode.REQUIRED)
     @NotNull(message = "음식 목록은 필수입니다.")
     @Size(min = 1, message = "음식은 한 개 이상 등록해야 합니다.")
     List<@Valid DietFoodCreateRequest> foods

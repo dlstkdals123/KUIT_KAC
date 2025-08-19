@@ -3,6 +3,7 @@ package org.example.kuit_kac.domain.user_information.service;
 import lombok.RequiredArgsConstructor;
 import org.example.kuit_kac.config.AuthOnboardingProperties;
 import org.example.kuit_kac.domain.terms.dto.TermAgreementUpsertRequest;
+import org.example.kuit_kac.domain.terms.repository.UserTermAgreementRepository;
 import org.example.kuit_kac.domain.terms.service.UserTermsService;
 import org.example.kuit_kac.domain.user.model.User;
 import org.example.kuit_kac.domain.user.repository.UserRepository;
@@ -14,6 +15,7 @@ import org.example.kuit_kac.exception.ErrorCode;
 import org.example.kuit_kac.global.util.dev.DevAutofillProperties;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.example.kuit_kac.exception.OnboardingAlreadyDoneException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -29,6 +31,8 @@ public class OnboardingService {
     private final UserInfoRepository userInfoRepository;
     private final UserRepository userRepository;
     private final UserTermsService userTermsService;
+    private final UserTermAgreementRepository userTermRepository;
+    private static String nameOrNull(Enum<?> e) { return e == null ? null : e.name(); }
 
     // 선택 주입(없으면 기본값 사용)
     private final ObjectProvider<DevAutofillProperties> autofillProvider;
@@ -152,7 +156,6 @@ public class OnboardingService {
 
         return user.getId();
     }
-
 
     private static class PreparedUserFields {
         final String nickname;

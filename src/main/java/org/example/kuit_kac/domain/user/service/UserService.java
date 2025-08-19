@@ -2,8 +2,10 @@ package org.example.kuit_kac.domain.user.service;
 
 import lombok.RequiredArgsConstructor;
 
+import org.example.kuit_kac.domain.terms.repository.UserTermAgreementRepository;
 import org.example.kuit_kac.domain.user.model.User;
 import org.example.kuit_kac.domain.user.repository.UserRepository;
+import org.example.kuit_kac.domain.user_information.repository.UserInfoRepository;
 import org.example.kuit_kac.exception.CustomException;
 import org.example.kuit_kac.exception.ErrorCode;
 import org.springframework.stereotype.Service;
@@ -16,6 +18,8 @@ import java.util.Optional;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final UserInfoRepository userInfoRepository;
+    private final UserTermAgreementRepository userTermRepository;
 
     @Transactional(readOnly = true)
     // TODO: 토큰으로 본인 맞는지 로직 필요
@@ -39,6 +43,13 @@ public class UserService {
     @Transactional(readOnly = true)
     public boolean existsByKakaoId(String kakaoId) {
         return userRepository.existsByKakaoId(kakaoId);
+    }
+
+    @Transactional
+    public boolean deleteUserById(long userId) {
+        if (!userRepository.existsById(userId)) return false;
+        userRepository.deleteById(userId); // FK CASCADE
+        return true;
     }
 
 }

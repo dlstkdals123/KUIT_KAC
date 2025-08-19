@@ -9,6 +9,7 @@ import org.example.kuit_kac.domain.diet_food.model.DietFood;
 import org.example.kuit_kac.domain.diet_food.model.DietAifood;
 import org.example.kuit_kac.domain.user.model.User;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -67,6 +68,10 @@ public class Diet {
     @Column(nullable = false, length = 30)
     private String name;
 
+    @Setter
+    @Column(name = "diet_date")
+    private LocalDate dietDate;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "diet_type", nullable = false)
     private DietType dietType;
@@ -101,6 +106,14 @@ public class Diet {
     public Diet(User user, String name, DietType dietType, DietEntryType dietEntryType) {
         this.user = user;
         this.name = name;
+        this.dietType = dietType;
+        this.dietEntryType = dietEntryType;
+    }
+
+    public Diet(User user, String name, LocalDate dietDate, DietType dietType, DietEntryType dietEntryType) {
+        this.user = user;
+        this.name = name;
+        this.dietDate = dietDate;
         this.dietType = dietType;
         this.dietEntryType = dietEntryType;
     }

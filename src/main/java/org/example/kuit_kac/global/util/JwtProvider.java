@@ -39,8 +39,7 @@ public class JwtProvider {
         Date now = new Date();
         JwtBuilder b = Jwts.builder().setSubject(type) // 토큰 주제 "access" | "refresh"
                 .setIssuedAt(now) // 발급 시각
-                .setExpiration(new Date(now.getTime() + ttlMs))
-                // 만료 시각
+                .setExpiration(new Date(now.getTime() + ttlMs)) // 만료 시각
                 .signWith(signingKey, SignatureAlgorithm.HS256); // 서명: 비밀키와 알고리즘
         if (userId != null) b.claim("uid", userId);
         if (kakaoIdOptional != null) b.claim("kid", kakaoIdOptional);
@@ -169,6 +168,7 @@ public class JwtProvider {
         aPrefix = aPrefix.substring(0, Math.min(12, aPrefix.length()));
         rPrefix = rPrefix.substring(0, Math.min(12, rPrefix.length()));
         log.info("[JWT] access.prefix={} refresh.prefix={}", aPrefix, rPrefix);
+
     }
 
     private Jws<Claims> parseWithKey(String token, Key k) {

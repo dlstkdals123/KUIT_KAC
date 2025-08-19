@@ -32,16 +32,19 @@ public class UserInformation {
     @Column(name = "weekly_eating_out_count", nullable = false)
     private String weeklyEatingOutCount;
 
-    @Enumerated(EnumType.STRING)
     @Column(name = "eating_out_type", nullable = false)
-    private EatingOutType eatingOutType;
+    private String eatingOutType;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "diet_velocity", nullable = false)
+    private DietVelocity dietVelocity;
 
     public UserInformation(User user,
                            boolean hasDietExperience,
                            String dietFailReason,
                            AppetiteType appetiteType,
                            String weeklyEatingOutCount,
-                           EatingOutType eatingOutType,
+                           String eatingOutType,
                            DietVelocity dietVelocity) {
         this.user = user;
         this.hasDietExperience = hasDietExperience;
@@ -52,7 +55,4 @@ public class UserInformation {
         this.dietVelocity = dietVelocity;
     }
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "diet_velocity", nullable = false)
-    private DietVelocity dietVelocity;
 }

@@ -1,11 +1,16 @@
 package org.example.kuit_kac.domain.oauth.controller;
 
+import io.jsonwebtoken.Claims;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.kuit_kac.domain.oauth.dto.TokenResponse;
@@ -24,30 +29,50 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/auth")
 @Slf4j
 @Schema(name = "인증", description = "로그인/토큰 관련 API")
+@Tag(name = "인증", description = "로그인/토큰 관련 API")
 public class AuthController {
     private final JwtProvider jwtProvider;
 
     @Operation(
             summary = "토큰 재발급",
-            description = "Refresh 토큰을 사용하여 새로운 Access/Refresh 토큰을 발급합니다."
+            description = "Refresh 토큰으로 새로운 Access/Refresh 토큰을 발급합니다.",
+            security = @SecurityRequirement(name = "bearerAuth")
     )
-    @Parameter(
-            name = "Authorization",
-            description = "Bearer {Refresh 토큰}",
-            in = ParameterIn.HEADER,
-            required = true,
-            example = "Bearer eyJhbGciOi..."
-    )
-    @ApiResponse(
-            responseCode = "200",
-            description = "재발급 성공",
-            content = @Content(schema = @Schema(implementation = TokenResponse.class))
-    )
-    @ApiResponse(
-            responseCode = "401",
-            description = "만료/잘못된 Refresh 토큰",
-            content = @Content(schema = @Schema(implementation = ErrorResponse.class))
-    )
+    @Parameter(name = "Authorization", in = ParameterIn.HEADER, required = true,
+            description = "Bearer {Refresh 토큰}", example = "Bearer eyJhbGciOiJIUzI1NiJ9...")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "재발급 성공",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = TokenResponse.class),
+                            examples = @ExampleObject(
+                                    name = "성공 예시",
+                                    value = """
+                {
+                  "accessToken": "eyJhbGciOiJIUzI1NiJ9.access....",
+                  "refreshToken": "eyJhbGciOiJIUzI1NiJ9.refresh...."
+                }
+                """
+                            )
+                    )
+            ),
+            @ApiResponse(responseCode = "401", description = "만료/잘못된 리프레시 토큰",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class),
+                            examples = @ExampleObject(
+                                    name = "401 예시",
+                                    value = """
+                {
+                  "code":"AUTH_001",
+                  "error":"Unauthorized",
+                  "message":"인증이 필요합니다.",
+                  "status":401,
+                  "timestamp":"2025-08-15T12:30:45"
+                }
+                """
+                            )
+                    )
+            )
+    })
     @PostMapping("/refresh")
     // refresh 토큰을 받아서 새 토큰을 발급
     public ResponseEntity<TokenResponse> refresh(@RequestHeader(value = "Authorization", required = false) String bearer) {
@@ -61,8 +86,10 @@ public class AuthController {
         }
 
         String token = bearer.substring(7);
+
         String type = jwtProvider.getTokenTypeStrict(token);
         if (!jwtProvider.validateToken(token) || !"refresh".equals(type)) {
+
             throw new CustomException(ErrorCode.AUTH_UNAUTHORIZED);
         }
 

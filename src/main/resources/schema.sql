@@ -28,16 +28,15 @@ CREATE TABLE `user`
     `updated_at`    datetime                NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
-CREATE TABLE `user_information`
-(
-    `user_id`                 bigint                                                     NOT NULL PRIMARY KEY,
-    `has_diet_experience`     boolean                                                    NOT NULL DEFAULT FALSE,
-    `diet_fail_reason`        varchar(50)                                                NULL,
-    `appetite_type`           ENUM ('SMALL', 'BIG')                                      NULL,
-    `weekly_eating_out_count` varchar(10)                                                NULL,
-    `eating_out_type`         ENUM ('FASTFOOD', 'KOREAN', 'CHINESE', 'WESTERN', 'FRIED') NOT NULL,
-    `diet_velocity`           ENUM ('YUMYUM', 'COACH', 'ALL_IN')                         NOT NULL,
-    FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE
+CREATE TABLE `user_information` (
+    `user_id`                 bigint          NOT NULL PRIMARY KEY,
+    `has_diet_experience`     boolean         NOT NULL DEFAULT FALSE,
+    `diet_fail_reason`        varchar(50)     NULL,
+    `appetite_type`           ENUM('SMALL', 'BIG') NULL,
+    `weekly_eating_out_count` varchar(10)     NULL,
+    `eating_out_type`         varchar(50)     NULL,
+    `diet_velocity`           ENUM('YUMYUM', 'COACH', 'ALL_IN') NOT NULL,
+    FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON DELETE CASCADE
 );
 
 CREATE TABLE `user_term_agreement`
@@ -68,16 +67,16 @@ CREATE TABLE `weight`
 
 
 -- 음식 관련 테이블
-CREATE TABLE `diet`
-(
-    `id`              bigint AUTO_INCREMENT                                                   NOT NULL PRIMARY KEY,
-    `user_id`         bigint                                                                  NOT NULL,
-    `name`            varchar(30)                                                             NULL,
-    `diet_type`       ENUM ('BREAKFAST', 'LUNCH', 'DINNER', 'SNACK', 'TEMPLATE')              NOT NULL,
-    `diet_entry_type` ENUM ('RECORD', 'FASTING', 'PLAN', 'AI_PLAN', 'DINING_OUT', 'DRINKING') NULL,
-    `created_at`      datetime                                                                NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    `updated_at`      datetime                                                                NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE
+CREATE TABLE `diet` (
+    `id`           bigint AUTO_INCREMENT NOT NULL PRIMARY KEY,
+    `user_id`      bigint                NOT NULL,
+    `name`         varchar(30)           NULL,
+    `diet_date`    date                  NULL,
+    `diet_type`    ENUM('BREAKFAST', 'LUNCH', 'DINNER', 'SNACK', 'TEMPLATE') NOT NULL,
+    `diet_entry_type` ENUM('RECORD', 'FASTING', 'PLAN', 'AI_PLAN', 'DINING_OUT', 'DRINKING') NULL,
+    `created_at`   datetime              NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_at`   datetime              NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON DELETE CASCADE
 );
 
 CREATE TABLE `food`
@@ -90,11 +89,8 @@ CREATE TABLE `food`
     `is_processed_food`     boolean NOT NULL  DEFAULT FALSE,
     `calorie`               double NOT NULL   DEFAULT 0.0,
     `carbohydrate`          double NOT NULL   DEFAULT 0.0,
-    `is_high_carbonhydrate` boolean NOT NULL  DEFAULT FALSE,
     `protein`               double NOT NULL   DEFAULT 0.0,
-    `is_high_protein`       boolean NOT NULL  DEFAULT FALSE,
     `fat`                   double NOT NULL   DEFAULT 0.0,
-    `is_high_fat`           boolean NOT NULL  DEFAULT FALSE,
     `sugar`                 double NOT NULL   DEFAULT 0.0,
     `score`                 int NOT NULL,
     `created_at`            datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -112,17 +108,15 @@ CREATE TABLE `aifood`
     `is_processed_food`     boolean NOT NULL  DEFAULT FALSE,
     `calorie`               double NOT NULL   DEFAULT 0.0,
     `carbohydrate`          double NOT NULL   DEFAULT 0.0,
-    `is_high_carbonhydrate` boolean NOT NULL  DEFAULT FALSE,
     `protein`               double NOT NULL   DEFAULT 0.0,
-    `is_high_protein`       boolean NOT NULL  DEFAULT FALSE,
     `fat`                   double NOT NULL   DEFAULT 0.0,
-    `is_high_fat`           boolean NOT NULL  DEFAULT FALSE,
     `sugar`                 double NOT NULL   DEFAULT 0.0,
     `score`                 int NOT NULL,
     `created_at`            datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `updated_at`            datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE
 );
+
 
 CREATE TABLE `diet_food`
 (
@@ -150,26 +144,25 @@ CREATE TABLE `diet_aifood`
     FOREIGN KEY (`aifood_id`) REFERENCES `aifood` (`id`) ON DELETE CASCADE
 );
 
+
 -- 운동 관련 테이블
-CREATE TABLE `routine`
-(
-    `id`           bigint AUTO_INCREMENT       NOT NULL PRIMARY KEY,
-    `user_id`      bigint                      NOT NULL,
-    `name`         varchar(50)                 NOT NULL,
-    `routine_type` ENUM ('RECORD', 'TEMPLATE') NOT NULL,
-    `created_at`   datetime                    NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    `updated_at`   datetime                    NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE
+CREATE TABLE `routine` (
+    `id`            bigint AUTO_INCREMENT NOT NULL PRIMARY KEY,
+    `user_id`       bigint                NOT NULL,
+    `name`          varchar(50)           NULL,
+    `routine_type`  ENUM('RECORD', 'TEMPLATE') NOT NULL,
+    `created_at`    datetime              NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_at`    datetime              NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON DELETE CASCADE
 );
 
-CREATE TABLE `exercise`
-(
-    `id`                  bigint AUTO_INCREMENT                                                                                                                                                                             NOT NULL PRIMARY KEY,
-    `name`                varchar(40)                                                                                                                                                                                       NULL,
-    `target_muscle_group` ENUM ('ABDOMINALS', 'ABDUCTORS', 'ADDUCTORS', 'BACK', 'BICEPS', 'CALVES', 'CHEST', 'FOREARMS', 'GLUTES', 'HAMSTRINGS', 'HIP_FLEXORS', 'QUADRICEPS', 'SHINS', 'SHOULDERS', 'TRAPEZIUS', 'TRICEPS') NOT NULL,
-    `met_value`           double                                                                                                                                                                                            NULL,
-    `created_at`          datetime                                                                                                                                                                                          NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    `updated_at`          datetime                                                                                                                                                                                          NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+CREATE TABLE `exercise` (
+    `id`                    bigint AUTO_INCREMENT NOT NULL PRIMARY KEY,
+    `name`                  varchar(40)           NULL,
+    `target_muscle_type`   ENUM('ABDOMINALS', 'ABDUCTORS', 'ADDUCTORS', 'AEROBIC', 'ANAEROBIC', 'BACK', 'BICEPS', 'CALVES', 'CHEST', 'FOREARMS', 'GLUTES', 'HAMSTRINGS', 'HIP_FLEXORS', 'QUADRICEPS', 'SHINS', 'SHOULDERS', 'TRAPEZIUS', 'TRICEPS') NOT NULL,
+    `met_value`            double                NULL,
+    `created_at`           datetime              NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    `updated_at`           datetime              NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
 CREATE TABLE `routine_exercise`

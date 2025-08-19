@@ -7,6 +7,7 @@ import lombok.Getter;
 import java.time.LocalDateTime;
 
 import org.example.kuit_kac.domain.food.model.Food;
+import org.example.kuit_kac.domain.food.model.Aifood;
 
 @Getter
 @AllArgsConstructor
@@ -24,22 +25,35 @@ public class FoodProfileResponse {
     @Schema(description = "음식의 타입", example = "밥류", requiredMode = Schema.RequiredMode.REQUIRED)
     private String foodType;
 
-    @Schema(description = "음식의 가공식품 여부", example = "false", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(description = "음식의 가공식품 여부 (가능한 값: true(가공식품), false(일반식품))", example = "false", requiredMode = Schema.RequiredMode.REQUIRED)
     private Boolean isProcessedFood;
 
-    @Schema(description = "음식의 칼로리", example = "137.0", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(description = "음식의 칼로리 (단위: kcal)", example = "137.0", requiredMode = Schema.RequiredMode.REQUIRED)
     private Double calorie;
 
-    @Schema(description = "음식의 점수", example = "1", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(description = "음식의 점수 (가능한 값: 0(위험), 1(적당), 2(양호))", example = "1", requiredMode = Schema.RequiredMode.REQUIRED)
     private int score;
 
-    @Schema(description = "음식 정보 생성일시", example = "2023-01-01T00:00:00")
+    @Schema(description = "음식 정보 생성일시 (형식: YYYY-MM-DDTHH:MM:SS)", example = "2023-01-01T00:00:00")
     private LocalDateTime createdAt;
 
-    @Schema(description = "음식 정보 최종 수정일시", example = "2023-01-01T00:00:00")
+    @Schema(description = "음식 정보 최종 수정일시 (형식: YYYY-MM-DDTHH:MM:SS)", example = "2023-01-01T00:00:00")
     private LocalDateTime updatedAt;
 
     public static FoodProfileResponse from(Food food) {
+        return new FoodProfileResponse(
+            food.getId(), 
+            food.getName(), 
+            food.getUnitType(), 
+            food.getFoodType().getKoreanName(), 
+            food.getIsProcessedFood(), 
+            food.getCalorie(), 
+            food.getScore(),
+            food.getCreatedAt(), 
+            food.getUpdatedAt());
+    }
+
+    public static FoodProfileResponse from(Aifood food) {
         return new FoodProfileResponse(
             food.getId(), 
             food.getName(), 

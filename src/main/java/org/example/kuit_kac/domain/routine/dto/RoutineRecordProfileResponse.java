@@ -14,16 +14,16 @@ public record RoutineRecordProfileResponse(
     @Schema(description = "나만의 루틴 이름", example = "오늘의 상체 루틴", requiredMode = Schema.RequiredMode.REQUIRED)
     String name,
 
-    @Schema(description = "루틴의 유형", example = "기록", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(description = "루틴의 유형 (가능한 값: 기록, 나만의 루틴)", example = "기록", requiredMode = Schema.RequiredMode.REQUIRED)
     String routineType,
 
-    @Schema(description = "식단 정보 생성일시", example = "2025-07-10T12:00:00")
+    @Schema(description = "루틴 정보 생성일시 (형식: YYYY-MM-DDTHH:MM:SS)", example = "2025-07-10T12:00:00")
     LocalDateTime createdAt,
 
-    @Schema(description = "식단 정보 최종 수정일시", example = "2025-07-10T12:00:00")
+    @Schema(description = "루틴 정보 최종 수정일시 (형식: YYYY-MM-DDTHH:MM:SS)", example = "2025-07-10T12:00:00")
     LocalDateTime updatedAt,
 
-    @Schema(description = "운동에 포함된 운동 목록", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(description = "루틴에 포함된 운동 목록", requiredMode = Schema.RequiredMode.REQUIRED)
     List<RoutineExerciseProfileResponse> routineExerciseProfiles
 ) {
 

@@ -7,12 +7,15 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.servlet.http.HttpServletRequest;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.kuit_kac.domain.user.model.UserPrincipal;
 import org.example.kuit_kac.domain.user.service.UserService;
 import org.example.kuit_kac.domain.user_information.dto.OnboardingRequest;
 import org.example.kuit_kac.domain.user_information.service.OnboardingService;
+import org.example.kuit_kac.exception.CustomException;
+import org.example.kuit_kac.exception.ErrorCode;
 import org.example.kuit_kac.global.util.JwtProvider;
 import org.example.kuit_kac.global.util.dev.DevAutofillProperties;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +29,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 @RequestMapping("/onboarding")
 @Schema(name = "온보딩", description = "회원 온보딩 관련 API")
+@Tag(name = "온보딩", description = "회원 온보딩 관련 API")
 public class OnboardingController {
     private final OnboardingService onboardingService;
     private final JwtProvider jwtProvider;
@@ -53,6 +57,7 @@ public class OnboardingController {
         );
         return ResponseEntity.ok(Map.of("userId", userId));
     }
+
 
     private String resolveKid(UserPrincipal principal, String bearer, jakarta.servlet.http.HttpServletRequest req) {
         if (principal != null && principal.getKakaoId() != null && !principal.getKakaoId().isBlank()) {

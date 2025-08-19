@@ -49,6 +49,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         log.info("[OAuth2Success] mode={}, deepLink='{}', isDeepLinkBranch={}", props.getMode(), props.getDeepLink(), props.isDeepLink());
         // 1) 사용자 정보
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
+
         Map<String, Object> attrs = oAuth2User.getAttributes(); // kakaoId: attributes에 "kakaoId"가 있으면 사용, 없으면 카카오 원본 "id", 둘 다 없으면 getName()
         String kakaoId = null;
         Object kidAttr = attrs.get("kakaoId");
@@ -85,6 +86,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         refreshClaims.put("sub", "refresh");
         refreshClaims.put("kid", kakaoId);
         if (userId != null) refreshClaims.put("uid", userId);
+
         String access = jwtProvider.generateAccessToken(userId, kakaoId); // kakaoId를 access에만 실어줌
         String refresh = jwtProvider.generateRefreshToken(userId);
         long expiresIn = props.getAccessTtlSeconds();
@@ -97,6 +99,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         } else {
             onboardingRequired = true;
         }
+
 
         // ✅ DEV 화이트리스트면 무조건 우회
         boolean devBypass = devWhitelistProperties != null
@@ -123,6 +126,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         long ts = Instant.now().getEpochSecond();
         String sig = hmacSha256(kidAuthSecret, kakaoId + "|" + ts);
         String state = request.getParameter("state");
+
 
         String deep = UriComponentsBuilder
                 .fromUriString(target)

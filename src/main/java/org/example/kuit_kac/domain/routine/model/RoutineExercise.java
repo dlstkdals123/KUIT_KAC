@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -32,6 +34,14 @@ public class RoutineExercise {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "exercise_id", nullable = false, foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private Exercise exercise;
+
+    @Setter
+    @OneToOne(mappedBy = "routineExercise", fetch = FetchType.LAZY)
+    private RoutineDetail routineDetail;
+
+    @Setter
+    @OneToMany(mappedBy = "routineExercise", fetch = FetchType.LAZY)
+    private List<RoutineSet> routineSets = new ArrayList<>();
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;

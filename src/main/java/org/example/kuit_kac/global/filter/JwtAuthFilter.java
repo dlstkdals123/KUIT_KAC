@@ -1,5 +1,7 @@
 package org.example.kuit_kac.global.filter;
 
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -41,8 +43,9 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 || p.startsWith("/login/oauth2/") // 콜백
                 || p.startsWith("/swagger-ui/")
                 || p.startsWith("/v3/api-docs/")
-                || p.equals("/") || p.startsWith("/health") || p.startsWith("/actuator");
-//                || p.startsWith("/reset-user/");
+                || p.equals("/") || p.startsWith("/health") || p.startsWith("/actuator")
+                // TODO: 배포 전 막아야 함
+                || p.startsWith("/dev-tools/") || p.startsWith("/dev-auth");
     }
 
     @Override
@@ -106,6 +109,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 return;
             }
 
+
 //            정상 경로: DB 조회 + 약관 체크
             try {
                 if (userId != null) {
@@ -137,11 +141,13 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             SecurityContextHolder.getContext().setAuthentication(auth);
 
         } catch (io.jsonwebtoken.JwtException jwtEx) {
+
             // JWT 문제면 인증 제거
             log.info("[JwtAuth] jwt error: {}", jwtEx.getMessage());
             SecurityContextHolder.clearContext();
         } catch (Exception e) {
             log.info("[JwtAuth] error: {}", e.getMessage());
+
             SecurityContextHolder.clearContext();
         }
         // 다음 필터로 넘김

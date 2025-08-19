@@ -63,4 +63,13 @@ public class GlobalExceptionHandler {
         }
 
     }
+
+    @ExceptionHandler(OnboardingAlreadyDoneException.class)
+    public ResponseEntity<?> handle(OnboardingAlreadyDoneException e) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of(
+                "code", "ONBOARDING_ALREADY_DONE",
+                "message", e.getMessage(),
+                "userId", e.getUserId()
+        ));
+    }
 }
