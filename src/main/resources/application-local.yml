@@ -36,7 +36,7 @@ jwt:
 auth:
   login:
     success:
-      mode: DEEPLINK # JSON | DEEPLINK
+      mode: JSON # JSON | DEEPLINK
       deep-link: myapp://oauth/kakao # 임시
       access-param: access
       refresh-param: refresh
