@@ -54,7 +54,6 @@ logging:
     org.hibernate.type.descriptor.sql.BasicBinder: OFF
     com.zaxxer.hikari: INFO
 
-
 debug:
   kid-auth:
     enabled: true
@@ -66,5 +65,14 @@ debug:
         - ${ANDROID_MH}
         - ${ANDROID_SW}
         - ${ANDROID_JH}
+        - ${SERVER_YR}
+        - "1323525"
     success:
       log-deeplink-full: true
+  onboarding:
+    autofill:
+      enabled: true
+      default-gender: MALE  # GenderType
+      default-age: 25
+      default-height: 170
+      default-target-weight: 65.0
