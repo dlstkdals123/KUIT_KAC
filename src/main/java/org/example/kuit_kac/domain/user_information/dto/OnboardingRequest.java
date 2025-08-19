@@ -22,7 +22,7 @@ public class OnboardingRequest {
     @Schema(description = "닉네임, 공백입력시 자동생성 가능", example = "user_dbd8b258")
     private String nickname;
 
-    @Schema(description = "성별 (가능한 값: 남성, 여성)", example = "MALE")
+    @Schema(description = "성별 (MALE, FEMALE)", example = "MALE")
     private GenderType gender;
 
     @Schema(description = "나이 (단위: 세)", example = "27")
@@ -40,16 +40,16 @@ public class OnboardingRequest {
     @Schema(description = "다이어트 실패 이유", example = "야식, 의지 부족")
     private String dietFailReason;
 
-    @Schema(description = "식욕 유형 (가능한 값: 식욕적음, 식욕많음)", example = "BIG, SMALL")
+    @Schema(description = "식욕 유형 (BIG, SMALL)", example = "BIG")
     private AppetiteType appetiteType;
 
     @Schema(description = "주간 외식 횟수", example = "4번 이상")
     private String weeklyEatingOutCount;
 
-    @Schema(description = "외식 유형", example = "FAST_FOOD, KOREAN")
+    @Schema(description = "외식 유형 (FASTFOOD, KOREAN, CHINESE, WESTERN, ASIAN, FRIED)", example = "FASTFOOD, CHINESE")
     private String eatingOutType;
 
-    @Schema(description = "다이어트 속도 (가능한 값: YUMYUM(12주), COACH(8주), ALL_IN(4주))", example = "YUMYUM/COACH/ALL_IN")
+    @Schema(description = "다이어트 속도 (YUMYUM(12주), COACH(8주), ALL_IN(4주))", example = "YUMYUM")
     private DietVelocity dietVelocity;
 
     @Schema(description = "약관 동의 목록", nullable = true)
