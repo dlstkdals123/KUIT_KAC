@@ -169,6 +169,7 @@ public class JwtProvider {
         aPrefix = aPrefix.substring(0, Math.min(12, aPrefix.length()));
         rPrefix = rPrefix.substring(0, Math.min(12, rPrefix.length()));
         log.info("[JWT] access.prefix={} refresh.prefix={}", aPrefix, rPrefix);
+
     }
 
     private Jws<Claims> parseWithKey(String token, Key k) {

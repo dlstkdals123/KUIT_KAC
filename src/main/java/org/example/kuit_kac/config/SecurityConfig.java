@@ -67,7 +67,7 @@ public class SecurityConfig {
                         ).permitAll()
                         .requestMatchers("/users/me").authenticated() //  테스트시 유일한 인증필요 api
 //                        // TODO 개발 테스트 유저 삭제용 코드. 운영시 삭제!!
-//                        .requestMatchers(HttpMethod.DELETE, "/reset-user/**").permitAll() // ★ 추가
+                        .requestMatchers(HttpMethod.DELETE, "/reset-user/**").permitAll() // ★ 추가
                         .anyRequest().permitAll()) // 테스트시 나머지는 요청 허가
 //                        .authenticated()) // TODO: 나머지 요청은 인증 필요
 
@@ -114,6 +114,7 @@ public class SecurityConfig {
                         .userInfoEndpoint(u -> u.userService(kakaoOAuth2UserService))
                         .successHandler(oAuth2SuccessHandler)
                 )
+
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterAfter(devKidAuthFilter, JwtAuthFilter.class)
                 .headers(h -> h.frameOptions(f -> f.sameOrigin()));

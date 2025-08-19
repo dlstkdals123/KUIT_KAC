@@ -86,8 +86,10 @@ public class AuthController {
         }
 
         String token = bearer.substring(7);
+
         String type = jwtProvider.getTokenTypeStrict(token);
         if (!jwtProvider.validateToken(token) || !"refresh".equals(type)) {
+
             throw new CustomException(ErrorCode.AUTH_UNAUTHORIZED);
         }
 

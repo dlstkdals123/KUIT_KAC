@@ -60,13 +60,9 @@ public class OnboardingController {
                 if (kid != null && !kid.isBlank()) return kid;
                 Long uid = jwtProvider.getUserIdFromAccessOrNull(t);
                 if (uid != null && uid >= 0L) {
-                    try {
-                        return userService.getUserById(uid).getKakaoId();
-                    } catch (Exception ignore) {
-                    }
+                    try { return userService.getUserById(uid).getKakaoId(); } catch (Exception ignore) {}
                 }
-            } catch (Exception ignore) {
-            }
+            } catch (Exception ignore) {}
         }
         String headerKid = req.getHeader("X-KID");
         if (headerKid != null && !headerKid.isBlank()) return headerKid;

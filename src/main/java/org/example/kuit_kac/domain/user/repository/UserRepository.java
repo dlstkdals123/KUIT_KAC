@@ -16,7 +16,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByKakaoId(String kakaoId);
 
     boolean existsByKakaoId(String kakaoId);
-    boolean existsByNickname(String nickname);
+    boolean existsByNickname(String nickname);  // ← 추가
 
     @Query("select u.id from User u where u.kakaoId = :kakaoId")
     Optional<Long> findIdByKakaoId(@Param("kakaoId") String kakaoId);

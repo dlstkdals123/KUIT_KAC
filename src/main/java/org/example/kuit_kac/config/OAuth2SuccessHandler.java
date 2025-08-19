@@ -49,8 +49,8 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         log.info("[OAuth2Success] mode={}, deepLink='{}', isDeepLinkBranch={}", props.getMode(), props.getDeepLink(), props.isDeepLink());
         // 1) 사용자 정보
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
-        Map<String, Object> attrs = oAuth2User.getAttributes();
 
+        Map<String, Object> attrs = oAuth2User.getAttributes(); // kakaoId: attributes에 "kakaoId"가 있으면 사용, 없으면 카카오 원본 "id", 둘 다 없으면 getName()
         String kakaoId = null;
         Object kidAttr = attrs.get("kakaoId");
         if (kidAttr == null)
@@ -114,17 +114,18 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         // // TODO: 서버토큰 JSON 활성화 코드 넣는 자리
 
         // 딥링크 파라미터
-        long ts = Instant.now().getEpochSecond();
-        String sig = hmacSha256(kidAuthSecret, kakaoId + "|" + ts);
-        String state = request.getParameter("state");
 
         String target = props.getDeepLink();
         boolean useDeepLink = "DEEPLINK".equalsIgnoreCase(props.getMode().toString());
         if (!useDeepLink || target == null || target.isBlank()) {
             log.error("[OAuth2Success] deep-link not configured. Falling back to JSON response.");
-//            writeJson(response, access, refresh, expiresIn, state, onboardingRequired, kakaoId);
+// writeJson
             return;
         }
+        long ts = Instant.now().getEpochSecond();
+        String sig = hmacSha256(kidAuthSecret, kakaoId + "|" + ts);
+        String state = request.getParameter("state");
+
 
         String deep = UriComponentsBuilder
                 .fromUriString(target)

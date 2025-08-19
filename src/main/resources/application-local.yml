@@ -36,7 +36,7 @@ jwt:
 auth:
   login:
     success:
-      mode: JSON # JSON | DEEPLINK
+      mode: DEEPLINK # JSON | DEEPLINK
       deep-link: myapp://oauth/kakao # 임시
       access-param: access
       refresh-param: refresh
@@ -61,12 +61,12 @@ debug:
     ts-skew-seconds: 300
     whitelist:
       enabled: true
-
       kids:
         - ${ANDROID_MH}
         - ${ANDROID_SW}
         - ${ANDROID_JH}
         - ${SERVER_YR}
+        - "1323525"
     success:
       log-deeplink-full: true
   onboarding:
