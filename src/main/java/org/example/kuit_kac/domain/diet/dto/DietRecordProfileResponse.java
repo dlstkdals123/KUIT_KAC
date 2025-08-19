@@ -42,18 +42,10 @@ public record DietRecordProfileResponse(
     Double totalKcal,
 
     @Schema(description = "식단에 포함된 음식 목록", requiredMode = Schema.RequiredMode.REQUIRED)
-    List<DietFoodProfileResponse> dietFoods,
-
-    @Schema(description = "식단에 포함된 AI 음식 목록", requiredMode = Schema.RequiredMode.REQUIRED)
-    List<DietFoodProfileResponse> dietAifoods
+    List<DietFoodProfileResponse> dietFoods
 ) {
     public static DietRecordProfileResponse todayFrom(Diet diet) {
         List<DietFoodProfileResponse> dietFoodProfiles = diet.getDietFoods().stream()
-                .filter(dietFood -> TimeGenerator.isToday(dietFood.getDietTime()))
-                .map(DietFoodProfileResponse::from)
-                .toList();
-
-        List<DietFoodProfileResponse> dietAifoodProfiles = diet.getDietAifoods().stream()
                 .filter(dietFood -> TimeGenerator.isToday(dietFood.getDietTime()))
                 .map(DietFoodProfileResponse::from)
                 .toList();
@@ -62,7 +54,7 @@ public record DietRecordProfileResponse(
             return null;
         }
 
-        return from(dietFoodProfiles, dietAifoodProfiles, diet);
+        return from(dietFoodProfiles, diet);
     }
 
     public static DietRecordProfileResponse from(Diet diet) {
@@ -70,33 +62,18 @@ public record DietRecordProfileResponse(
                 .map(DietFoodProfileResponse::from)
                 .toList();
 
-        List<DietFoodProfileResponse> dietAifoodProfiles = diet.getDietAifoods().stream()
-                .map(DietFoodProfileResponse::from)
-                .toList();
         
-        return from(dietFoodProfiles, dietAifoodProfiles, diet);
+        return from(dietFoodProfiles, diet);
     }
 
-    private static DietRecordProfileResponse from(List<DietFoodProfileResponse> dietFoodProfiles, List<DietFoodProfileResponse> dietAifoodProfiles, Diet diet) {
+    private static DietRecordProfileResponse from(List<DietFoodProfileResponse> dietFoodProfiles, Diet diet) {
         double totalKcal = dietFoodProfiles.stream()
                 .mapToDouble(dietFood -> dietFood.quantity() * dietFood.food().getCalorie())
                 .sum();
 
-        double totalKcalAifood = dietAifoodProfiles.stream()
-                .mapToDouble(dietFood -> dietFood.quantity() * dietFood.food().getCalorie())
-                .sum();
-
-        totalKcal += totalKcalAifood;
-
         List<FoodProfileResponse> dietFoodProfileResponses = dietFoodProfiles.stream()
                 .map(DietFoodProfileResponse::food)
                 .collect(Collectors.toList());
-
-        List<FoodProfileResponse> dietAifoodProfileResponses = dietAifoodProfiles.stream()
-                .map(DietFoodProfileResponse::food)
-                .collect(Collectors.toList());
-        
-        dietFoodProfileResponses.addAll(dietAifoodProfileResponses);
 
         FoodStatusType foodStatusType = FoodStatusType.getFoodStatusType(dietFoodProfileResponses);
 
@@ -110,8 +87,7 @@ public record DietRecordProfileResponse(
                 diet.getCreatedAt(),
                 diet.getUpdatedAt(),
                 totalKcal,
-                dietFoodProfiles,
-                dietAifoodProfiles
+                dietFoodProfiles
         );
     }
 }

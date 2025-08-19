@@ -2,7 +2,6 @@ package org.example.kuit_kac.domain.diet_food.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
-import org.example.kuit_kac.domain.diet_food.model.DietAifood;
 import org.example.kuit_kac.domain.diet_food.model.DietFood;
 import org.example.kuit_kac.domain.food.dto.FoodProfileResponse;
 
@@ -28,15 +27,6 @@ public record DietFoodProfileResponse(
                 dietFood.getDietTime(),
                 dietFood.getQuantity(),
                 FoodProfileResponse.from(dietFood.getFood())
-        );
-    }
-
-    public static DietFoodProfileResponse from(DietAifood dietFood) {
-        return new DietFoodProfileResponse(
-                dietFood.getId(),
-                dietFood.getDietTime(),
-                dietFood.getQuantity(),
-                FoodProfileResponse.from(dietFood.getAifood())
         );
     }
 } 
