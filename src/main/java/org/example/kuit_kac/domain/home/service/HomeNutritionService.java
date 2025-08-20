@@ -1,5 +1,6 @@
 package org.example.kuit_kac.domain.home.service;
 
+import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.example.kuit_kac.domain.diet_food.model.DietFood;
 import org.example.kuit_kac.domain.diet_food.service.DietFoodService;
@@ -14,6 +15,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@AllArgsConstructor
 public class HomeNutritionService {
     // TODO: 오늘먹은 음식에서 탄수화물, 단백질, 당류, 지방의 목표량, 섭취량, 비율(%) 계산해서 제공)
     // TODO: 유저 id와 날짜로 음식가져오기

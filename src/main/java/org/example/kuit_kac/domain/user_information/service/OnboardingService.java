@@ -45,13 +45,6 @@ public class OnboardingService {
                 .orElseThrow(() -> new RuntimeException("사용자 정보가 없습니다."));
     }
 
-//    @Transactional(readOnly = true)
-//    public boolean isOnboardingRequired(long userId) {
-//        return userInfoRepository.findByUserId(userId)
-//                .map(info -> isOnboardingIncomplete(info))
-//                .orElse(true); // 정보 자체가 없으면 온보딩 필요
-//    }
-
     private boolean isOnboardingIncomplete(UserInformation info) {
         if (!StringUtils.hasText(info.getDietFailReason())) return true;
         if (info.getAppetiteType() == null) return true;
@@ -152,16 +145,16 @@ public class OnboardingService {
         );
         userInfoRepository.save(info);
 
-        // 5) 약관 업서트 (요청에 있으면)
-        if (req.getAgreements() != null && !req.getAgreements().isEmpty()) {
-            userTermsService.upsertAgreements(user.getId(),
-                    new TermAgreementUpsertRequest(req.getAgreements()));
-        }
+//        // 5) 약관 업서트 (요청에 있으면)
+//        if (req.getAgreements() != null && !req.getAgreements().isEmpty()) {
+//            userTermsService.upsertAgreements(user.getId(),
+//                    new TermAgreementUpsertRequest(req.getAgreements()));
+//        }
 
-        // 6) 필수 약관 검증(정책상 강제일 경우)
-        if (enforceRequiredTerms && !userTermsService.hasAgreedRequired(user.getId())) {
-            throw new CustomException(ErrorCode.REQUIRED_TERMS_NOT_AGREED);
-        }
+//        // 6) 필수 약관 검증(정책상 강제일 경우)
+//        if (enforceRequiredTerms && !userTermsService.hasAgreedRequired(user.getId())) {
+//            throw new CustomException(ErrorCode.REQUIRED_TERMS_NOT_AGREED);
+//        }
 
         //기초대사량 계산
         long userId = user.getId();
