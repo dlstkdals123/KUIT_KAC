@@ -18,5 +18,5 @@ public class TermAgreementItem {
     private String version;  // 동의한 문서 버전
 
     @Schema(description = "동의 여부", example = "true")
-    private boolean agreed;  // true=동의, false=철회
+    private boolean agreed = true;  // true=동의, false=철회
 }

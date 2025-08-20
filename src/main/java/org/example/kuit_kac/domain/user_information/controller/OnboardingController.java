@@ -70,6 +70,7 @@ public class OnboardingController {
             return ResponseEntity.status(401).build();
         }
 
+
         // DEV 판단: dev 필터가 넣는 가짜 uid < 0 를 기준
         boolean isDev = principal != null && principal.getUserId() != null && principal.getUserId() < 0L;
 

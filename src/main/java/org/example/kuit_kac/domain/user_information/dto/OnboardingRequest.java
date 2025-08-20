@@ -58,8 +58,5 @@ public class OnboardingRequest {
 
     @Schema(description = "활동량 (VERY_LOW, LOW, NORMAL, HIGH, VERY_HIGH", example = "LOW")
     private Activity activity;
-
-    @Schema(description = "약관 동의 목록", nullable = true)
-    private List<TermAgreementItem> agreements;
 }
 
