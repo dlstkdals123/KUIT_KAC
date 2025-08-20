@@ -1,4 +1,3 @@
-
 package org.example.kuit_kac.config;
 
 import jakarta.servlet.ServletException;
@@ -6,7 +5,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.example.kuit_kac.domain.user_information.service.OnboardingService;
 import org.example.kuit_kac.domain.user_information.service.OnboardingStatusService;
 import org.example.kuit_kac.global.util.JwtProvider;
 import org.example.kuit_kac.global.util.dev.DevWhitelistProperties;
