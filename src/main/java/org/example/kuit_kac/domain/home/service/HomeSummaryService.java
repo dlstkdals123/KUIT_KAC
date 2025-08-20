@@ -105,12 +105,13 @@ public class HomeSummaryService {
     }
 
     // 일일섭취목표 칼로리 계산
-    public double calculateDailyKCalorieGoal(Long userId) {
+    private double calculateDailyKCalorieGoal(Long userId) {
         // 일일섭취목표 : BMR - 일일감량목표칼로리
 
         //기초대사량 계산
         User user = userService.getUserById(userId);
-        UserInformation userInfo = getUserInformationByUserId(userId);
+        UserInformation userInfo = userInfoRepository.findByUserId(userId)
+                .orElseThrow(() -> new RuntimeException("사용자 정보가 없습니다."));
         double weightValue = weightService.getLatestWeightByUserId(userId).getWeight();
 
         double activityConstant = userInfo.getActivity().getActivityConstant();
@@ -122,9 +123,8 @@ public class HomeSummaryService {
         return bmrWithActivity - dailyDeficit;
     }
 
-    @Transactional(readOnly = true)
-    public UserInformation getUserInformationByUserId(long userId) {
-        return userInfoRepository.findByUserId(userId)
-                .orElseThrow(() -> new RuntimeException("사용자 정보가 없습니다."));
-    }
+//    public UserInformation getUserInformationByUserId(long userId) {
+//        return userInfoRepository.findByUserId(userId)
+//                .orElseThrow(() -> new RuntimeException("사용자 정보가 없습니다."));
+//    }
 }

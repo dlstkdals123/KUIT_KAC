@@ -6,6 +6,10 @@ import org.example.kuit_kac.domain.diet_food.model.DietFood;
 import org.example.kuit_kac.domain.diet_food.service.DietFoodService;
 import org.example.kuit_kac.domain.food.model.Food;
 import org.example.kuit_kac.domain.home.dto.HomeNutritionResponse;
+import org.example.kuit_kac.domain.user.model.User;
+import org.example.kuit_kac.domain.user.service.UserService;
+import org.example.kuit_kac.domain.user_information.model.UserInformation;
+import org.example.kuit_kac.domain.user_information.repository.UserInfoRepository;
 import org.example.kuit_kac.global.util.TimeRange;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,18 +19,20 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-@AllArgsConstructor
 public class HomeNutritionService {
     // TODO: 오늘먹은 음식에서 탄수화물, 단백질, 당류, 지방의 목표량, 섭취량, 비율(%) 계산해서 제공)
     // TODO: 유저 id와 날짜로 음식가져오기
     // TODO: homeSummaryService에서 오늘목표섭취칼로리 가져오기
-    DietFoodService dietFoodService; //
-    HomeSummaryService homeSummaryService;
+    private final DietFoodService dietFoodService; //
+    private final UserService userService;
+    private final UserInfoRepository userInfoRepository;
+    private final WeightService weightService;
+
 
     @Transactional(readOnly = true)
     public HomeNutritionResponse getTodayNutrition(Long userId) {
         // 오늘 목표 칼로리 계산
-        double todayTotalKCalorieGoal = homeSummaryService.calculateDailyKCalorieGoal(userId);
+        double todayTotalKCalorieGoal = calculateDailyKCalorieGoal(userId);
 
         TimeRange timeRange = TimeRange.getTodayTimeRange();
         LocalDateTime startOfDay = timeRange.start();
@@ -78,5 +84,22 @@ public class HomeNutritionService {
                 sugarRatio,
                 fatRatio
         );
+    }
+
+    private double calculateDailyKCalorieGoal(Long userId) {
+        // 일일섭취목표 : BMR - 일일감량목표칼로리
+        //기초대사량 계산
+        User user = userService.getUserById(userId);
+        UserInformation userInfo = userInfoRepository.findByUserId(userId)
+                .orElseThrow(() -> new RuntimeException("사용자 정보가 없습니다."));
+        double weightValue = weightService.getLatestWeightByUserId(userId).getWeight();
+
+        double activityConstant = userInfo.getActivity().getActivityConstant();
+        double bmrWithActivity = user.getBMR(weightValue) * activityConstant;
+        // 목표까지 감량해야 할 몸무게
+        double TargetWeightLoss = Math.max(weightValue - user.getTargetWeight(), 0);
+        int dietDays = userInfo.getDietVelocity().getPeriodInDays(); // 다이어트기간 '일'단위로 계산
+        double dailyDeficit = (TargetWeightLoss * 7700) / dietDays; // 감량칼로리 / 다이어트기간
+        return bmrWithActivity - dailyDeficit;
     }
 }
