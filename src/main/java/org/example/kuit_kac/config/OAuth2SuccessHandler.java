@@ -51,6 +51,10 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
         Map<String, Object> attrs = oAuth2User.getAttributes();
         // kakaoId: attributes에 "kakaoId"가 있으면 사용, 없으면 카카오 원본 "id", 둘 다 없으면 getName()
+
+        Object emailAttr = attrs.get("account_email");
+        log.info("kakao email: " + emailAttr);
+
         String kakaoId = null;
         Object kidAttr = attrs.get("kakaoId");
         if (kidAttr == null)

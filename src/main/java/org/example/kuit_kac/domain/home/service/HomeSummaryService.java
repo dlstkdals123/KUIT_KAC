@@ -16,7 +16,6 @@ import org.example.kuit_kac.domain.user.model.User;
 import org.example.kuit_kac.domain.user.service.UserService;
 import org.example.kuit_kac.domain.user_information.model.UserInformation;
 import org.example.kuit_kac.domain.user_information.repository.UserInfoRepository;
-import org.example.kuit_kac.domain.user_information.service.OnboardingService;
 import org.example.kuit_kac.global.util.TimeRange;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,7 +30,6 @@ import java.util.List;
 public class HomeSummaryService {
     private final DietFoodRepository dietFoodRepository;
     private final UserService userService;
-    //    private final OnboardingService onboardingService;
     private final UserInfoRepository userInfoRepository;
     private final WeightService weightService;
     private final RoutineRepository routineRepository;

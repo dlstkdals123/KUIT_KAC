@@ -87,8 +87,7 @@ public class OnboardingService {
     public OnboardingResponse createUserWithOnboarding(String kakaoId,
                                                        OnboardingRequest req,
                                                        boolean allowAutofill) {
-        boolean enforceTerms = onboardingPropsProvider.getIfAvailable(() -> null) == null
-                || onboardingPropsProvider.getObject().isRequire();
+        boolean enforceTerms = false;
         return createUserWithOnboarding(kakaoId, req, allowAutofill, enforceTerms);
     }
 
@@ -159,9 +158,9 @@ public class OnboardingService {
         }
 
         // 6) 필수 약관 검증(정책상 강제일 경우)
-        if (enforceRequiredTerms && !userTermsService.hasAgreedRequired(user.getId())) {
-            throw new CustomException(ErrorCode.REQUIRED_TERMS_NOT_AGREED);
-        }
+//        if (enforceRequiredTerms && !userTermsService.hasAgreedRequired(user.getId())) {
+//            throw new CustomException(ErrorCode.REQUIRED_TERMS_NOT_AGREED);
+//        }
 
         //기초대사량 계산
         long userId = user.getId();
