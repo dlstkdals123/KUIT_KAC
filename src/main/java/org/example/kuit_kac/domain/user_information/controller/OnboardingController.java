@@ -39,12 +39,12 @@ public class OnboardingController {
             return ResponseEntity.status(401).body(Map.of("error", "missing kid"));
         }
 
-        // DEV 판단: (추천) dev 필터가 넣는 가짜 uid < 0 를 기준
+        // DEV 판단: dev 필터가 넣는 가짜 uid < 0 를 기준
         boolean isDev = principal != null && principal.getUserId() != null && principal.getUserId() < 0L;
 
         Long userId = onboardingService.createUserWithOnboarding(
                 kid, req,
-                /* allowAutofill */ autofill.isEnabled() && isDev
+                autofill.isEnabled() && isDev
         );
         return ResponseEntity.ok(Map.of("userId", userId));
     }
