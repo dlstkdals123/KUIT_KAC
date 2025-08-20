@@ -203,5 +203,4 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         sb.append("}");
         response.getWriter().write(sb.toString());
     }
-
 }
