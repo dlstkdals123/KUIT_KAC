@@ -20,9 +20,6 @@ public class HomeCoachReportResponse {
     @Schema(description = "술자리 빈도")
     private Level dringkingLevel; // 술자리
 
-    @Schema(description = "배달어플 사용 빈도")
-    private Level deliveryLevel; // 배달어플 사용 빈도
-
     @Schema(description = "야식 빈도")
     private Level lateNightLevel; // 야식
 }

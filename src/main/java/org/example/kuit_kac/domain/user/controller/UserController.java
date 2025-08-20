@@ -124,6 +124,7 @@ public class UserController {
     }
 
 
+    @Hidden // 프론트에서 안 쓰므로 숨김
     @Operation(
             summary = "가입 상태 조회",
             description = "현재 로그인한 사용자의 필수 약관 동의 여부와 온보딩 완료 여부를 반환합니다.",

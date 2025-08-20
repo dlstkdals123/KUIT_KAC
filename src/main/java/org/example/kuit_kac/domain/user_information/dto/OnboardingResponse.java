@@ -1,21 +1,18 @@
 package org.example.kuit_kac.domain.user_information.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.example.kuit_kac.domain.user.model.User;
 
 @Getter
 @AllArgsConstructor
+@Schema(name = "온보딩 응답", description = "온보딩 후 유저 생성 및 bmr, 일일감량목표 반환")
 public class OnboardingResponse {
+    @Schema(description = "유저 아이디", example = "1")
     private long userId;
+    @Schema(description = "BMR(기초대사량)", example = "1473")
     private int bmr;
+    @Schema(description = "일일감량목표 칼로리", example = "1375")
     private int dailyDeficit;
-
-    public static OnboardingResponse from(User user, double bmr, double dailyDeficit) {
-        return new OnboardingResponse(user.getId(), (int) bmr, (int) dailyDeficit);
-    }
-
-    public static OnboardingResponse from(long userId, double bmr, double dailyDeficit) {
-        return new OnboardingResponse(userId, (int) bmr, (int) dailyDeficit);
-    }
 }
