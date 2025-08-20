@@ -25,13 +25,14 @@ public class CoachReportService {
     // 배달어플:  일단 0회, 1회, 2회로 하자
     // 야식: 일단 0회, 1회, 2회로 하자
 
-    DietService dietService;
-    DietFoodService dietFoodService;
+    private final DietService dietService;
+    private final DietFoodService dietFoodService;
 
     @Transactional(readOnly = true)
     public HomeCoachReportResponse getCoachReport(Long userId) {
         TimeRange range = TimeRange.getPastWeekTimeRange();
 
+        // TODO dietService null
         // 일주일 외식 횟수 가져오기
         long diningOutCount = dietService.countDietFoodWithConditions(userId, DietEntryType.DINING_OUT, false, range);
 
@@ -44,9 +45,6 @@ public class CoachReportService {
                 : (drinkingCount == 1) ? Level.NORMAL
                 : Level.HIGH;
 
-        // TODO 배달어플(로컬데이터 필요)
-        Level deliveryLevel = Level.HIGH;
-
         // 일주일 야식 횟수 가져오기
         long lateNightCount = dietService.countDietFoodWithConditions(userId, null, true, range);
         Level lateNightLevel = (lateNightCount == 0) ? Level.LOW
@@ -57,7 +55,6 @@ public class CoachReportService {
                 diningOutCount, // 외식횟수
                 fastingLevel, // 공복시간
                 dringkingLevel, // 술자리
-                deliveryLevel, // 배달어플
                 lateNightLevel // 야식
         );
     }

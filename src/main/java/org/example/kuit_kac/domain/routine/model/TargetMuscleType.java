@@ -26,8 +26,7 @@ public enum TargetMuscleType {
     SHINS("Shins", "정강이"),
     SHOULDERS("Shoulders", "어깨"),
     TRAPEZIUS("Trapezius", "승모근"),
-    TRICEPS("Triceps", "삼두근"),
-    ;
+    TRICEPS("Triceps", "삼두근");
 
     private final String value;
     private final String koreanName;
