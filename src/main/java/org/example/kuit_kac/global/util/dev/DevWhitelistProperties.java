@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 @ConfigurationProperties(prefix = "debug.kid-auth.whitelist")
 @Slf4j
 public class DevWhitelistProperties {
-    private boolean enabled = true;
+    private boolean enabled = false;
     private List<String> kids = new ArrayList<>();
 
     /** 화이트리스트 판정 */
