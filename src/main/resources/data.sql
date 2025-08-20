@@ -7,9 +7,7 @@
 # TRUNCATE TABLE routine;
 # TRUNCATE TABLE exercise;
 #
-# TRUNCATE TABLE diet_aifood;
 # TRUNCATE TABLE diet_food;
-# TRUNCATE TABLE aifood;
 # TRUNCATE TABLE food;
 # TRUNCATE TABLE diet;
 #

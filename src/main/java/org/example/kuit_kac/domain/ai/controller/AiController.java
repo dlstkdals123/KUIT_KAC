@@ -16,7 +16,6 @@ import org.example.kuit_kac.domain.diet.dto.DietRecordProfileResponse;
 import org.example.kuit_kac.domain.diet.model.Diet;
 import org.example.kuit_kac.domain.diet.service.DietService;
 import org.example.kuit_kac.domain.diet_food.dto.DietFoodCreateRequest;
-import org.example.kuit_kac.domain.diet_food.dto.DietFoodProfileResponse;
 import org.example.kuit_kac.domain.food.dto.FoodProfileResponse;
 import org.example.kuit_kac.domain.food.model.Food;
 import org.example.kuit_kac.domain.food.service.FoodService;
