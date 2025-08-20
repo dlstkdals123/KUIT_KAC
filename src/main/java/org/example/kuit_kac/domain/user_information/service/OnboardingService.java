@@ -57,6 +57,7 @@ public class OnboardingService {
         if (!StringUtils.hasText(info.getWeeklyEatingOutCount())) return true;
         if (info.getEatingOutType() == null) return true;
         if (info.getDietVelocity() == null) return true;
+        if (info.getActivity() == null) return true;
         return false;
     }
 
@@ -138,7 +139,8 @@ public class OnboardingService {
                 req.getAppetiteType(),
                 req.getWeeklyEatingOutCount(),
                 req.getEatingOutType(),
-                req.getDietVelocity()
+                req.getDietVelocity(),
+                req.getActivity()
         );
         userInfoRepository.save(info);
 

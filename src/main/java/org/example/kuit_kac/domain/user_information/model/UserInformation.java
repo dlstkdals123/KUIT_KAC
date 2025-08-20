@@ -39,13 +39,18 @@ public class UserInformation {
     @Column(name = "diet_velocity", nullable = false)
     private DietVelocity dietVelocity;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "activity", nullable = false)
+    private Activity activity;
+
     public UserInformation(User user,
                            boolean hasDietExperience,
                            String dietFailReason,
                            AppetiteType appetiteType,
                            String weeklyEatingOutCount,
                            String eatingOutType,
-                           DietVelocity dietVelocity) {
+                           DietVelocity dietVelocity,
+                           Activity activity) {
         this.user = user;
         this.hasDietExperience = hasDietExperience;
         this.dietFailReason = dietFailReason;
@@ -53,6 +58,7 @@ public class UserInformation {
         this.weeklyEatingOutCount = weeklyEatingOutCount;
         this.eatingOutType = eatingOutType;
         this.dietVelocity = dietVelocity;
+        this.activity = activity;
     }
 
 }

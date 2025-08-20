@@ -8,6 +8,7 @@ import lombok.Setter;
 import org.example.kuit_kac.domain.home.model.DietVelocity;
 import org.example.kuit_kac.domain.terms.dto.TermAgreementItem;
 import org.example.kuit_kac.domain.user.model.GenderType;
+import org.example.kuit_kac.domain.user_information.model.Activity;
 import org.example.kuit_kac.domain.user_information.model.AppetiteType;
 
 import java.util.List;
@@ -51,6 +52,9 @@ public class OnboardingRequest {
 
     @Schema(description = "다이어트 속도 (YUMYUM(12주), COACH(8주), ALL_IN(4주))", example = "YUMYUM")
     private DietVelocity dietVelocity;
+
+    @Schema(description = "활동량 (VERY_LOW, LOW, NORMAL, HIGH, VERY_HIGH", example = "LOW")
+    private Activity activity;
 
     @Schema(description = "약관 동의 목록", nullable = true)
     private List<TermAgreementItem> agreements;

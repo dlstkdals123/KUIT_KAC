@@ -36,6 +36,7 @@ CREATE TABLE `user_information` (
     `weekly_eating_out_count` varchar(10)     NULL,
     `eating_out_type`         varchar(50)     NULL,
     `diet_velocity`           ENUM('YUMYUM', 'COACH', 'ALL_IN') NOT NULL,
+    `activity`                ENUM('VERY_LOW', 'LOW', 'NORMAL', 'HIGH', 'VERY_HIGH') NOT NULL,
     FOREIGN KEY (`user_id`) REFERENCES `user`(`id`) ON DELETE CASCADE
 );
 
