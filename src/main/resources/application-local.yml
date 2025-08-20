@@ -67,6 +67,7 @@ debug:
         - ${ANDROID_JH}
         - ${SERVER_YR}
         - ${SERVER_MASTER}
+
   onboarding:
     autofill:
       enabled: true
