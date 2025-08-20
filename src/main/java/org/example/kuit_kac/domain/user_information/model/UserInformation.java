@@ -3,7 +3,6 @@ package org.example.kuit_kac.domain.user_information.model;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.example.kuit_kac.domain.home.model.DietVelocity;
 import org.example.kuit_kac.domain.user.model.User;
 
 @Getter

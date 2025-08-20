@@ -115,7 +115,8 @@ public class HomeSummaryService {
         double weightValue = weightService.getLatestWeightByUserId(userId).getWeight();
 
         //기초대사량 계산
-        double bmr = user.getBMR(weightValue);
+        double activityConstant = userInfo.getActivity().getActivityConstant();
+        double bmr = user.getBMR(weightValue) * activityConstant;
         // 목표까지 감량해야 할 몸무게
         double TargetWeightLoss = weightValue - user.getTargetWeight();
         int dietDays = userInfo.getDietVelocity().getPeriodInDays(); // 다이어트기간 '일'단위로 계산
