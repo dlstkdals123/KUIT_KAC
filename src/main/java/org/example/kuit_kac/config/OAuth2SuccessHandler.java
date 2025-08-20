@@ -132,8 +132,8 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 //                .queryParam(props.getRefreshParam(), refresh)
 //                .queryParam(props.getExpiresParam(), expiresIn)
                 .queryParam("kid", kakaoId)
-//                .queryParam("ts", ts)
-//                .queryParam("sig", sig)
+                .queryParam("ts", ts)
+                .queryParam("sig", sig)
 //                .queryParam(props.getOnboardingRequired(), onboardingRequired)
 //                .queryParam(props.getStateParam(), (state == null ? "" : state))
                 .build().encode() // 인코딩 보존
