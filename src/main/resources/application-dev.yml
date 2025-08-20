@@ -56,7 +56,7 @@ logging:
 
 debug:
   kid-auth:
-    enabled: true
+    enabled: false
     secret: ${KID_AUTH_SECRET}
     ts-skew-seconds: 300
     whitelist:
