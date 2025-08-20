@@ -18,7 +18,7 @@ public class DevAuthController {
     // 예: GET /dev-auth/mint?uid=3&kid=4384440657
     @GetMapping("/mint")
     public Map<String, String> mint(@RequestParam(required = false) Long uid,
-                                    @RequestParam(required = false) String kid) {
+                                    @RequestParam(required = true) String kid) {
         String access = jwtProvider.generateAccessToken(uid, kid); // kid는 access에 실림
         String refresh = jwtProvider.generateRefreshToken(uid);
         return Map.of("accessToken", access, "refreshToken", refresh);
