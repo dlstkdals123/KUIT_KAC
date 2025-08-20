@@ -8,6 +8,7 @@ import org.example.kuit_kac.domain.diet_food.service.DietFoodService;
 import org.example.kuit_kac.domain.home.dto.HomeCoachReportResponse;
 import org.example.kuit_kac.domain.home.model.Level;
 import org.example.kuit_kac.global.util.TimeRange;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,6 +17,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 
 @Service
+@Component
 @RequiredArgsConstructor
 public class CoachReportService {
     // TODO: 외식횟수, 공복시간 적음/적당/많음 여부, 술자리 적음/많음 여부, 배달어플 빈도, 야식 적음/많음 여부

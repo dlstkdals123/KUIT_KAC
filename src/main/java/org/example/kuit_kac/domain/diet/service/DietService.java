@@ -12,6 +12,8 @@ import org.example.kuit_kac.domain.user.model.User;
 import org.example.kuit_kac.domain.diet.model.DietType;
 import org.example.kuit_kac.global.util.TimeRange;
 import org.example.kuit_kac.global.util.TimeGenerator;
+import org.springframework.context.annotation.Bean;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,6 +34,7 @@ import org.example.kuit_kac.domain.food.service.FoodService;
 import org.example.kuit_kac.domain.diet_food.service.DietAifoodService;
 
 @Service
+@Component
 @RequiredArgsConstructor
 public class DietService {
 
