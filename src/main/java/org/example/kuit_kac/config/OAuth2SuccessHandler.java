@@ -39,8 +39,6 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
     @Value("${debug.kid-auth.secret}")
     private String kidAuthSecret;
-    @Value("${debug.kid-auth.success.log-deeplink-full}")
-    private boolean logDeepLinkFull; // 로컬에서만 true 권장
     @Autowired
     private org.springframework.core.env.Environment env;
 
@@ -140,10 +138,8 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
                 .toUriString();
 
         // 실제 딥링크
-        if (isSafeToLogFull()) {
             // 로컬/개발에서만 전체 URL 찍기 (운영 금지)
             log.info("[OAuth2Success] deepLinkUrl={}", deep); // 로컬/DEV + DEBUG일 때만 전체 출력
-        }
 
 
         // 민감값 마스킹된 파라미터 로그 (운영에서도 안전)
@@ -205,14 +201,5 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
                     .append(state).append("\"");
         sb.append("}");
         response.getWriter().write(sb.toString());
-    }
-
-    // 로컬/DEV + DEBUG 레벨 + 토글 true 일 때만 전체 URL 찍기
-    private boolean isSafeToLogFull() {
-        // spring.profiles.active 가 local/dev인지 확인
-//        boolean isLocalOrDev = env != null && env.acceptsProfiles(org.springframework.core.env.Profiles.of("local", "dev"));
-        return logDeepLinkFull;
-//                && isLocalOrDev
-//                && log.isDebugEnabled();
     }
 }
