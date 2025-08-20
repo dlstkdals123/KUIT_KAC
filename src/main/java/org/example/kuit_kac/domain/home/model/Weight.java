@@ -46,5 +46,4 @@ public class Weight {
         this.userId = user_id;
         this.weight = weight;
     }
-
 }

@@ -2,12 +2,14 @@ package org.example.kuit_kac.domain.user_information.service;
 
 import lombok.RequiredArgsConstructor;
 import org.example.kuit_kac.config.AuthOnboardingProperties;
+import org.example.kuit_kac.domain.home.service.WeightService;
 import org.example.kuit_kac.domain.terms.dto.TermAgreementUpsertRequest;
 import org.example.kuit_kac.domain.terms.repository.UserTermAgreementRepository;
 import org.example.kuit_kac.domain.terms.service.UserTermsService;
 import org.example.kuit_kac.domain.user.model.User;
 import org.example.kuit_kac.domain.user.repository.UserRepository;
 import org.example.kuit_kac.domain.user_information.dto.OnboardingRequest;
+import org.example.kuit_kac.domain.user_information.dto.OnboardingResponse;
 import org.example.kuit_kac.domain.user_information.model.UserInformation;
 import org.example.kuit_kac.domain.user_information.repository.UserInfoRepository;
 import org.example.kuit_kac.exception.CustomException;
@@ -30,8 +32,7 @@ public class OnboardingService {
     private final UserInfoRepository userInfoRepository;
     private final UserRepository userRepository;
     private final UserTermsService userTermsService;
-    private final UserTermAgreementRepository userTermRepository;
-    private static String nameOrNull(Enum<?> e) { return e == null ? null : e.name(); }
+    private final WeightService weightService;
 
     // 선택 주입(없으면 기본값 사용)
     private final ObjectProvider<DevAutofillProperties> autofillProvider;
@@ -44,12 +45,12 @@ public class OnboardingService {
                 .orElseThrow(() -> new RuntimeException("사용자 정보가 없습니다."));
     }
 
-    @Transactional(readOnly = true)
-    public boolean isOnboardingRequired(long userId) {
-        return userInfoRepository.findByUserId(userId)
-                .map(info -> isOnboardingIncomplete(info))
-                .orElse(true); // 정보 자체가 없으면 온보딩 필요
-    }
+//    @Transactional(readOnly = true)
+//    public boolean isOnboardingRequired(long userId) {
+//        return userInfoRepository.findByUserId(userId)
+//                .map(info -> isOnboardingIncomplete(info))
+//                .orElse(true); // 정보 자체가 없으면 온보딩 필요
+//    }
 
     private boolean isOnboardingIncomplete(UserInformation info) {
         if (!StringUtils.hasText(info.getDietFailReason())) return true;
@@ -62,29 +63,30 @@ public class OnboardingService {
     }
 
     // 생성
+
     /**
      * 기본 온보딩 생성 (프로퍼티 기반 설정 사용)
      * - debug.autofill.enabled가 true이면 누락 필드 자동 채움
      * - auth.onboarding.require가 true이면 필수 약관 강제
      */
-    @Transactional
-    public Long createUserWithOnboarding(String kakaoId, OnboardingRequest req) {
-        boolean allowAutofill = autofillProvider.getIfAvailable(() -> null) != null
-                && autofillProvider.getObject().isEnabled();
-
-        boolean enforceTerms = onboardingPropsProvider.getIfAvailable(() -> null) == null
-                || onboardingPropsProvider.getObject().isRequire();
-
-        return createUserWithOnboarding(kakaoId, req, allowAutofill, enforceTerms);
-    }
+//    @Transactional
+//    public OnboardingResponse createUserWithOnboarding(String kakaoId, OnboardingRequest req) {
+//        boolean allowAutofill = autofillProvider.getIfAvailable(() -> null) != null
+//                && autofillProvider.getObject().isEnabled();
+//
+//        boolean enforceTerms = onboardingPropsProvider.getIfAvailable(() -> null) == null
+//                || onboardingPropsProvider.getObject().isRequire();
+//
+//        return createUserWithOnboarding(kakaoId, req, allowAutofill, enforceTerms);
+//    }
 
     /**
      * 세밀 제어 버전 (컨트롤러에서 DEV 여부로 넘겨줌)
      */
     @Transactional
-    public Long createUserWithOnboarding(String kakaoId,
-                                         OnboardingRequest req,
-                                         boolean allowAutofill) {
+    public OnboardingResponse createUserWithOnboarding(String kakaoId,
+                                                       OnboardingRequest req,
+                                                       boolean allowAutofill) {
         boolean enforceTerms = onboardingPropsProvider.getIfAvailable(() -> null) == null
                 || onboardingPropsProvider.getObject().isRequire();
         return createUserWithOnboarding(kakaoId, req, allowAutofill, enforceTerms);
@@ -94,10 +96,10 @@ public class OnboardingService {
      * 가장 하위 구현
      */
     @Transactional
-    public Long createUserWithOnboarding(String kakaoId,
-                                         OnboardingRequest req,
-                                         boolean allowAutofill,
-                                         boolean enforceRequiredTerms) {
+    public OnboardingResponse createUserWithOnboarding(String kakaoId,
+                                                       OnboardingRequest req,
+                                                       boolean allowAutofill,
+                                                       boolean enforceRequiredTerms) {
 
         // 0) kakaoId 필수
         Objects.requireNonNull(kakaoId, "kakaoId required");
@@ -119,16 +121,22 @@ public class OnboardingService {
                 new User(kakaoId, fields.nickname, fields.gender, fields.age, fields.height, fields.targetWeight)
         );
 
+
         if (existingOpt.isEmpty()) {
             // 신규면 저장(닉네임 unique 제약 방어 포함)
             user = persistUserWithUniqueNickname(user, fields.nickname);
         } else {
             // 기존인데 아직 온보딩 전이면 필요한 필드 업데이트
-             existingOpt.get().setNickname(fields.nickname);
-             existingOpt.get().setGender(fields.gender);
-             existingOpt.get().setAge(fields.age);
-             existingOpt.get().setHeight(fields.height);
-             existingOpt.get().setTargetWeight(fields.targetWeight);
+            existingOpt.get().setNickname(fields.nickname);
+            existingOpt.get().setGender(fields.gender);
+            existingOpt.get().setAge(fields.age);
+            existingOpt.get().setHeight(fields.height);
+            existingOpt.get().setTargetWeight(fields.targetWeight);
+        }
+
+        // 현재 몸무게 저장
+        if (fields.currentWeight != null) {
+            weightService.saveOrUpdateTodayWeight(user.getId(), fields.currentWeight);
         }
 
         // 4) UserInformation 생성/저장 (PK=@MapsId(user_id) 가정)
@@ -155,25 +163,41 @@ public class OnboardingService {
             throw new CustomException(ErrorCode.REQUIRED_TERMS_NOT_AGREED);
         }
 
-        return user.getId();
+        //기초대사량 계산
+        long userId = user.getId();
+        UserInformation userInfo = this.getUserInformationByUserId(userId);
+        double weightValue = weightService.getLatestWeightByUserId(userId).getWeight();
+
+        double bmr = user.getBMR(weightValue);
+
+        // 목표까지 감량해야 할 몸무게
+        double TargetWeightLoss = Math.max(weightValue - user.getTargetWeight(), 0);
+        int dietDays = userInfo.getDietVelocity().getPeriodInDays();
+        double dailyDeficit = (TargetWeightLoss * 7700) / dietDays; // 감량칼로리 / 다이어트기간
+
+        return new OnboardingResponse(user.getId(), (int) bmr, (int) dailyDeficit);
     }
 
     private static class PreparedUserFields {
+
         final String nickname;
         final org.example.kuit_kac.domain.user.model.GenderType gender;
         final Integer age;
         final Integer height;
         final Double targetWeight;
+        final Double currentWeight;
 
         PreparedUserFields(String nickname,
                            org.example.kuit_kac.domain.user.model.GenderType gender,
-                           Integer age, Integer height, Double targetWeight) {
+                           Integer age, Integer height, Double targetWeight, Double currentWeight) {
             this.nickname = nickname;
             this.gender = gender;
             this.age = age;
             this.height = height;
             this.targetWeight = targetWeight;
+            this.currentWeight = currentWeight;
         }
+
     }
 
     private PreparedUserFields prepareUserFields(String kakaoId,
@@ -188,20 +212,22 @@ public class OnboardingService {
         var gender = req.getGender();
         Integer age = req.getAge();
         Integer height = req.getHeight();
-        Double target = req.getTargetWeight();
+        Double targetWeight = req.getTargetWeight();
+        Double currentWeight = req.getCurrentWeight();
 
         if (allowAutofill) {
             DevAutofillProperties af = autofillProvider.getIfAvailable(() -> null);
             if (af != null) {
-                if (gender == null)  gender = af.getDefaultGender();
-                if (age == null)     age    = af.getDefaultAge();
-                if (height == null)  height = af.getDefaultHeight();
-                if (target == null)  target = af.getDefaultTargetWeight();
+                if (gender == null) gender = af.getDefaultGender();
+                if (age == null) age = af.getDefaultAge();
+                if (height == null) height = af.getDefaultHeight();
+                if (targetWeight == null) targetWeight = af.getDefaultTargetWeight();
+                if (currentWeight == null) currentWeight = af.getDefaultCurrentWeight();
             }
         }
 
         // 프로덕션에선 누락되면 아래 단계(DB not-null)에 걸리거나, 별도 Validation으로 막자
-        return new PreparedUserFields(nickname, gender, age, height, target);
+        return new PreparedUserFields(nickname, gender, age, height, targetWeight, currentWeight);
     }
 
     private User persistUserWithUniqueNickname(User user, String baseNickname) {

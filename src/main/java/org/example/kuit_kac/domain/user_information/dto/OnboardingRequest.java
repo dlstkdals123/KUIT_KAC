@@ -35,6 +35,9 @@ public class OnboardingRequest {
     @Schema(description = "목표 체중 (단위: kg)", example = "68.5")
     private Double targetWeight;
 
+    @Schema(description = "현재 체중 (단위: kg)", example = "75.0")
+    private Double currentWeight;
+
     @Schema(description = "다이어트 경험 여부", example = "true")
     private boolean hasDietExperience;
 

@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.example.kuit_kac.domain.user.model.UserPrincipal;
 import org.example.kuit_kac.domain.user.service.UserService;
 import org.example.kuit_kac.domain.user_information.dto.OnboardingRequest;
+import org.example.kuit_kac.domain.user_information.dto.OnboardingResponse;
 import org.example.kuit_kac.domain.user_information.service.OnboardingService;
 import org.example.kuit_kac.global.util.JwtProvider;
 import org.example.kuit_kac.global.util.dev.DevAutofillProperties;
@@ -28,7 +29,7 @@ public class OnboardingController {
     private final DevAutofillProperties autofill; // ← 주입
 
     @PostMapping
-    public ResponseEntity<Map<String, Object>> onboarding(
+    public ResponseEntity<OnboardingResponse> onboarding(
             @AuthenticationPrincipal UserPrincipal principal,
             @RequestHeader(value = "Authorization", required = false) String bearer,
             @RequestBody @Valid OnboardingRequest req,
@@ -36,17 +37,17 @@ public class OnboardingController {
     ) {
         final String kid = resolveKid(principal, bearer, httpRequest);
         if (kid == null || kid.isBlank()) {
-            return ResponseEntity.status(401).body(Map.of("error", "missing kid"));
+            return ResponseEntity.status(401).build();
         }
 
         // DEV 판단: dev 필터가 넣는 가짜 uid < 0 를 기준
         boolean isDev = principal != null && principal.getUserId() != null && principal.getUserId() < 0L;
 
-        Long userId = onboardingService.createUserWithOnboarding(
+        OnboardingResponse response = onboardingService.createUserWithOnboarding(
                 kid, req,
                 autofill.isEnabled() && isDev
         );
-        return ResponseEntity.ok(Map.of("userId", userId));
+        return ResponseEntity.ok(response);
     }
 
     private String resolveKid(UserPrincipal principal, String bearer, jakarta.servlet.http.HttpServletRequest req) {

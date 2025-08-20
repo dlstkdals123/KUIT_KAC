@@ -7,6 +7,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.kuit_kac.domain.user_information.service.OnboardingService;
+import org.example.kuit_kac.domain.user_information.service.OnboardingStatusService;
 import org.example.kuit_kac.global.util.JwtProvider;
 import org.example.kuit_kac.global.util.dev.DevWhitelistProperties;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +35,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
     private final JwtProvider jwtProvider;
     private final AuthLoginSuccessProperties props;
     private final AuthOnboardingProperties onboardingProperties;
-    private final OnboardingService onboardingService;
+    private final OnboardingStatusService onboardingStatusService;
     private final DevWhitelistProperties devWhitelistProperties;
 
     @Value("${debug.kid-auth.secret}")
@@ -93,7 +94,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         if (!onboardingProperties.isRequire()) {
             onboardingRequired = false;
         } else if (userId != null) {
-            onboardingRequired = onboardingService.isOnboardingRequired(userId);
+            onboardingRequired = onboardingStatusService.isOnboardingRequired(userId);
         } else {
             onboardingRequired = true;
         }
