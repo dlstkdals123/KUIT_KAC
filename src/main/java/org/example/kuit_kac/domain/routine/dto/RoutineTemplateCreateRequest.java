@@ -1,10 +1,25 @@
 package org.example.kuit_kac.domain.routine.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
-//@Schema(description = "나만의 운동 루틴 생성 요청 DTO")
-//public record RoutineTemplateCreateRequest(
-//        Long userId,
-//        String name
-//) {
-//}
+import java.util.List;
+
+@Schema(description = "나만의 운동 루틴 생성 요청 DTO")
+public record RoutineTemplateCreateRequest(
+    @Schema(description = "유저 ID", example = "1", requiredMode = Schema.RequiredMode.REQUIRED)
+    @NotNull(message = "유저 ID는 필수입니다.")
+    Long userId,
+
+    @Schema(description = "루틴 이름", example = "상체 루틴1", requiredMode = Schema.RequiredMode.REQUIRED)
+    @NotBlank(message = "루틴 이름은 필수입니다.")
+    String name,
+    
+    @Schema(description = "루틴 운동 목록 (중복 불가, 1개 이상)", requiredMode = Schema.RequiredMode.REQUIRED)
+    @NotNull(message = "루틴 운동 목록은 필수입니다.")
+    @Size(min = 1, message = "루틴 운동 목록은 한 개 이상 등록해야 합니다.")
+    List<@Valid RoutineExerciseCreateRequest> routineExercises
+) {}
