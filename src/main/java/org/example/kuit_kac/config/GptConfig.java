@@ -28,7 +28,7 @@ public class GptConfig {
     public final static double TEMPERATURE = 1.0;
     public final static double TOP_P = 1.0;
     public final static int MAX_TOKENS = 10000;
-    public final static Duration TIMEOUT = Duration.ofSeconds(30);
+    public final static Duration TIMEOUT = Duration.ofSeconds(60);
 
 
     @Value("${openai.api-key}")
