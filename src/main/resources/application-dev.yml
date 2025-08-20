@@ -60,7 +60,7 @@ debug:
     secret: ${KID_AUTH_SECRET}
     ts-skew-seconds: 300
     whitelist:
-      enabled: true
+      enabled: false
       kids:
         - ${ANDROID_MH}
         - ${ANDROID_SW}
@@ -69,7 +69,7 @@ debug:
         - ${SERVER_MASTER}
   onboarding:
     autofill:
-      enabled: true
+      enabled: false
       default-gender: MALE  # GenderType
       default-age: 25
       default-height: 170
