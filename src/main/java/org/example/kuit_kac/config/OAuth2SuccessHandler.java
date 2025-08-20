@@ -114,7 +114,6 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         // // TODO: 서버토큰 JSON 활성화 코드 넣는 자리
 
         // 딥링크 파라미터
-
         String target = props.getDeepLink();
         boolean useDeepLink = "DEEPLINK".equalsIgnoreCase(props.getMode().toString());
         if (!useDeepLink || target == null || target.isBlank()) {
@@ -163,8 +162,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         // 302 리다이렉트
         response.setStatus(HttpServletResponse.SC_FOUND);
         response.setHeader("Location", deep);
-//        response.setContentLength(0);
-        writeJson(response, access, refresh, expiresIn, state, onboardingRequired, kakaoId);
+        response.setContentLength(0);
     }
 
     // 민감값 미리보기 (앞 10글자 + 길이)
