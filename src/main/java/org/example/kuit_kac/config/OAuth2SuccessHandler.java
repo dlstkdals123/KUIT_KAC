@@ -128,14 +128,14 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
         String deep = UriComponentsBuilder
                 .fromUriString(target)
-                .queryParam(props.getAccessParam(), access)
-                .queryParam(props.getRefreshParam(), refresh)
-                .queryParam(props.getExpiresParam(), expiresIn)
+//                .queryParam(props.getAccessParam(), access)
+//                .queryParam(props.getRefreshParam(), refresh)
+//                .queryParam(props.getExpiresParam(), expiresIn)
                 .queryParam("kid", kakaoId)
-                .queryParam("ts", ts)
-                .queryParam("sig", sig)
-                .queryParam(props.getOnboardingRequired(), onboardingRequired)
-                .queryParam(props.getStateParam(), (state == null ? "" : state))
+//                .queryParam("ts", ts)
+//                .queryParam("sig", sig)
+//                .queryParam(props.getOnboardingRequired(), onboardingRequired)
+//                .queryParam(props.getStateParam(), (state == null ? "" : state))
                 .build().encode() // 인코딩 보존
                 .toUriString();
 
