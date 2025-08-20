@@ -4,6 +4,7 @@
   "age": 22,
   "height": 162,
   "targetWeight": 50.0,
+  "currentWeight": 65.0,
   "hasDietExperience": false,
   "dietFailReason": null,
   "appetiteType": "BIG",
