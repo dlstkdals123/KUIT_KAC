@@ -8,10 +8,10 @@ SET @admin_id = LAST_INSERT_ID();
 
 INSERT ignore INTO user_information
 (`user_id`, `has_diet_experience`, `diet_fail_reason`, `appetite_type`,
- `weekly_eating_out_count`, `eating_out_type`, `diet_velocity`)
-VALUES (1, FALSE, NULL, 'SMALL', '4번 이상', 'KOREAN', 'COACH'),
-       (2, TRUE, '야식', 'BIG', '1번 이하', 'FASTFOOD', 'ALL_IN'),
-       (@admin_id, TRUE, NULL, 'BIG', '0', 'KOREAN', 'ALL_IN');
+ `weekly_eating_out_count`, `eating_out_type`, `diet_velocity`, `activity`)
+VALUES (1, FALSE, NULL, 'SMALL', '4번 이상', 'KOREAN', 'COACH', 'VERY_HIGH'),
+       (2, TRUE, '야식', 'BIG', '1번 이하', 'FASTFOOD', 'ALL_IN', 'LOW'),
+       (@admin_id, TRUE, NULL, 'BIG', '0', 'KOREAN', 'ALL_IN', 'NORMAL');
 
 
 INSERT ignore INTO user_term_agreement (user_id, code, version, agreed, agreed_at)
