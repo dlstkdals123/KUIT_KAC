@@ -37,4 +37,8 @@ public class FoodService {
     public List<Aifood> getAifoodsByUserId(Long userId) {
         return aifoodRepository.findByUserId(userId);
     }
+
+    public List<Food> getFoodsAfter(Long id) {
+        return foodRepository.findByIdGreaterThanOrderByIdAsc(id);
+    }
 }
