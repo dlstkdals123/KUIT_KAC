@@ -98,6 +98,7 @@
 - **ERD**: <img width="931" height="488" alt="ERD diagram cut" src="https://github.com/user-attachments/assets/aa164ec6-1a9e-47d6-a52e-e20d047d49ce" />
 - **API 명세서**: (http://15.165.158.249:8080/swagger-ui/index.html#/%EC%8B%9D%EB%8B%A8%20%EA%B4%80%EB%A6%AC/createRecordDiet)
 - **아키텍처 다이어그램**: 
-<img width="2792" height="1914" alt="wmremove-transformed (3)" src="https://github.com/user-attachments/assets/c6dbad3f-67dd-412c-929b-e43faab21499" />
+<img width="2792" height="1812" alt="image" src="https://github.com/user-attachments/assets/cfcacf04-937f-481c-9f79-b3efc96fdbb8" />
+
 
 
