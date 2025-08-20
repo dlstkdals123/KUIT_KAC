@@ -47,40 +47,27 @@ public class HomeSummaryService {
         TimeRange timeRange = TimeRange.getTodayTimeRange();
         LocalDateTime startOfDay = timeRange.start();
         LocalDateTime endOfDay = timeRange.end();
-        log.info("startOfDay: " + startOfDay);
         // 날짜정보로 식단기록 가져오기
         List<DietFood> dietFoods = dietFoodRepository.findByDietUserIdAndDietTimeBetween(userId, startOfDay, endOfDay);
 
-        log.info("dietFoods {}", dietFoods);
         // 오늘 섭취 칼로리 계산
         double totalKCalorie = 0;
         for (DietFood dietFood : dietFoods) {
             Food food = dietFood.getFood();
             double quantity = dietFood.getQuantity(); // 양 가져오기
-            log.info("quantity: {}", quantity);
             double unitCalorie = food.getCalorie(); // 단위당 칼로리 가져오기
-            log.info("unitCalori: {}", unitCalorie);
             totalKCalorie += quantity * unitCalorie;
         }
-        log.info("totalCalorie: " + totalKCalorie);
 
         double currentWeight = weightService.getLatestWeightByUserId(userId).getWeight();
-        // 1MET : 1*(3.5kg * min)=air(ml)
-        // air(L)*5=kcal
-        // 런닝 계산 예시(10 MET, 몸무게:70kg, 시간: 60분)
-//        10*(3.5*70*60) = 147,000(ml)
-//                147(L)L*5 = 735kcal
 
         // 오늘 소모 운동칼로리 계산
         double exerciseKCalorie = 0;
         exerciseKCalorie = getExerciseKCalorie(userId, startOfDay, endOfDay, exerciseKCalorie, currentWeight);
 
-        log.info("[HomeSummaryService] {}", exerciseKCalorie);
         // 일일섭취목표 계산
         double dailyKCalorieGoal = calculateDailyKCalorieGoal(userId); // 일일섭취목표
-        log.info("dailyKcalGoal: " + dailyKCalorieGoal);
         double remainingKCalorie = dailyKCalorieGoal - totalKCalorie + exerciseKCalorie;
-        log.info("remainingKCalorie: " + remainingKCalorie);
 
         return new HomeSummaryResponse(
                 dailyKCalorieGoal, // 일일섭취목표
@@ -129,13 +116,10 @@ public class HomeSummaryService {
 
         //기초대사량 계산
         double bmr = user.getBMR(weightValue);
-        log.info("bmr = {}", bmr);
         // 목표까지 감량해야 할 몸무게
         double TargetWeightLoss = weightValue - user.getTargetWeight();
         int dietDays = userInfo.getDietVelocity().getPeriodInDays(); // 다이어트기간 '일'단위로 계산
-        log.info("dietDays = {}", dietDays);
         double dailyDeficit = (TargetWeightLoss * 7700) / dietDays; // 감량칼로리 / 다이어트기간
-        log.info("dailyDeficit = {}", dailyDeficit);
-        return bmr + dailyDeficit;
+        return bmr - dailyDeficit;
     }
 }
