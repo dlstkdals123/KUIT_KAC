@@ -35,28 +35,6 @@ public class RoutineService {
         return routineRepository.findByUserIdAndRoutineType(userId, routineType);
     }
 
-    // @Transactional
-    // public Diet createTemplateDiet(User user, String name, List<DietFoodCreateRequest> foods) {
-    //     // diet_type = TEMPLATE, diet_entry_type = null
-    //     if (foods == null || foods.isEmpty()) {
-    //         throw new CustomException(ErrorCode.DIET_ENTRY_TYPE_MUST_HAVE_FOOD);
-    //     }
-    //     Diet diet = new Diet(user, name, DietType.TEMPLATE, null);
-    //     Diet saved = dietRepository.save(diet);
-    //     List<DietFood> dietFoods = dietFoodService.createDietFoodsWithDietTime(foods, saved, null);
-    //     dietFoods.forEach(saved::addDietFood);
-    //     return saved;
-    // }
-
-    // @Transactional
-    // public Diet updateTemplateDiet(Diet diet, String name, List<DietFoodCreateRequest> foods) {
-    //     diet.setName(name);
-    //     diet.getDietFoods().clear();
-    //     List<DietFood> dietFoods = dietFoodService.createDietFoodsWithDietTime(foods, diet, null);
-    //     dietFoods.forEach(diet::addDietFood);
-    //     return dietRepository.save(diet);
-    // }
-
     @Transactional
     public Routine createGeneralRoutine(User user, String name, List<RoutineExerciseCreateRequest> routineExercises) {
         Routine routine = new Routine(user, name, RoutineType.RECORD);
@@ -87,15 +65,31 @@ public class RoutineService {
     }
 
     @Transactional
+    public Routine createTemplateRoutine(User user, String name, List<RoutineExerciseCreateRequest> routineExercises) {
+        Routine routine = new Routine(user, name, RoutineType.TEMPLATE);
+        Routine saved = routineRepository.save(routine);
+        
+        List<RoutineExercise> savedRoutineExercises = routineExerciseService.createRoutineExercises(routine, routineExercises);
+        savedRoutineExercises.forEach(saved::addRoutineExercise);
+
+        return saved;
+    }
+
+    @Transactional
+    public Routine updateTemplateRoutine(Routine routine, String name, List<RoutineExerciseCreateRequest> routineExercises) {
+        routine.setName(name);
+        routine.getRoutineExercises().clear();
+        List<RoutineExercise> savedRoutineExercises = routineExerciseService.createRoutineExercises(routine, routineExercises);
+        savedRoutineExercises.forEach(routine::addRoutineExercise);
+        return routineRepository.save(routine);
+    }
+
+    @Transactional
     public void deleteRoutine(Routine routine) {
         routineExerciseService.deleteRoutineExercises(routine.getRoutineExercises());
         routineRepository.delete(routine);
     }
-
-    private boolean isTemplateType(RoutineType routineType) {
-        return routineType == RoutineType.TEMPLATE;
-    }
-
+    
     @Transactional(readOnly = true)
     public Routine getRoutineById(Long routineId) {
         return routineRepository.findById(routineId).orElseThrow(() -> new CustomException(ErrorCode.ROUTINE_NOT_FOUND));
