@@ -74,9 +74,9 @@ public class User {
 
     public double getBMR(double weight) {
         if (gender == GenderType.MALE) {
-            return (10 * weight + 6.25 * height - 5 * age + 5);
+            return 66.47 + (13.75 * weight) + (5 * height) - (6.76 * age);
         } else {
-            return (10 * weight + 6.25 * height - 5 * age - 161);
+            return 655.1 + (9.56 * weight) + (1.85 * height) - (4.68 * age);
         }
     }
 }
