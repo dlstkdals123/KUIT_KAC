@@ -2,19 +2,20 @@ package org.example.kuit_kac.domain.user_information.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.example.kuit_kac.domain.user_information.model.DietVelocity;
-import org.example.kuit_kac.domain.user_information.model.UserInformation;
+import org.example.kuit_kac.domain.user.model.User;
 
 @Getter
 @AllArgsConstructor
 public class OnboardingResponse {
     private long userId;
-    private DietVelocity dietVelocity;
+    private int bmr;
+    private int dailyDeficit;
 
-    public static OnboardingResponse from(UserInformation info) {
-        return new OnboardingResponse(
-                info.getUserId(),
-                info.getDietVelocity()
-        );
+    public static OnboardingResponse from(User user, double bmr, double dailyDeficit) {
+        return new OnboardingResponse(user.getId(), (int) bmr, (int) dailyDeficit);
+    }
+
+    public static OnboardingResponse from(long userId, double bmr, double dailyDeficit) {
+        return new OnboardingResponse(userId, (int) bmr, (int) dailyDeficit);
     }
 }

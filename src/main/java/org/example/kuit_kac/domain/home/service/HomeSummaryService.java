@@ -6,18 +6,16 @@ import org.example.kuit_kac.domain.diet_food.model.DietFood;
 import org.example.kuit_kac.domain.diet_food.repository.DietFoodRepository;
 import org.example.kuit_kac.domain.food.model.Food;
 import org.example.kuit_kac.domain.home.dto.HomeSummaryResponse;
-import org.example.kuit_kac.domain.routine.model.Routine;
 import org.example.kuit_kac.domain.routine.model.RoutineDetail;
 import org.example.kuit_kac.domain.routine.model.RoutineExercise;
 import org.example.kuit_kac.domain.routine.model.RoutineType;
 import org.example.kuit_kac.domain.routine.repository.RoutineDetailRepository;
 import org.example.kuit_kac.domain.routine.repository.RoutineExerciseRepository;
 import org.example.kuit_kac.domain.routine.repository.RoutineRepository;
-import org.example.kuit_kac.domain.routine.service.RoutineService;
-import org.example.kuit_kac.domain.user.model.GenderType;
 import org.example.kuit_kac.domain.user.model.User;
 import org.example.kuit_kac.domain.user.service.UserService;
 import org.example.kuit_kac.domain.user_information.model.UserInformation;
+import org.example.kuit_kac.domain.user_information.repository.UserInfoRepository;
 import org.example.kuit_kac.domain.user_information.service.OnboardingService;
 import org.example.kuit_kac.global.util.TimeRange;
 import org.springframework.stereotype.Service;
@@ -33,11 +31,11 @@ import java.util.List;
 public class HomeSummaryService {
     private final DietFoodRepository dietFoodRepository;
     private final UserService userService;
-    private final OnboardingService onboardingService;
+    //    private final OnboardingService onboardingService;
+    private final UserInfoRepository userInfoRepository;
     private final WeightService weightService;
     private final RoutineRepository routineRepository;
     private final RoutineExerciseRepository reRepository;
-    private final RoutineDetailRepository routineDetailRepository;
 
     // 하루 섭취 영양소 요약
     @Transactional(readOnly = true)
@@ -110,17 +108,23 @@ public class HomeSummaryService {
     public double calculateDailyKCalorieGoal(Long userId) {
         // 일일섭취목표 : BMR - 일일감량목표칼로리
 
+        //기초대사량 계산
         User user = userService.getUserById(userId);
-        UserInformation userInfo = onboardingService.getUserInformationByUserId(userId);
+        UserInformation userInfo = getUserInformationByUserId(userId);
         double weightValue = weightService.getLatestWeightByUserId(userId).getWeight();
 
-        //기초대사량 계산
         double activityConstant = userInfo.getActivity().getActivityConstant();
-        double bmr = user.getBMR(weightValue) * activityConstant;
+        double bmrWithActivity = user.getBMR(weightValue) * activityConstant;
         // 목표까지 감량해야 할 몸무게
-        double TargetWeightLoss = weightValue - user.getTargetWeight();
+        double TargetWeightLoss = Math.max(weightValue - user.getTargetWeight(), 0);
         int dietDays = userInfo.getDietVelocity().getPeriodInDays(); // 다이어트기간 '일'단위로 계산
         double dailyDeficit = (TargetWeightLoss * 7700) / dietDays; // 감량칼로리 / 다이어트기간
-        return bmr - dailyDeficit;
+        return bmrWithActivity - dailyDeficit;
+    }
+
+    @Transactional(readOnly = true)
+    public UserInformation getUserInformationByUserId(long userId) {
+        return userInfoRepository.findByUserId(userId)
+                .orElseThrow(() -> new RuntimeException("사용자 정보가 없습니다."));
     }
 }

@@ -14,4 +14,5 @@ public class DevAutofillProperties {
     private Integer defaultAge = 25;
     private Integer defaultHeight = 170;
     private Double defaultTargetWeight = 65.0;
+    private Double defaultCurrentWeight = 75.0;
 }
