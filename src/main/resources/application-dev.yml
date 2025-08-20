@@ -66,9 +66,7 @@ debug:
         - ${ANDROID_SW}
         - ${ANDROID_JH}
         - ${SERVER_YR}
-        - "1323525"
-    success:
-      log-deeplink-full: true
+        - ${SERVER_MASTER}
   onboarding:
     autofill:
       enabled: true
