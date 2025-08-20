@@ -10,6 +10,7 @@
   "weeklyEatingOutCount": "1-2",
   "eatingOutType": "KOREAN",
   "dietVelocity": "YUMYUM",
+  "activity": "VERY_HIGH",
   "agreements": [
     {"code":"SERVICE_TOS","version":"v1.0.0","agreed":true},
     {"code":"PRIVACY","version":"v1.0.0","agreed":true},
