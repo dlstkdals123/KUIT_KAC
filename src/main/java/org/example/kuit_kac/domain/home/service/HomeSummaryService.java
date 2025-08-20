@@ -1,12 +1,18 @@
 package org.example.kuit_kac.domain.home.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.example.kuit_kac.domain.diet_food.model.DietFood;
 import org.example.kuit_kac.domain.diet_food.repository.DietFoodRepository;
 import org.example.kuit_kac.domain.food.model.Food;
 import org.example.kuit_kac.domain.home.dto.HomeSummaryResponse;
 import org.example.kuit_kac.domain.routine.model.Routine;
+import org.example.kuit_kac.domain.routine.model.RoutineDetail;
+import org.example.kuit_kac.domain.routine.model.RoutineExercise;
 import org.example.kuit_kac.domain.routine.model.RoutineType;
+import org.example.kuit_kac.domain.routine.repository.RoutineDetailRepository;
+import org.example.kuit_kac.domain.routine.repository.RoutineExerciseRepository;
+import org.example.kuit_kac.domain.routine.repository.RoutineRepository;
 import org.example.kuit_kac.domain.routine.service.RoutineService;
 import org.example.kuit_kac.domain.user.model.GenderType;
 import org.example.kuit_kac.domain.user.model.User;
@@ -18,16 +24,20 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class HomeSummaryService {
     private final DietFoodRepository dietFoodRepository;
     private final UserService userService;
     private final OnboardingService onboardingService;
     private final WeightService weightService;
-    private final RoutineService routineService;
+    private final RoutineRepository routineRepository;
+    private final RoutineExerciseRepository reRepository;
+    private final RoutineDetailRepository routineDetailRepository;
 
     // 하루 섭취 영양소 요약
     @Transactional(readOnly = true)
@@ -37,38 +47,76 @@ public class HomeSummaryService {
         TimeRange timeRange = TimeRange.getTodayTimeRange();
         LocalDateTime startOfDay = timeRange.start();
         LocalDateTime endOfDay = timeRange.end();
-
+        log.info("startOfDay: " + startOfDay);
         // 날짜정보로 식단기록 가져오기
         List<DietFood> dietFoods = dietFoodRepository.findByDietUserIdAndDietTimeBetween(userId, startOfDay, endOfDay);
 
+        log.info("dietFoods {}", dietFoods);
         // 오늘 섭취 칼로리 계산
         double totalKCalorie = 0;
         for (DietFood dietFood : dietFoods) {
             Food food = dietFood.getFood();
             double quantity = dietFood.getQuantity(); // 양 가져오기
+            log.info("quantity: {}", quantity);
             double unitCalorie = food.getCalorie(); // 단위당 칼로리 가져오기
+            log.info("unitCalori: {}", unitCalorie);
             totalKCalorie += quantity * unitCalorie;
         }
+        log.info("totalCalorie: " + totalKCalorie);
 
         double currentWeight = weightService.getLatestWeightByUserId(userId).getWeight();
-        // TODO 운동소모 칼로리 더미데이터 300.0kcal
-
-        // 날짜정보로 운동기록 가져오기
-        List<Routine> exerciseList = routineService.getRoutinesByUserIdBetween(userId, RoutineType.RECORD, startOfDay, endOfDay);
+        // 1MET : 1*(3.5kg * min)=air(ml)
+        // air(L)*5=kcal
+        // 런닝 계산 예시(10 MET, 몸무게:70kg, 시간: 60분)
+//        10*(3.5*70*60) = 147,000(ml)
+//                147(L)L*5 = 735kcal
 
         // 오늘 소모 운동칼로리 계산
         double exerciseKCalorie = 0;
-//        for (Ro)
+        exerciseKCalorie = getExerciseKCalorie(userId, startOfDay, endOfDay, exerciseKCalorie, currentWeight);
 
-
-        double remainingKCalorie = totalKCalorie - 300.0;
+        log.info("[HomeSummaryService] {}", exerciseKCalorie);
+        // 일일섭취목표 계산
+        double dailyKCalorieGoal = calculateDailyKCalorieGoal(userId); // 일일섭취목표
+        log.info("dailyKcalGoal: " + dailyKCalorieGoal);
+        double remainingKCalorie = dailyKCalorieGoal - totalKCalorie + exerciseKCalorie;
+        log.info("remainingKCalorie: " + remainingKCalorie);
 
         return new HomeSummaryResponse(
-                calculateDailyKCalorieGoal(userId), // 일일섭취목표
+                dailyKCalorieGoal, // 일일섭취목표
                 totalKCalorie,
                 currentWeight,
                 remainingKCalorie
         );
+    }
+
+    private double getExerciseKCalorie(Long userId, LocalDateTime startOfDay, LocalDateTime endOfDay, double exerciseKCalorie, double currentWeight) {
+        List<Long> routineIds = routineRepository.findIdsByUserIdAndRoutineTypeAndCreatedAtBetween(userId, RoutineType.RECORD, startOfDay, endOfDay);
+        if (!routineIds.isEmpty()) {
+            List<RoutineExercise> rexList = new ArrayList<>();
+            for (Long routineId : routineIds) {
+                rexList = reRepository.findAllByRoutineId(routineId);
+            }
+
+            for (RoutineExercise re : rexList) {
+                double met = (re.getExercise() != null && re.getExercise().getMetValue() != null)
+                        ? re.getExercise().getMetValue() : 0.0;
+
+                int minutes = 0;
+                RoutineDetail detail = re.getRoutineDetail();
+                if (detail != null && detail.getTime() != null) {
+                    minutes = Math.max(0, detail.getTime());
+                }
+
+                exerciseKCalorie += kcalFromMet(met, currentWeight, minutes);
+            }
+        }
+        return exerciseKCalorie;
+    }
+
+    private double kcalFromMet(double met, double currentWeight, int minutes) {
+        // kcal = (MET * 3.5 * 체중(kg) / 200) * 운동시간(분)
+        return (met * 3.5 * currentWeight / 200.0) * minutes;
     }
 
     // 일일섭취목표 칼로리 계산
@@ -81,12 +129,13 @@ public class HomeSummaryService {
 
         //기초대사량 계산
         double bmr = user.getBMR(weightValue);
+        log.info("bmr = {}", bmr);
         // 목표까지 감량해야 할 몸무게
         double TargetWeightLoss = weightValue - user.getTargetWeight();
         int dietDays = userInfo.getDietVelocity().getPeriodInDays(); // 다이어트기간 '일'단위로 계산
-
+        log.info("dietDays = {}", dietDays);
         double dailyDeficit = (TargetWeightLoss * 7700) / dietDays; // 감량칼로리 / 다이어트기간
-
-        return bmr - dailyDeficit;
+        log.info("dailyDeficit = {}", dailyDeficit);
+        return bmr + dailyDeficit;
     }
 }

@@ -48,7 +48,8 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         // 1) 사용자 정보
         OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
 
-        Map<String, Object> attrs = oAuth2User.getAttributes(); // kakaoId: attributes에 "kakaoId"가 있으면 사용, 없으면 카카오 원본 "id", 둘 다 없으면 getName()
+        Map<String, Object> attrs = oAuth2User.getAttributes();
+        // kakaoId: attributes에 "kakaoId"가 있으면 사용, 없으면 카카오 원본 "id", 둘 다 없으면 getName()
         String kakaoId = null;
         Object kidAttr = attrs.get("kakaoId");
         if (kidAttr == null)
@@ -202,4 +203,5 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         sb.append("}");
         response.getWriter().write(sb.toString());
     }
+
 }
