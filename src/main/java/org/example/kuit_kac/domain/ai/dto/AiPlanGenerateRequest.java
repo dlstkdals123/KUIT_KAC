@@ -1,4 +1,4 @@
-package org.example.kuit_kac.domain.diet.dto;
+package org.example.kuit_kac.domain.ai.dto;
 
 import java.util.List;
 

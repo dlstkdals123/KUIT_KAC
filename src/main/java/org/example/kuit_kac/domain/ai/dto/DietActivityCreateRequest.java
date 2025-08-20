@@ -1,4 +1,4 @@
-package org.example.kuit_kac.domain.diet.dto;
+package org.example.kuit_kac.domain.ai.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
