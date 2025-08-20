@@ -5,7 +5,6 @@ import lombok.RequiredArgsConstructor;
 import org.example.kuit_kac.domain.diet.model.Diet;
 import org.example.kuit_kac.domain.diet.model.DietEntryType;
 import org.example.kuit_kac.domain.diet.repository.DietRepository;
-import org.example.kuit_kac.domain.diet_food.model.DietAifood;
 import org.example.kuit_kac.domain.diet_food.model.DietFood;
 import org.example.kuit_kac.domain.diet_food.service.DietFoodService;
 import org.example.kuit_kac.domain.user.model.User;
@@ -19,17 +18,11 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.example.kuit_kac.exception.CustomException;
 import org.example.kuit_kac.exception.ErrorCode;
-import org.example.kuit_kac.domain.diet_food.dto.DietAifoodCreateRequest;
 import org.example.kuit_kac.domain.diet_food.dto.DietFoodCreateRequest;
 import org.example.kuit_kac.domain.diet_food.dto.DietFoodSnackCreateRequest;
-import org.example.kuit_kac.domain.food.model.Aifood;
-import org.example.kuit_kac.domain.food.service.FoodService;
-import org.example.kuit_kac.domain.diet_food.service.DietAifoodService;
 
 @Service
 @RequiredArgsConstructor
@@ -37,8 +30,6 @@ public class DietService {
 
     private final DietRepository dietRepository;
     private final DietFoodService dietFoodService;
-    private final DietAifoodService dietAifoodService;
-    private final FoodService foodService;
 
     @Transactional(readOnly = true)
     public List<Diet> getDietsByUserId(Long userId, DietEntryType dietEntryType) {
@@ -192,21 +183,29 @@ public class DietService {
     }
 
     @Transactional
-    public Diet createAiPlanDiet(User user, String dietTypeStr, LocalDate date, List<DietAifoodCreateRequest> aiDietFoods) {
-        Map<DietAifoodCreateRequest, List<Aifood>> aifoodMap = aiDietFoods.stream()
-                .collect(Collectors.toMap(
-                    dietAifood -> dietAifood,
-                    dietAifood -> dietAifood.aiFoods().stream()
-                            .map(aifood -> foodService.createAifood(user, aifood))
-                            .collect(Collectors.toList())
-                ));
-
+    public Diet createAiPlanDiet(User user, String dietTypeStr, LocalDate date, List<DietFoodCreateRequest> foods) {
         LocalDateTime dietDateTime = TimeGenerator.getDateStart(date);
         Diet diet = new Diet(user, null, date, DietType.getDietType(dietTypeStr), DietEntryType.AI_PLAN);
         Diet saved = dietRepository.save(diet);
-        List<DietAifood> dietAifoods = dietAifoodService.createAiDietFoodsWithDietTime(user, aifoodMap, saved, dietDateTime);
-        dietAifoods.forEach(saved::addDietAifood);
-        return dietRepository.save(saved);
+        List<DietFood> dietFoods = dietFoodService.createDietFoodsWithDietTime(foods, saved, dietDateTime);
+        dietFoods.forEach(saved::addDietFood);
+        return saved;
+    }
+
+    @Transactional
+    public Diet createActivityDiet(User user, String dietTypeStr, LocalDate date, String dietEntryTypeStr) {
+        DietEntryType dietEntryType = DietEntryType.getDietEntryType(dietEntryTypeStr);
+        if (dietEntryType == null) {
+            throw new CustomException(ErrorCode.DIET_ENTRY_TYPE_INVALID);
+        }
+
+        DietType dietType = DietType.getDietType(dietTypeStr);
+        if (dietType == null || isTemplateDietType(dietType)) {
+            throw new CustomException(ErrorCode.DIET_TYPE_INVALID);
+        }
+
+        Diet diet = new Diet(user, null, date, dietType, dietEntryType);
+        return dietRepository.save(diet);
     }
 
     @Transactional
