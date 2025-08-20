@@ -2,7 +2,7 @@ package org.example.kuit_kac.domain.user_information.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.example.kuit_kac.domain.home.model.DietVelocity;
+import org.example.kuit_kac.domain.user_information.model.DietVelocity;
 import org.example.kuit_kac.domain.user_information.model.UserInformation;
 
 @Getter
