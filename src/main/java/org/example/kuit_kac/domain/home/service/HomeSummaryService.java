@@ -5,6 +5,9 @@ import org.example.kuit_kac.domain.diet_food.model.DietFood;
 import org.example.kuit_kac.domain.diet_food.repository.DietFoodRepository;
 import org.example.kuit_kac.domain.food.model.Food;
 import org.example.kuit_kac.domain.home.dto.HomeSummaryResponse;
+import org.example.kuit_kac.domain.routine.model.Routine;
+import org.example.kuit_kac.domain.routine.model.RoutineType;
+import org.example.kuit_kac.domain.routine.service.RoutineService;
 import org.example.kuit_kac.domain.user.model.GenderType;
 import org.example.kuit_kac.domain.user.model.User;
 import org.example.kuit_kac.domain.user.service.UserService;
@@ -19,12 +22,12 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-// TODO: 컨트롤러로 로직분리
 public class HomeSummaryService {
     private final DietFoodRepository dietFoodRepository;
     private final UserService userService;
     private final OnboardingService onboardingService;
     private final WeightService weightService;
+    private final RoutineService routineService;
 
     // 하루 섭취 영양소 요약
     @Transactional(readOnly = true)
@@ -49,6 +52,15 @@ public class HomeSummaryService {
 
         double currentWeight = weightService.getLatestWeightByUserId(userId).getWeight();
         // TODO 운동소모 칼로리 더미데이터 300.0kcal
+
+        // 날짜정보로 운동기록 가져오기
+        List<Routine> exerciseList = routineService.getRoutinesByUserIdBetween(userId, RoutineType.RECORD, startOfDay, endOfDay);
+
+        // 오늘 소모 운동칼로리 계산
+        double exerciseKCalorie = 0;
+//        for (Ro)
+
+
         double remainingKCalorie = totalKCalorie - 300.0;
 
         return new HomeSummaryResponse(
