@@ -9,7 +9,6 @@ import org.example.kuit_kac.domain.home.dto.HomeSummaryResponse;
 import org.example.kuit_kac.domain.routine.model.RoutineDetail;
 import org.example.kuit_kac.domain.routine.model.RoutineExercise;
 import org.example.kuit_kac.domain.routine.model.RoutineType;
-import org.example.kuit_kac.domain.routine.repository.RoutineDetailRepository;
 import org.example.kuit_kac.domain.routine.repository.RoutineExerciseRepository;
 import org.example.kuit_kac.domain.routine.repository.RoutineRepository;
 import org.example.kuit_kac.domain.user.model.User;
@@ -17,6 +16,7 @@ import org.example.kuit_kac.domain.user.service.UserService;
 import org.example.kuit_kac.domain.user_information.model.UserInformation;
 import org.example.kuit_kac.domain.user_information.repository.UserInfoRepository;
 import org.example.kuit_kac.global.util.TimeRange;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
+@Component
 @RequiredArgsConstructor
 @Slf4j
 public class HomeSummaryService {
@@ -108,7 +109,8 @@ public class HomeSummaryService {
 
         //기초대사량 계산
         User user = userService.getUserById(userId);
-        UserInformation userInfo = getUserInformationByUserId(userId);
+        UserInformation userInfo = userInfoRepository.findByUserId(userId)
+                .orElseThrow(() -> new RuntimeException("사용자 정보가 없습니다."));
         double weightValue = weightService.getLatestWeightByUserId(userId).getWeight();
 
         double activityConstant = userInfo.getActivity().getActivityConstant();
@@ -120,9 +122,4 @@ public class HomeSummaryService {
         return bmrWithActivity - dailyDeficit;
     }
 
-    @Transactional(readOnly = true)
-    public UserInformation getUserInformationByUserId(long userId) {
-        return userInfoRepository.findByUserId(userId)
-                .orElseThrow(() -> new RuntimeException("사용자 정보가 없습니다."));
-    }
 }
