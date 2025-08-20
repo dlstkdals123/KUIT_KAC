@@ -18,4 +18,11 @@ public record DietFoodCreateRequest(
     @DecimalMin(value = "0.1", message = "음식 섭취량은 0.1 이상이어야 합니다.")
     @DecimalMax(value = "100", message = "음식 섭취량은 100 이하이어야 합니다.")
     double quantity
-) {} 
+) {
+    public static DietFoodCreateRequest from(Long foodId, double quantity) {
+        return new DietFoodCreateRequest(
+            foodId,
+            quantity
+        );
+    }
+} 
