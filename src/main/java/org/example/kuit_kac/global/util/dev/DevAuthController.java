@@ -23,6 +23,7 @@ public class DevAuthController {
     private final DevAuthService devAuthService;
 
     // 예: GET /dev-auth/mint?uid=3&kid=4384440657
+    @Hidden
     @GetMapping("/mint")
     public Map<String, Object> mint(@RequestParam(required = false) Long uid,
                                     @RequestParam(required = true) String kid) {
