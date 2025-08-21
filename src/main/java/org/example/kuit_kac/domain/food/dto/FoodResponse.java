@@ -24,7 +24,7 @@ public class FoodResponse {
     @Schema(description = "음식의 단위 수량", example = "1", requiredMode = Schema.RequiredMode.REQUIRED)
     private Long unitNum;
 
-    @Schema(description = "음식의 타입", example = "밥류", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(description = "음식의 타입", example = "NORMAL_GRAIN_AND_TUBER", requiredMode = Schema.RequiredMode.REQUIRED)
     private String foodType;
 
     @Schema(description = "음식의 가공식품 여부 (가능한 값: true(가공식품), false(일반식품))", example = "false", requiredMode = Schema.RequiredMode.REQUIRED)
@@ -60,7 +60,7 @@ public class FoodResponse {
             food.getName(), 
             food.getUnitType(),
             food.getUnitNum(),
-            food.getFoodType().getKoreanName(), 
+            food.getFoodType().getValue(), 
             food.getIsProcessedFood(), 
             food.getCalorie(),
             food.getCarbohydrate(),
