@@ -54,6 +54,9 @@ logging:
     org.hibernate.SQL: INFO
     org.hibernate.type.descriptor.sql.BasicBinder: OFF
     com.zaxxer.hikari: INFO
+    org.springframework.security: DEBUG
+    org.example.kuit_kac: DEBUG
+    org.springframework.security.method: TRACE
 
 debug:
   kid-auth:
@@ -71,7 +74,7 @@ debug:
   onboarding:
     autofill:
       enabled: false
-      default-gender: MALE  # GenderType
+      default-gender: MALE # GenderType
       default-age: 25
       default-height: 170
       default-target-weight: 65.0
