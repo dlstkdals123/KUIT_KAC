@@ -23,7 +23,7 @@ public record AiGenerateResponse(
         boolean is_processed_food,
         
         @Schema(description = "칼로리", example = "200")
-        int kcal,
+        double kcal,
         
         @Schema(description = "단백질(g)", example = "6.0")
         double protein,
@@ -41,9 +41,9 @@ public record AiGenerateResponse(
         String unit_type,
         
         @Schema(description = "단위 수량", example = "400")
-        int unit_num,
+        Long unit_num,
         
         @Schema(description = "점수", example = "1")
-        int score
+        Integer score
     ) {}
 }

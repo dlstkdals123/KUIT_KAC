@@ -1,5 +1,6 @@
 package org.example.kuit_kac.global.util.dev;
 
+import io.swagger.v3.oas.annotations.Hidden;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.kuit_kac.exception.CustomException;
@@ -44,6 +45,7 @@ public class DevAuthController {
         }
     }
 
+    @Hidden
     // kid만으로 발급(온보딩 전 시나리오) — uid는 null
     @GetMapping("/mint-anon")
     public Map<String, String> mintAnon(@RequestParam String kid) {

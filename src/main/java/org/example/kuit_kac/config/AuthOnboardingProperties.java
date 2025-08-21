@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 @Getter
 @Setter
@@ -13,4 +12,5 @@ import org.springframework.stereotype.Service;
 public class AuthOnboardingProperties {
     /** 필수 약관 강제 여부 */
     private boolean require = true;
-    public boolean isRequire() { return require; }}
+    public boolean isRequire() { return require; }
+}

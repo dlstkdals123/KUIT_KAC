@@ -7,7 +7,7 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Max;
 import lombok.Getter;
 
-public record AifoodCreateRequest(
+public record FoodCreateRequest(
     @Getter
     @Schema(description = "음식 이름", example = "현미죽")
     @NotNull(message = "음식 이름은 필수입니다")

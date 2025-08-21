@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
+import org.example.kuit_kac.domain.ai.dto.AiGenerateResponse.FoodItem;
+
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
@@ -66,5 +68,23 @@ public class Food {
     @PreUpdate
     protected void onUpdate() {
         this.updatedAt = LocalDateTime.now();
+    }
+
+    public Food(String name, String unitType, Long unitNum, FoodType foodType, Boolean isProcessedFood, Double calorie, Double carbohydrate, Double protein, Double fat, Double sugar, Integer score) {
+        this.name = name;
+        this.unitType = unitType;
+        this.unitNum = unitNum;
+        this.foodType = foodType;
+        this.isProcessedFood = isProcessedFood;
+        this.calorie = calorie;
+        this.carbohydrate = carbohydrate;
+        this.protein = protein;
+        this.fat = fat;
+        this.sugar = sugar;
+        this.score = score;
+    }
+
+    public static Food from(FoodItem foodItem) {
+        return new Food(foodItem.name(), foodItem.unit_type(), foodItem.unit_num(), FoodType.getFoodType(foodItem.food_type()), foodItem.is_processed_food(), foodItem.kcal(), foodItem.carb(), foodItem.protein(), foodItem.fat(), foodItem.sugar(), foodItem.score());
     }
 }

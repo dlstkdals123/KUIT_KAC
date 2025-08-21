@@ -26,6 +26,7 @@ services:
       - SERVER_YR=${SERVER_YR}
       - SERVER_MASTER=${SERVER_MASTER}
       - KID_AUTH_SECRET=${KID_AUTH_SECRET}
+      - DEFAULT_FOOD_SIZE=${DEFAULT_FOOD_SIZE}
     networks:
       - temp
 

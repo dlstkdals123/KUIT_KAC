@@ -7,9 +7,7 @@
 # TRUNCATE TABLE routine;
 # TRUNCATE TABLE exercise;
 #
-# TRUNCATE TABLE diet_aifood;
 # TRUNCATE TABLE diet_food;
-# TRUNCATE TABLE aifood;
 # TRUNCATE TABLE food;
 # TRUNCATE TABLE diet;
 #
@@ -25,7 +23,7 @@
 INSERT IGNORE INTO user (`nickname`, `kakao_id`, `gender`, `age`, `height`, `target_weight`)
 VALUES ('user4', '0000000001', 'MALE', 30, 175, 70.5),
        ('user5', '0000000002', 'FEMALE', 25, 163, 55.0),
-       ('admin@test', '9999999999', 'MALE', 29, 180, 70.0);;
+       ('admin@test', '9999999999', 'MALE', 29, 180, 70.0);
 
 SET @admin_id = LAST_INSERT_ID();
 

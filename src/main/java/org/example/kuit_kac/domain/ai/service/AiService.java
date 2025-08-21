@@ -12,7 +12,7 @@ import org.example.kuit_kac.domain.user.model.User;
 import org.example.kuit_kac.domain.user_information.service.UserInfoService;
 import org.example.kuit_kac.global.util.DateRange;
 import org.example.kuit_kac.domain.ai.dto.AiGenerateResponse;
-import org.example.kuit_kac.domain.diet.dto.AiPlanGenerateRequest;
+import org.example.kuit_kac.domain.ai.dto.AiPlanGenerateRequest;
 import org.example.kuit_kac.domain.diet.model.Diet;
 import org.example.kuit_kac.domain.diet.model.DietType;
 
@@ -28,7 +28,7 @@ import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
-public class AiDietService {
+public class AiService {
 
     private final UserInfoService userInfoService;
     private final WeightService weightService;

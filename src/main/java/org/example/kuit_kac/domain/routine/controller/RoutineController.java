@@ -62,17 +62,6 @@ public class RoutineController {
         return ResponseEntity.ok(responses);
     }
 
-//     @PostMapping("/template")
-//     @Operation(summary = "나만의 식단 생성", description = "유저 ID와 식단 이름, 음식을 입력하여 나만의 식단을 생성합니다.")
-//     public ResponseEntity<DietRecordProfileResponse> createTemplateDiet(
-//             @RequestBody @Valid DietTemplateCreateRequest request
-//     ) {
-//         User user = userService.getUserById(request.userId());
-//         Diet diet = dietService.createTemplateDiet(user, request.name(), request.foods());
-//         DietRecordProfileResponse response = DietRecordProfileResponse.from(diet);
-//         return ResponseEntity.ok(response);
-//     }
-
 //     @PutMapping("/template/{dietId}")
 //     @Operation(summary = "나만의 식단 수정", description = "식단 ID와 식단 이름, 음식을 입력하여 나만의 식단을 수정합니다.")
 //     public ResponseEntity<DietRecordProfileResponse> updateTemplateDiet(
@@ -83,16 +72,6 @@ public class RoutineController {
 //         dietService.updateTemplateDiet(diet, request.name(), request.foods());
 //         DietRecordProfileResponse response = DietRecordProfileResponse.from(diet);
 //         return ResponseEntity.ok(response);
-//     }
-
-//     @DeleteMapping("/template/{dietId}")
-//     @Operation(summary = "나만의 식단 삭제", description = "식단 ID를 입력하여 나만의 식단을 삭제합니다.")
-//     public ResponseEntity<Void> deleteTemplateDiet(
-//             @PathVariable("dietId") Long dietId
-//     ) {
-//         Diet diet = dietService.getDietById(dietId);
-//         dietService.deleteDiet(diet);
-//         return ResponseEntity.noContent().build();
 //     }
 
     @PostMapping("/records")
@@ -125,6 +104,29 @@ public class RoutineController {
     ) {
         User user = userService.getUserById(request.userId());
         Routine routine = routineService.createSimpleRoutine(user, request.aerobicDetail(), request.anaerobicDetail());
+        RoutineRecordProfileResponse response = RoutineRecordProfileResponse.from(routine);
+        return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/templates")
+    @Operation(summary = "나만의 운동 루틴 생성", description = "유저 ID와 루틴 이름, 루틴 운동을 입력하여 나만의 운동 루틴을 생성합니다.")
+    public ResponseEntity<RoutineRecordProfileResponse> createTemplateRoutine(
+            @RequestBody @Valid RoutineTemplateCreateRequest request
+    ) {
+        User user = userService.getUserById(request.userId());
+        Routine routine = routineService.createTemplateRoutine(user, request.name(), request.routineExercises());
+        RoutineRecordProfileResponse response = RoutineRecordProfileResponse.from(routine);
+        return ResponseEntity.ok(response);
+    }
+
+    @PutMapping("/templates/{routineId}")
+    @Operation(summary = "나만의 운동 루틴 수정", description = "루틴 ID와 루틴 이름, 루틴 운동을 입력하여 나만의 운동 루틴을 수정합니다.")
+    public ResponseEntity<RoutineRecordProfileResponse> updateTemplateRoutine(
+            @PathVariable("routineId") Long routineId,
+            @RequestBody @Valid RoutineTemplateUpdateRequest request
+    ) {
+        Routine routine = routineService.getRoutineById(routineId);
+        routineService.updateTemplateRoutine(routine, request.name(), request.routineExercises());
         RoutineRecordProfileResponse response = RoutineRecordProfileResponse.from(routine);
         return ResponseEntity.ok(response);
     }

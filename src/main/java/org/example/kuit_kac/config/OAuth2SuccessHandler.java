@@ -1,4 +1,3 @@
-
 package org.example.kuit_kac.config;
 
 import jakarta.servlet.ServletException;
