@@ -21,7 +21,6 @@ public class OwnerGuard {
     }
 
     public boolean same(Long targetUserId, Authentication auth) {
-        // 강제 출력으로 확인
         System.out.println("=== OwnerGuard.same() 호출됨 ===");
         System.out.println("targetUserId: " + targetUserId);
         System.out.println("auth: " + auth);
