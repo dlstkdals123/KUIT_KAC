@@ -15,10 +15,13 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.stereotype.Component;
+import lombok.extern.slf4j.Slf4j;
 
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity(prePostEnabled = true) // 추가
+@Slf4j
 public class SecurityConfig {
 
     private final KakaoOAuth2UserService kakaoOAuth2UserService;
@@ -33,6 +36,12 @@ public class SecurityConfig {
         this.oAuth2SuccessHandler = oAuth2SuccessHandler;
         this.authenticationEntryPoint = authenticationEntryPoint;
         this.denialHandler = denialHandler;
+    }
+
+    @Bean
+    public OwnerGuard owner() {
+        System.out.println("=== SecurityConfig에서 OwnerGuard 빈 생성 ===");
+        return new OwnerGuard();
     }
 
     @Bean
@@ -74,7 +83,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.DELETE, "/reset-user/**").permitAll() // ★ 추가
 //                        .permitAll()) // 테스트시 나머지는 요청 허가
                         // 나머지 보호 API: 정식 USER 권한
-                        .anyRequest().hasAuthority("USER"))
+                        .anyRequest().authenticated()  // ← 인증만 확인하고 권한은 메서드에서 체크
+                )
 
                 // 카카오 OAuth2 로그인: 사용자정보 서비스 + 성공 핸들러
                 .oauth2Login(oauth2 -> oauth2
