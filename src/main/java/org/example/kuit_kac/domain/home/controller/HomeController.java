@@ -45,7 +45,7 @@ public class HomeController {
     }
 
     @PostMapping("/weight")
-    @PreAuthorize("@owner.same(#userId, authentication) or hasRole('ADMIN')")
+    @PreAuthorize("@owner.sameBody(#request, authentication) or hasRole('ADMIN')")
     @Operation(summary = "체중 등록", description = "오늘 날짜에 처음 체중을 기록합니다.")
     public ResponseEntity<Void> createWeight(
             @RequestBody @Valid HomeWeightRequest request) {
@@ -63,7 +63,7 @@ public class HomeController {
     }
 
     @PutMapping("/weight")
-    @PreAuthorize("@owner.same(#userId, authentication) or hasRole('ADMIN')")
+    @PreAuthorize("@owner.sameBody(#request, authentication) or hasRole('ADMIN')")
     @Operation(summary = "체중 수정", description = "오늘 이미 기록된 체중이 있을 경우, 새로운 값으로 수정합니다.")
     public ResponseEntity<Void> updateWeight(
             @RequestBody @Valid HomeWeightRequest request) {
