@@ -1,24 +1,3 @@
-# -- 외래키 제약 조건 잠깐 꺼두기
-# SET FOREIGN_KEY_CHECKS = 0;
-#
-# TRUNCATE TABLE routine_set;
-# TRUNCATE TABLE routine_detail;
-# TRUNCATE TABLE routine_exercise;
-# TRUNCATE TABLE routine;
-# TRUNCATE TABLE exercise;
-#
-# TRUNCATE TABLE diet_food;
-# TRUNCATE TABLE food;
-# TRUNCATE TABLE diet;
-#
-# TRUNCATE TABLE weight;
-# TRUNCATE TABLE user_term_agreement;
-# TRUNCATE TABLE user_information;
-# TRUNCATE TABLE user;
-#
-# SET FOREIGN_KEY_CHECKS = 1;
-#
-
 -- 사용자 관련 테이블
 INSERT IGNORE INTO user (`nickname`, `kakao_id`, `gender`, `age`, `height`, `target_weight`)
 VALUES ('user4', '0000000001', 'MALE', 30, 175, 70.5),
@@ -59,10 +38,10 @@ INSERT INTO `diet` (`user_id`, `name`, `diet_date`, `diet_type`, `diet_entry_typ
 (1, '나만의 아침', NULL, 'TEMPLATE', NULL),
 (1, '나만의 점심', NULL, 'TEMPLATE', NULL),
 (1, '나만의 저녁', NULL, 'TEMPLATE', NULL),
-(2, NULL, CURRENT_DATE(), 'BREAKFAST', 'PLAN'),
-(2, NULL, CURRENT_DATE(), 'LUNCH', 'PLAN'),
-(2, NULL, CURRENT_DATE(), 'DINNER', 'PLAN'),
-(2, NULL, CURRENT_DATE(), 'BREAKFAST', 'FASTING');
+(1, NULL, CURRENT_DATE(), 'BREAKFAST', 'PLAN'),
+(1, NULL, CURRENT_DATE(), 'LUNCH', 'PLAN'),
+(1, NULL, CURRENT_DATE(), 'DINNER', 'PLAN'),
+(1, NULL, CURRENT_DATE(), 'BREAKFAST', 'FASTING');
 
 -- diet_food 샘플 데이터
 INSERT INTO `diet_food` (`diet_id`, `food_id`, `quantity`, `diet_time`)
