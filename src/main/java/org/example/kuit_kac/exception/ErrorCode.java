@@ -23,6 +23,9 @@ public enum ErrorCode {
 
     // 유저(User) 관련 에러 코드
     USER_NOT_FOUND("USER_001", "존재하지 않는 유저입니다."),
+    USER_UID_NOT_FOUND("USER_002", "존재하지 않는 유저입니다."),
+    USER_KID_NOT_FOUND("USER_003", "존재하지 않는 유저입니다."),
+    UID_KID_MISMATCH("USER_004", "유저아이디와 카카오아이디가 가리키는 유저가 일치하지 않습니다."),
 
     // 식단(Diet) 관련 에러 코드
     DIET_NOT_FOUND("DIET_001", "존재하지 않는 식단입니다."),

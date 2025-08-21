@@ -2,7 +2,10 @@ package org.example.kuit_kac.global.util.dev;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.example.kuit_kac.exception.CustomException;
+import org.example.kuit_kac.exception.ErrorCode;
 import org.example.kuit_kac.global.util.JwtProvider;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -16,10 +19,11 @@ import java.util.Map;
 @Slf4j
 public class DevAuthController {
     private final JwtProvider jwtProvider;
+    private final DevAuthService devAuthService;
 
     // 예: GET /dev-auth/mint?uid=3&kid=4384440657
     @GetMapping("/mint")
-    public Map<String, String> mint(@RequestParam(required = false) Long uid,
+    public Map<String, Object> mint(@RequestParam(required = false) Long uid,
                                     @RequestParam(required = true) String kid) {
         String access = null;
         String refresh = null;
@@ -28,8 +32,13 @@ public class DevAuthController {
             log.info("pre 토큰 발급: " + access);
             return Map.of("accessToken", access);
         } else {
-            access = jwtProvider.generateUserAccessToken(uid, kid);
-            refresh = jwtProvider.generateRefreshToken(uid);
+            if (kid == null || kid.isBlank()) {
+                return Map.of("error","kid required");
+            }
+            Map<String, Object> mintUserStrict = devAuthService.mintUserStrict(uid, kid);
+
+            access = mintUserStrict.get("access").toString();
+            refresh = mintUserStrict.get("refresh").toString();
             log.info("user 토큰 발급: " + access);
             return Map.of("accessToken", access, "refreshToken", refresh);
         }
