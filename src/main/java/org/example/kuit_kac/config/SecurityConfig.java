@@ -58,19 +58,21 @@ public class SecurityConfig {
                                 // 개발용
                                 "/h2-console/**",
 //                                "/dev-tools/**"
-                                "/dev-auth/mint/**"
+                                "/dev-auth/**"
                         ).permitAll()
                         .requestMatchers(
                                 HttpMethod.POST,
                                 // 토큰 재발급
                                 "/auth/refresh"
                         ).permitAll()
+                        // 온보딩 전용
+                        .requestMatchers(HttpMethod.POST, "/onboarding").hasAnyAuthority("ONBOARD", "USER")
 //                        .requestMatchers("/users/me").authenticated() //  테스트시 유일한 인증필요 api
 //                        // TODO 개발 테스트 유저 삭제용 코드. 운영시 삭제!!
                         .requestMatchers(HttpMethod.DELETE, "/reset-user/**").permitAll() // ★ 추가
-                        .anyRequest()
 //                        .permitAll()) // 테스트시 나머지는 요청 허가
-                        .authenticated()) // TODO: 나머지 요청은 인증 필요
+                        // 나머지 보호 API: 정식 USER 권한
+                        .anyRequest().hasAuthority("USER"))
 
                 // 카카오 OAuth2 로그인: 사용자정보 서비스 + 성공 핸들러
                 .oauth2Login(oauth2 -> oauth2
@@ -107,8 +109,10 @@ public class SecurityConfig {
                                 "/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**",
                                 "/oauth2/**", "/login/oauth2/**",
                                 "/h2-console/**", "/dev-tools/**", "/actuator/**",
-                                "/dev-auth/mint/**"
+                                "/dev-auth/**"
                         ).permitAll()
+                        .requestMatchers(HttpMethod.POST, "/onboarding").hasAnyAuthority("ONBOARD", "USER")
+                        .requestMatchers(HttpMethod.POST, "/dev-auth/mint").hasAuthority("ONBOARD")
                         .anyRequest()
                         .authenticated() // TODO: 나머지 요청은 인증 필요
                 )
@@ -121,6 +125,7 @@ public class SecurityConfig {
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
 //                .addFilterAfter(devKidAuthFilter, JwtAuthFilter.class)
                 .headers(h -> h.frameOptions(f -> f.sameOrigin()));
+
         return http.build();
     }
 }

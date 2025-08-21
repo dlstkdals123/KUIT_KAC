@@ -31,6 +31,7 @@ jwt:
   refresh-secret-base64: ${JWT_REFRESH_SECRET_BASE64}
   access-ttl-ms: 315360000000 # 10년 (3650일)
   refresh-ttl-ms: 315360000000 # 10년 (3650일)
+  pre-access-ttl-ms: 60000 # 10분
 
 auth:
   login:

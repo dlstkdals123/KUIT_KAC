@@ -66,7 +66,11 @@ public enum ErrorCode {
     EXERCISE_NOT_FOUND("EXERCISE_001", "존재하지 않는 운동입니다."),
 
     // AI 관련 에러 코드
-    GPT_API_ERROR("AI_001", "GPT API 오류가 발생했습니다.");
+    GPT_API_ERROR("AI_001", "GPT API 오류가 발생했습니다."),
+
+    // 프리토큰 카카오 id 없을때
+    ISSUE_TOKEN_KID ("KID_001", "카카오 ID가 없습니다"),
+    ISSUE_TOKEN_UID ("UID_001", "유저 ID가 없습니다");
 
     private final String code;
     private final String message;

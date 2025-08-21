@@ -8,6 +8,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.example.kuit_kac.domain.user.model.PrePrincipal;
+import org.example.kuit_kac.domain.user.repository.UserRepository;
 import org.example.kuit_kac.global.util.dev.DevWhitelistProperties;
 import org.example.kuit_kac.domain.terms.service.UserTermsService;
 import org.example.kuit_kac.domain.user.model.User;
@@ -24,6 +26,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Component
 @RequiredArgsConstructor
@@ -33,6 +36,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     private final JwtProvider jwtProvider;
     private final UserService userService; // 최신값 필요하면 조회해서 Principal 새로 만듦
     private final UserTermsService userTermsService;
+    private final UserRepository userRepository;
     private final DevWhitelistProperties devWhitelistProperties;
 
 
@@ -52,6 +56,13 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
+
+        // 이미 인증됐으면 패스
+        if (SecurityContextHolder.getContext().getAuthentication() != null) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
 // 수정안: Authorization 헤더가 있으면 무조건 JWT 검사로 덮어쓴다
         String authHeader = request.getHeader("Authorization");
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
@@ -67,6 +78,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         log.info("[JwtAuth] token(prefix10)={}, len={}",
                 token.substring(0, Math.min(10, token.length())), token.length());
 
+        // access 토큰만 허용
         String type = jwtProvider.getTokenTypeStrict(token);
         if (!"access".equals(type)) {
             log.info("[JwtAuth] non-access token on path {}: {}", request.getRequestURI(), type);
@@ -88,9 +100,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             log.info("[JwtAuth] devBypass={}, whitelistEnabled={}",
                     devBypass, (devWhitelistProperties != null && devWhitelistProperties.isEnabled()));
 
-            User user = null;
-            boolean termsAgreed = false;
-
 //            우회면 DB조회/약관 건너뜀
             if (devBypass) {
                 // 유저가 아직 없을 수도 있으니, 그대로 통과할 수 있는 Principal을 만들어
@@ -109,45 +118,88 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 return;
             }
 
-//            정상 경로: DB 조회 + 약관 체크
-            try {
-                if (userId != null) {
-                    user = userService.getUserById(userId);
-                    termsAgreed = (user != null) && userTermsService.hasAgreedRequired(userId);
+
+            // ===== PRE 단계: kid만, ONBOARD 권한 =====
+            if (jwtProvider.isPreAccess(token)) {
+                String kid = jwtProvider.getKakaoIdFromAccessOrNull(token);
+                if (kid == null || kid.isBlank()) {
+                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "KID_REQUIRED");
+                    return;
                 }
-            } catch (Exception svcEx) {
-                log.warn("[JwtAuth] user/terms lookup failed: {}", svcEx.toString());
+                PrePrincipal principal = new PrePrincipal(kid);
+                var at = new UsernamePasswordAuthenticationToken(
+                        principal, null, List.of(new SimpleGrantedAuthority("ONBOARD"))
+                );
+                at.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                SecurityContextHolder.getContext().setAuthentication(at);
+                filterChain.doFilter(request, response);
+                return;
             }
 
-            // 5) Principal 구성: uid 없을 때도 kakaoId로 폴백 가능하도록
-            UserPrincipal principal = UserPrincipal.from(user, termsAgreed, kakaoId);
+            // ===== USER 단계: uid+kid+ver 모두 DB와 일치해야 통과 =====
+            if (jwtProvider.isUserAccess(token)) {
+                Long uid = jwtProvider.getUserIdFromAccessOrNull(token);
+                String kid = jwtProvider.getKakaoIdFromAccessOrNull(token);
 
-            List<SimpleGrantedAuthority> authorities = new ArrayList<>();
-            authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
+                if (uid == null || kid == null) {
+                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "CLAIMS_MISSING");
+                    return;
+                }
 
-            log.info("[JwtAuth] result principal: onboarded={}, termsAgreed={}, roles={}",
-                    principal.isOnboardingNeeded(), principal.isTermsAgreed(), authorities);
+                User user = userService.getUserById(uid);
+                if (user == null) {
+                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "USER_NOT_FOUND");
+                    return;
+                }
+                if (!Objects.equals(user.getKakaoId(), kid)) {
+                    response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "KAKAO_LINK_CHANGED");
+                    return;
+                }
 
-            var auth =
-                    new UsernamePasswordAuthenticationToken(
-                            principal,
-                            null,
-                            authorities
-                    );
-            auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                // (선택) 약관 상태를 프린시펄에 반영하고 싶다면
+                boolean termsAgreed = false;
+//            정상 경로: DB 조회 + 약관 체크
+                try {
+                    if (userId != null) {
+                        user = userService.getUserById(userId);
+                        termsAgreed = (user != null) && userTermsService.hasAgreedRequired(userId);
+                    }
+                } catch (Exception svcEx) {
+                    log.warn("[JwtAuth] user/terms lookup failed: {}", svcEx.toString());
+                }
 
-            // 6) SecurityContext에 인증 정보 저장
-            SecurityContextHolder.getContext().setAuthentication(auth);
+                // 5) Principal 구성: uid 없을 때도 kakaoId로 폴백 가능하도록
+                UserPrincipal principal = UserPrincipal.from(user, termsAgreed, kakaoId);
 
+                log.info("[JwtAuth] result principal: onboarded={}, termsAgreed={}, roles={}",
+                        principal.isOnboardingNeeded(), principal.isTermsAgreed(), List.of(new SimpleGrantedAuthority("ROLE_USER")));
+
+                var auth =
+                        new UsernamePasswordAuthenticationToken(
+                                principal,
+                                null,
+                                List.of(new SimpleGrantedAuthority("ROLE_USER")
+                                ));
+                auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+
+                // 6) SecurityContext에 인증 정보 저장
+                SecurityContextHolder.getContext().setAuthentication(auth);
+                filterChain.doFilter(request, response);
+                return;
+            }
+            // stage 인식 실패
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "UNKNOWN_STAGE");
+            return;
         } catch (io.jsonwebtoken.JwtException jwtEx) {
             // JWT 문제면 인증 제거
             log.info("[JwtAuth] jwt error: {}", jwtEx.getMessage());
             SecurityContextHolder.clearContext();
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "INVALID_TOKEN");
         } catch (Exception e) {
             log.info("[JwtAuth] error: {}", e.getMessage());
             SecurityContextHolder.clearContext();
+            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "AUTH_ERROR");
+            return;
         }
-        // 다음 필터로 넘김
-        filterChain.doFilter(request, response);
     }
 }

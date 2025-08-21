@@ -1,6 +1,5 @@
 package org.example.kuit_kac.domain.oauth.controller;
 
-import io.jsonwebtoken.Claims;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -96,7 +95,7 @@ public class AuthController {
         Long   uid = jwtProvider.getUserIdFromAccessOrNull(token);   // ← 예외 대신 null 가능
         String kid = jwtProvider.getKakaoIdFromAccessOrNull(token);  // ← 유지 권장
 
-        String newAccess  = jwtProvider.generateAccessToken(uid, kid);
+        String newAccess  = jwtProvider.generateUserAccessToken(uid, kid);
         String newRefresh = jwtProvider.generateRefreshToken(uid); // 회전 정책이면 유지
 
         return ResponseEntity.ok(new TokenResponse(newAccess, newRefresh));

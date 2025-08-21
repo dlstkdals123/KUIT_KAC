@@ -6,7 +6,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.example.kuit_kac.domain.user_information.service.OnboardingService;
 import org.example.kuit_kac.domain.user_information.service.OnboardingStatusService;
 import org.example.kuit_kac.global.util.JwtProvider;
 import org.example.kuit_kac.global.util.dev.DevWhitelistProperties;
@@ -51,14 +50,9 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
         Map<String, Object> attrs = oAuth2User.getAttributes();
         // kakaoId: attributes에 "kakaoId"가 있으면 사용, 없으면 카카오 원본 "id", 둘 다 없으면 getName()
-
-        Object emailAttr = attrs.get("account_email");
-        log.info("kakao email: " + emailAttr);
-
         String kakaoId = null;
         Object kidAttr = attrs.get("kakaoId");
-        if (kidAttr == null)
-            kidAttr = attrs.get("id"); // 카카오 원본
+        if (kidAttr == null) kidAttr = attrs.get("id"); // 카카오 원본
         if (kidAttr != null) kakaoId = String.valueOf(kidAttr);
         if (kakaoId == null || kakaoId.isBlank()) {
             // nameAttributeKey를 "kakaoId"로 설정했다면 getName()이 kakaoId일 수 있음
@@ -70,6 +64,8 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
                 return;
             }
         }
+
+        // 유저id 있으면 읽기
         Long userId = null;
         Object uidAttr = attrs.get("userId");
         if (uidAttr instanceof Number n) {
@@ -80,20 +76,8 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
             } catch (NumberFormatException ignored) {
             }
         }
-        // 2) 토큰 생성 (클레임 Map으로 유연하게)
-        Map<String, Object> accessClaims = new HashMap<>();
-        accessClaims.put("sub", "access");
-        accessClaims.put("kid", kakaoId);
-        // 프론트가 디코딩해서 온보딩 요청에 실어보내면 됨
-        if (userId != null) accessClaims.put("uid", userId);
-        Map<String, Object> refreshClaims = new HashMap<>();
-        refreshClaims.put("sub", "refresh");
-        refreshClaims.put("kid", kakaoId);
-        if (userId != null) refreshClaims.put("uid", userId);
-        String access = jwtProvider.generateAccessToken(userId, kakaoId); // kakaoId를 access에만 실어줌
-        String refresh = jwtProvider.generateRefreshToken(userId);
-        long expiresIn = props.getAccessTtlSeconds();
-        // 3) 온보딩 필요 여부
+
+        // 온보딩 필요 여부
         boolean onboardingRequired;
         if (!onboardingProperties.isRequire()) {
             onboardingRequired = false;
@@ -115,13 +99,45 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         log.info("[OAuth2Success] onboarding.require(yml)={} -> final.onboardingRequired={}",
                 onboardingProperties.isRequire(), onboardingRequired);
 
+        // 2) 토큰 생성 (클레임 Map으로 유연하게)
+        String access;
+        String refresh = null;
+        long expiresIn = props.getAccessTtlSeconds();
+
+        if (userId != null) {
+            // USER 토큰 발급: uid/kid
+            access = jwtProvider.generateUserAccessToken(userId, kakaoId);
+            refresh = jwtProvider.generateRefreshToken(userId);
+            expiresIn = props.getAccessTtlSeconds();
+        } else {
+            // PRE 토큰 발급: kid-only(온보딩 API 전용)
+            access = jwtProvider.generatePreAccessToken(kakaoId);
+            refresh = null;
+            expiresIn = props.getAccessTtlSeconds();
+        }
+
+        // 기존토큰 발급로직
+//        Map<String, Object> accessClaims = new HashMap<>();
+//        accessClaims.put("sub", "access");
+//        accessClaims.put("kid", kakaoId);
+//        // 프론트가 디코딩해서 온보딩 요청에 실어보내면 됨
+//        if (userId != null) accessClaims.put("uid", userId);
+//        Map<String, Object> refreshClaims = new HashMap<>();
+//        refreshClaims.put("sub", "refresh");
+//        refreshClaims.put("kid", kakaoId);
+//        if (userId != null) refreshClaims.put("uid", userId);
+//        String access = jwtProvider.generateUserAccessToken(userId, kakaoId); // kakaoId를 access에만 실어줌
+//        String refresh = jwtProvider.generateRefreshToken(userId);
+//        long expiresIn = props.getAccessTtlSeconds();
+
+
         // // TODO: 서버토큰 JSON 활성화 코드 넣는 자리
 
         // 딥링크 파라미터
         String target = props.getDeepLink();
         boolean useDeepLink = "DEEPLINK".equalsIgnoreCase(props.getMode().toString());
         if (!useDeepLink || target == null || target.isBlank()) {
-            log.error("[OAuth2Success] deep-link not configured. Falling back to JSON response.");
+            log.warn("[OAuth2Success] deep-link not configured. Falling back to JSON response.");
 // writeJson
             return;
         }
@@ -144,7 +160,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
                 .toUriString();
 
         // 실제 딥링크
-            // 로컬/개발에서만 전체 URL 찍기 (운영 금지)
+            // TODO: 로컬/개발에서만 전체 URL 찍기 (운영 금지)
             log.info("[OAuth2Success] deepLinkUrl={}", deep); // 로컬/DEV + DEBUG일 때만 전체 출력
 
 
