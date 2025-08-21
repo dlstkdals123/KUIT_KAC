@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 
 import java.util.List;
 
-import org.example.kuit_kac.domain.food.dto.FoodProfileResponse;
+import org.example.kuit_kac.domain.food.dto.FoodResponse;
 import org.example.kuit_kac.domain.food.model.Food;
 import org.example.kuit_kac.domain.food.service.FoodService;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,11 +24,11 @@ public class FoodController {
     private Long defaultFoodSize;
 
     @GetMapping("")
-    public ResponseEntity<List<FoodProfileResponse>> getFoods() {
+    public ResponseEntity<List<FoodResponse>> getFoods() {
         List<Food> foods = foodService.getFoodsAfter(defaultFoodSize);
-        List<FoodProfileResponse> foodProfileResponses = foods.stream()
-            .map(FoodProfileResponse::from)
+        List<FoodResponse> foodResponses = foods.stream()
+            .map(FoodResponse::from)
             .toList();
-        return ResponseEntity.ok(foodProfileResponses);
+        return ResponseEntity.ok(foodResponses);
     }
 }
