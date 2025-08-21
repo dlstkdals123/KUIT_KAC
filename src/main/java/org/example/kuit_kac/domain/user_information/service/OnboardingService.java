@@ -14,6 +14,7 @@ import org.example.kuit_kac.domain.user_information.model.UserInformation;
 import org.example.kuit_kac.domain.user_information.repository.UserInfoRepository;
 import org.example.kuit_kac.exception.CustomException;
 import org.example.kuit_kac.exception.ErrorCode;
+import org.example.kuit_kac.global.util.dev.DevAuthService;
 import org.example.kuit_kac.global.util.dev.DevAutofillProperties;
 import org.hibernate.annotations.NotFound;
 import org.springframework.beans.factory.ObjectProvider;
@@ -22,6 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
@@ -34,6 +36,7 @@ public class OnboardingService {
     private final UserRepository userRepository;
     private final UserTermsService userTermsService;
     private final WeightService weightService;
+    private final DevAuthService devAuthService;
 
     // 선택 주입(없으면 기본값 사용)
     private final ObjectProvider<DevAutofillProperties> autofillProvider;
@@ -169,7 +172,12 @@ public class OnboardingService {
         int dietDays = userInfo.getDietVelocity().getPeriodInDays();
         double dailyDeficit = (TargetWeightLoss * 7700) / dietDays; // 감량칼로리 / 다이어트기간
 
-        return new OnboardingResponse(user.getId(), (int) bmr, (int) dailyDeficit);
+        // 토큰발급
+        Map<String, Object> mintUserStrict = devAuthService.mintUserStrict(userId, kakaoId);
+        String access = mintUserStrict.get("access").toString();
+        String refresh = mintUserStrict.get("refresh").toString();
+
+        return new OnboardingResponse(user.getId(), (int) bmr, (int) dailyDeficit, access, refresh);
     }
 
     private static class PreparedUserFields {

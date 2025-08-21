@@ -14,12 +14,15 @@ import org.example.kuit_kac.domain.user_information.dto.OnboardingRequest;
 import org.example.kuit_kac.domain.user_information.dto.OnboardingResponse;
 import org.example.kuit_kac.domain.user_information.service.OnboardingService;
 import org.example.kuit_kac.global.util.JwtProvider;
+import org.example.kuit_kac.global.util.dev.DevAuthService;
 import org.example.kuit_kac.global.util.dev.DevAutofillProperties;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -31,6 +34,7 @@ public class OnboardingController {
     private final JwtProvider jwtProvider;
     private final UserService userService;
     private final DevAutofillProperties autofill; // ← 주입
+    private final DevAuthService devAuthService;
 
     @Operation(
             summary = "회원 온보딩 API 🚀",
@@ -51,6 +55,8 @@ public class OnboardingController {
             - 생성된 유저 ID  
             - 계산된 BMR 값  
             - 일일 감량 목표 칼로리  
+            - 액세스토큰
+            - 리프레쉬토큰
             """,
             responses = {
                     @ApiResponse(responseCode = "200", description = "온보딩 성공 🎉",

@@ -15,4 +15,8 @@ public class OnboardingResponse {
     private int bmr;
     @Schema(description = "일일감량목표 칼로리", example = "1375")
     private int dailyDeficit;
+    @Schema(description = "액세스 토큰", example = "eyJhbGciOi...")
+    private String access;
+    @Schema(description = "리프레쉬 토큰", example = "eyJhbGciOi...")
+    private String refresh;
 }
