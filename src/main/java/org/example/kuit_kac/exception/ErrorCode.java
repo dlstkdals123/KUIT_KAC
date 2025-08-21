@@ -23,6 +23,9 @@ public enum ErrorCode {
 
     // 유저(User) 관련 에러 코드
     USER_NOT_FOUND("USER_001", "존재하지 않는 유저입니다."),
+    USER_UID_NOT_FOUND("USER_002", "존재하지 않는 유저입니다."),
+    USER_KID_NOT_FOUND("USER_003", "존재하지 않는 유저입니다."),
+    UID_KID_MISMATCH("USER_004", "유저아이디와 카카오아이디가 가리키는 유저가 일치하지 않습니다."),
 
     // 식단(Diet) 관련 에러 코드
     DIET_NOT_FOUND("DIET_001", "존재하지 않는 식단입니다."),
@@ -66,7 +69,13 @@ public enum ErrorCode {
     EXERCISE_NOT_FOUND("EXERCISE_001", "존재하지 않는 운동입니다."),
 
     // AI 관련 에러 코드
-    GPT_API_ERROR("AI_001", "GPT API 오류가 발생했습니다.");
+    GPT_API_ERROR("AI_001", "GPT API 오류가 발생했습니다."),
+
+    // 프리토큰 카카오 id 없을때
+    ISSUE_TOKEN_KID ("KID_001", "카카오 ID가 없습니다"),
+    ISSUE_TOKEN_UID ("UID_001", "유저 ID가 없습니다"),
+    NO_WEIGHT("WEIGHT_001", "최근 체중 정보가 없습니다"),
+    KEY_INVALID("KEY_001", "키 생성이 유효하지 않습니다");
 
     private final String code;
     private final String message;

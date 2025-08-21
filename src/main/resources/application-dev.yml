@@ -31,6 +31,7 @@ jwt:
   refresh-secret-base64: ${JWT_REFRESH_SECRET_BASE64}
   access-ttl-ms: 315360000000 # 10년 (3650일)
   refresh-ttl-ms: 315360000000 # 10년 (3650일)
+  pre-access-ttl-ms: 60000 # 10분
 
 auth:
   login:
@@ -56,11 +57,11 @@ logging:
 
 debug:
   kid-auth:
-    enabled: true
+    enabled: false
     secret: ${KID_AUTH_SECRET}
     ts-skew-seconds: 300
     whitelist:
-      enabled: true
+      enabled: false
       kids:
         - ${ANDROID_MH}
         - ${ANDROID_SW}
@@ -69,7 +70,7 @@ debug:
         - ${SERVER_MASTER}
   onboarding:
     autofill:
-      enabled: true
+      enabled: false
       default-gender: MALE  # GenderType
       default-age: 25
       default-height: 170

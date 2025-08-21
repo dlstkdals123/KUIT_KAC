@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -17,6 +18,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity(prePostEnabled = true) // 추가
 public class SecurityConfig {
 
     private final KakaoOAuth2UserService kakaoOAuth2UserService;
@@ -57,7 +59,7 @@ public class SecurityConfig {
 
                                 // 개발용
                                 "/h2-console/**",
-                                "/dev-tools/**",
+//                                "/dev-tools/**"
                                 "/dev-auth/**"
                         ).permitAll()
                         .requestMatchers(
@@ -65,11 +67,14 @@ public class SecurityConfig {
                                 // 토큰 재발급
                                 "/auth/refresh"
                         ).permitAll()
-                        .requestMatchers("/users/me").authenticated() //  테스트시 유일한 인증필요 api
+                        // 온보딩 전용
+                        .requestMatchers(HttpMethod.POST, "/onboarding").hasAnyAuthority("ONBOARD", "USER")
+//                        .requestMatchers("/users/me").authenticated() //  테스트시 유일한 인증필요 api
 //                        // TODO 개발 테스트 유저 삭제용 코드. 운영시 삭제!!
                         .requestMatchers(HttpMethod.DELETE, "/reset-user/**").permitAll() // ★ 추가
-                        .anyRequest().permitAll()) // 테스트시 나머지는 요청 허가
-//                        .authenticated()) // TODO: 나머지 요청은 인증 필요
+//                        .permitAll()) // 테스트시 나머지는 요청 허가
+                        // 나머지 보호 API: 정식 USER 권한
+                        .anyRequest().hasAuthority("USER"))
 
                 // 카카오 OAuth2 로그인: 사용자정보 서비스 + 성공 핸들러
                 .oauth2Login(oauth2 -> oauth2
@@ -81,8 +86,9 @@ public class SecurityConfig {
                         .successHandler(oAuth2SuccessHandler)) // Spring Security가 관리하는 OAuth2 로그인 흐름 안에서 토큰 생성 보장
                 // JWT 필터는 UsernamePassrodAuthenticatorFilter 전에 하도록 함
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-                .addFilterAfter(devKidAuthFilter, JwtAuthFilter.class)
-                .addFilterAfter(devKidAuthFilter, JwtAuthFilter.class)                .addFilterAfter(devKidAuthFilter, JwtAuthFilter.class)                .addFilterAfter(jwtAuthFilter, DevKidAuthFilter.class)                .exceptionHandling(ex -> ex
+//                .addFilterAfter(devKidAuthFilter, JwtAuthFilter.class)
+//                .addFilterAfter(jwtAuthFilter, DevKidAuthFilter.class)
+                .exceptionHandling(ex -> ex
                         .authenticationEntryPoint(authenticationEntryPoint)
                         .accessDeniedHandler(denialHandler)
                 )
@@ -104,9 +110,13 @@ public class SecurityConfig {
                                 "/", "/error",
                                 "/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**",
                                 "/oauth2/**", "/login/oauth2/**",
-                                "/h2-console/**", "/dev-tools/**", "/actuator/**"
+                                "/h2-console/**", "/dev-tools/**", "/actuator/**",
+                                "/dev-auth/**"
                         ).permitAll()
-                        .anyRequest().permitAll() // local은 전부 개방
+                        .requestMatchers(HttpMethod.POST, "/onboarding").hasAnyAuthority("ONBOARD", "USER")
+                        .requestMatchers(HttpMethod.POST, "/dev-auth/mint").hasAuthority("ONBOARD")
+                        .anyRequest()
+                        .authenticated() // TODO: 나머지 요청은 인증 필요
                 )
                 .oauth2Login(oauth2 -> oauth2
                         .authorizationEndpoint(ae -> ae.baseUri("/oauth2/authorization"))
@@ -114,10 +124,10 @@ public class SecurityConfig {
                         .userInfoEndpoint(u -> u.userService(kakaoOAuth2UserService))
                         .successHandler(oAuth2SuccessHandler)
                 )
-
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
-                .addFilterAfter(devKidAuthFilter, JwtAuthFilter.class)
+//                .addFilterAfter(devKidAuthFilter, JwtAuthFilter.class)
                 .headers(h -> h.frameOptions(f -> f.sameOrigin()));
+
         return http.build();
     }
 }

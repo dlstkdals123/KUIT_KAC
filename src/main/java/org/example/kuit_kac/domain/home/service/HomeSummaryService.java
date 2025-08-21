@@ -15,6 +15,8 @@ import org.example.kuit_kac.domain.user.model.User;
 import org.example.kuit_kac.domain.user.service.UserService;
 import org.example.kuit_kac.domain.user_information.model.UserInformation;
 import org.example.kuit_kac.domain.user_information.repository.UserInfoRepository;
+import org.example.kuit_kac.exception.CustomException;
+import org.example.kuit_kac.exception.ErrorCode;
 import org.example.kuit_kac.global.util.TimeRange;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
@@ -110,7 +112,7 @@ public class HomeSummaryService {
         //기초대사량 계산
         User user = userService.getUserById(userId);
         UserInformation userInfo = userInfoRepository.findByUserId(userId)
-                .orElseThrow(() -> new RuntimeException("사용자 정보가 없습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
         double weightValue = weightService.getLatestWeightByUserId(userId).getWeight();
 
         double activityConstant = userInfo.getActivity().getActivityConstant();
