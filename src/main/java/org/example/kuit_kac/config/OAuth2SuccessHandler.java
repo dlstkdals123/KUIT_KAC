@@ -6,6 +6,8 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.kuit_kac.domain.user_information.service.OnboardingStatusService;
+import org.example.kuit_kac.exception.CustomException;
+import org.example.kuit_kac.exception.ErrorCode;
 import org.example.kuit_kac.global.util.JwtProvider;
 import org.example.kuit_kac.global.util.dev.DevWhitelistProperties;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -197,9 +199,9 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
             byte[] raw = mac.doFinal(data.getBytes(StandardCharsets.UTF_8));
             return java.util.Base64.getUrlEncoder().withoutPadding().encodeToString(raw);
         } catch (InvalidKeyException e) {
-            throw new RuntimeException(e);
+            throw new CustomException(ErrorCode.KEY_INVALID);
         } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
+            throw new CustomException(ErrorCode.KEY_INVALID);
         }
     }
 

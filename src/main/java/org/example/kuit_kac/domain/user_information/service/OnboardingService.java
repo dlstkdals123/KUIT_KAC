@@ -15,6 +15,7 @@ import org.example.kuit_kac.domain.user_information.repository.UserInfoRepositor
 import org.example.kuit_kac.exception.CustomException;
 import org.example.kuit_kac.exception.ErrorCode;
 import org.example.kuit_kac.global.util.dev.DevAutofillProperties;
+import org.hibernate.annotations.NotFound;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -42,7 +43,7 @@ public class OnboardingService {
     @Transactional(readOnly = true)
     public UserInformation getUserInformationByUserId(long userId) {
         return userInfoRepository.findByUserId(userId)
-                .orElseThrow(() -> new RuntimeException("사용자 정보가 없습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.USER_NOT_FOUND));
     }
 
     private boolean isOnboardingIncomplete(UserInformation info) {

@@ -6,7 +6,7 @@ import lombok.Getter;
 import java.time.LocalDateTime;
 
 @Getter
-public class CustomException extends RuntimeException {
+public class CustomException extends ception {
 
     private final ErrorCode errorCode;
     private final LocalDateTime timestamp;

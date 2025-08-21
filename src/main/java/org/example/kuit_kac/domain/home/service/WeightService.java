@@ -3,6 +3,8 @@ package org.example.kuit_kac.domain.home.service;
 import lombok.RequiredArgsConstructor;
 import org.example.kuit_kac.domain.home.model.Weight;
 import org.example.kuit_kac.domain.home.repository.WeightRepository;
+import org.example.kuit_kac.exception.CustomException;
+import org.example.kuit_kac.exception.ErrorCode;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,7 +20,7 @@ public class WeightService {
     @Transactional(readOnly = true)
     public Weight getLatestWeightByUserId(Long userId) {
         return weightRepository.findTopByUserIdOrderByCreatedAtDesc(userId)
-                .orElseThrow(()-> new RuntimeException("최근 체중 정보가 없습니다."));
+                .orElseThrow(() -> new CustomException(ErrorCode.NO_WEIGHT));
     }
 
     // 2. 오늘의 체중 저장 or 수정

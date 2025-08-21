@@ -73,7 +73,9 @@ public enum ErrorCode {
 
     // 프리토큰 카카오 id 없을때
     ISSUE_TOKEN_KID ("KID_001", "카카오 ID가 없습니다"),
-    ISSUE_TOKEN_UID ("UID_001", "유저 ID가 없습니다");
+    ISSUE_TOKEN_UID ("UID_001", "유저 ID가 없습니다"),
+    NO_WEIGHT("WEIGHT_001", "최근 체중 정보가 없습니다"),
+    KEY_INVALID("KEY_001", "키 생성이 유효하지 않습니다");
 
     private final String code;
     private final String message;
