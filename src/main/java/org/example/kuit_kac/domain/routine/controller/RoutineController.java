@@ -7,6 +7,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,6 +31,7 @@ public class RoutineController {
     private final UserService userService;
 
     @GetMapping("/records/profiles")
+    @PreAuthorize("@owner.same(#userId, authentication) or hasRole('ADMIN')")
     @Operation(summary = "사용자 ID로 루틴 기록 조회", description = "제공된 사용자 ID를 사용하여 해당 사용자의 오늘의 루틴 기록을 조회합니다.")
     public ResponseEntity<List<RoutineRecordProfileResponse>> getRoutineRecords(
             @Parameter(description = "조회할 사용자의 고유 ID", example = "1")
@@ -47,6 +49,7 @@ public class RoutineController {
     }
 
     @GetMapping("/template/profiles")
+    @PreAuthorize("@owner.same(#userId, authentication) or hasRole('ADMIN')")
     @Operation(summary = "사용자 ID로 나만의 루틴 조회", description = "제공된 사용자 ID를 사용하여 해당 사용자의 나만의 루틴을 조회합니다.")
     public ResponseEntity<List<RoutineRecordProfileResponse>> getTemplateRoutines(
             @Parameter(description = "조회할 사용자의 고유 ID", example = "1")
@@ -75,6 +78,7 @@ public class RoutineController {
 //     }
 
     @PostMapping("/records")
+    @PreAuthorize("@owner.sameBody(#request, authentication) or hasRole('ADMIN')")
     @Operation(summary = "운동 기록 생성", description = "유저 ID와 루틴 이름, 루틴 항목 종류, 루틴 운동을 입력하여 운동 기록을 생성합니다.")
     public ResponseEntity<RoutineRecordProfileResponse> createRecordRoutine(
             @RequestBody @Valid RoutineGeneralCreateRequest request
@@ -98,6 +102,7 @@ public class RoutineController {
     }
 
     @PostMapping("/records/simples")
+    @PreAuthorize("@owner.sameBody(#request, authentication) or hasRole('ADMIN')")
     @Operation(summary = "운동 기록 생성", description = "유저 ID와 루틴 이름, 루틴 항목 종류, 루틴 운동을 입력하여 운동 기록을 생성합니다.")
     public ResponseEntity<RoutineRecordProfileResponse> createSimpleRecordRoutine(
             @RequestBody @Valid RoutineSimpleCreateRequest request
@@ -109,6 +114,7 @@ public class RoutineController {
     }
 
     @PostMapping("/templates")
+    @PreAuthorize("@owner.sameBody(#request, authentication) or hasRole('ADMIN')")
     @Operation(summary = "나만의 운동 루틴 생성", description = "유저 ID와 루틴 이름, 루틴 운동을 입력하여 나만의 운동 루틴을 생성합니다.")
     public ResponseEntity<RoutineRecordProfileResponse> createTemplateRoutine(
             @RequestBody @Valid RoutineTemplateCreateRequest request

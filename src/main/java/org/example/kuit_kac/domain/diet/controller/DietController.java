@@ -9,6 +9,7 @@ import org.example.kuit_kac.domain.diet.dto.*;
 import org.example.kuit_kac.domain.diet.model.*;
 import org.example.kuit_kac.domain.diet.service.*;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -29,6 +30,7 @@ public class DietController {
     private final UserService userService;
 
     @GetMapping("/records/profiles")
+    @PreAuthorize("@owner.same(#userId, authentication) or hasRole('ADMIN')")
     @Operation(summary = "사용자 ID로 식단 기록 조회", description = "제공된 사용자 ID를 사용하여 해당 사용자의 오늘의 식단 기록을 조회합니다.")
     public ResponseEntity<List<DietRecordProfileResponse>> getDietRecords(
             @Parameter(description = "조회할 사용자의 고유 ID", example = "1")
@@ -44,6 +46,7 @@ public class DietController {
     }
 
     @GetMapping("/plans/profiles")
+    @PreAuthorize("@owner.same(#userId, authentication) or hasRole('ADMIN')")
     @Operation(summary = "사용자 ID로 오늘의 계획(Plan) 식단 조회", description = "제공된 사용자 ID를 사용하여 해당 사용자의 오늘의 계획(Plan) 식단을 조회합니다.")
     public ResponseEntity<List<DietRecordProfileResponse>> getDietPlans(
             @Parameter(description = "조회할 사용자의 고유 ID", example = "1")
@@ -59,6 +62,7 @@ public class DietController {
     }
 
     @GetMapping("/activities/months")
+    @PreAuthorize("@owner.same(#userId, authentication) or hasRole('ADMIN')")
     @Operation(summary = "사용자 ID로 한 달 동안의 계획(Plan) 식단 조회", description = "제공된 사용자 ID를 사용하여 해당 사용자의 한 달 동안의 활동(계획, AI 계획, 술자리, 외식) 식단을 조회합니다.")
     public ResponseEntity<List<DietRecordProfileResponse>> getDietPlansMonths(
             @Parameter(description = "조회할 사용자의 고유 ID", example = "1")
@@ -75,6 +79,7 @@ public class DietController {
     }
 
     @GetMapping("/templates/profiles")
+    @PreAuthorize("@owner.same(#userId, authentication) or hasRole('ADMIN')")
     @Operation(summary = "사용자 ID로 나만의 식단 조회", description = "제공된 사용자 ID를 사용하여 해당 사용자의 나만의 식단을 조회합니다.")
     public ResponseEntity<List<DietRecordProfileResponse>> getTemplateDiets(
             @Parameter(description = "조회할 사용자의 고유 ID", example = "1")
@@ -90,6 +95,7 @@ public class DietController {
     }
 
     @PostMapping("/templates")
+    @PreAuthorize("@owner.sameBody(#request, authentication) or hasRole('ADMIN')")
     @Operation(summary = "나만의 식단 생성", description = "유저 ID와 식단 이름, 음식을 입력하여 나만의 식단을 생성합니다.")
     public ResponseEntity<DietRecordProfileResponse> createTemplateDiet(
             @RequestBody @Valid DietTemplateCreateRequest request
@@ -113,6 +119,7 @@ public class DietController {
     }
 
     @PostMapping("/simple")
+    @PreAuthorize("@owner.sameBody(#request, authentication) or hasRole('ADMIN')")
     @Operation(summary = "단식 식단 생성", description = "유저 ID와 식단 종류를 입력하여 단식을 생성합니다.")
     public ResponseEntity<DietRecordProfileResponse> createFastingDiet(
             @RequestBody @Valid DietFastingCreateRequest request
@@ -124,6 +131,7 @@ public class DietController {
     }
 
     @PostMapping("/records")
+    @PreAuthorize("@owner.sameBody(#request, authentication) or hasRole('ADMIN')")
     @Operation(summary = "식단 기록 생성", description = "유저 ID와 식단 이름, 식단 종류, 섭취 시간, 음식을 입력하여 음식을 포함하는 식단을 생성합니다.")
     public ResponseEntity<DietRecordProfileResponse> createRecordDiet(
             @RequestBody @Valid DietRecordCreateRequest request
@@ -147,6 +155,7 @@ public class DietController {
     }
 
     @PostMapping("/snacks")
+    @PreAuthorize("@owner.sameBody(#request, authentication) or hasRole('ADMIN')")
     @Operation(summary = "간식 식단 생성", description = "유저 ID와 식단 음식 섭취 시간을 입력하여 간식 식단을 생성합니다.")
     public ResponseEntity<DietRecordProfileResponse> createSnackDiet(
             @RequestBody @Valid DietSnackCreateRequest request
@@ -170,6 +179,7 @@ public class DietController {
     }
 
     @PostMapping("/plans")
+    @PreAuthorize("@owner.sameBody(#request, authentication) or hasRole('ADMIN')")
     @Operation(summary = "계획 식단 생성", description = "유저 ID와 식단 종류, 계획 날짜, 음식을 입력하여 계획 식단을 생성합니다.")
     public ResponseEntity<DietRecordProfileResponse> createPlanDiet(
             @RequestBody @Valid DietPlanCreateRequest request
